@@ -27,6 +27,9 @@ At the conversation boundary, the MVP passes state around as
 `mikuproject_workbook_json`.
 It does not try to replace the `mikuproject` browser UI.
 
+The repository also now documents a Phase B primary file workflow for
+`MS Project XML`, structural workbook `XLSX`, and `mikuproject_workbook_json`.
+
 Developer-oriented documents are available under [`docs/`](./docs/):
 
 - [`docs/agent-skill-design.md`](./docs/agent-skill-design.md)
@@ -61,6 +64,9 @@ Developer-oriented documents are available under [`docs/`](./docs/):
 
 会話境界では、MVP は state を `mikuproject_workbook_json` として持ち回ります。
 `mikuproject` のブラウザ UI を置き換えることは目指しません。
+
+あわせて、このリポジトリでは `MS Project XML`、構造忠実 workbook `XLSX`、
+`mikuproject_workbook_json` を扱う Phase B の primary file workflow も整理しています。
 
 開発者向け文書は [`docs/`](./docs/) にあります。
 

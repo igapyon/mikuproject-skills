@@ -1,21 +1,34 @@
 ---
 name: mikuproject
-description: Work with mikuproject AI JSON workflows for WBS planning and iterative editing. Use when Codex needs to provide the mikuproject AI JSON spec, accept `project_draft_view`, apply `Patch JSON`, or hand off `mikuproject_workbook_json` for continued AI collaboration.
+description: Work with mikuproject AI JSON workflows and primary file import/export workflows. Use when Codex needs to provide the mikuproject AI JSON spec, accept `project_draft_view`, apply `Patch JSON`, hand off `mikuproject_workbook_json`, or move between the current state and `MS Project XML` or structural workbook `XLSX`.
 ---
 
 # Mikuproject
 
-Use this skill to drive the MVP workflow for `mikuproject` Agent Skills.
-Keep the focus on structured JSON exchange, not on replacing the browser UI.
+Use this skill to drive the current workflow for `mikuproject` Agent Skills.
+Keep the focus on structured exchange and primary file workflows, not on replacing the browser UI.
 
 ## Core Workflow
 
-Treat the skill as one workflow with four operations:
+Treat the skill as one workflow with two layers of operations.
+
+Phase A:
 
 - `spec`: provide `mikuproject-ai-json-spec`
 - `draft`: accept AI-produced `project_draft_view`
 - `patch`: accept AI-produced `Patch JSON`
 - `workbook`: return current `mikuproject_workbook_json`
+
+Phase B:
+
+- `xml-import`: accept `MS Project XML` and return `mikuproject_workbook_json`
+- `xml-export`: return current `MS Project XML`
+- `xlsx-import`: accept structural workbook `XLSX` and return `mikuproject_workbook_json`
+- `xlsx-merge-import`: apply structural workbook `XLSX` edits onto an existing state
+- `xlsx-export`: return current structural workbook `XLSX`
+- `workbook-import`: accept `mikuproject_workbook_json` as a replace import
+- `workbook-merge-import`: apply `mikuproject_workbook_json` onto an existing state
+- `workbook-export`: return current `mikuproject_workbook_json` as a file-oriented export
 
 At the conversation boundary, prefer `mikuproject_workbook_json` as the state exchange format.
 When processing input, convert through upstream APIs as needed.
@@ -36,8 +49,17 @@ Use these functions first:
 - `parseAiJsonText()`
 - `importAiJsonDocument()`
 - `importAiJsonText()`
+- `importExternal()`
+- `msProject.importFromXml()`
+- `msProject.exportToXml()`
 - `workbookJson.exportDocument()`
 - `workbookJson.importAsProjectModel()`
+- `workbookJson.importIntoProjectModel()`
+- `xlsx.decodeWorkbook()`
+- `xlsx.encodeWorkbook()`
+- `xlsx.exportWorkbook()`
+- `xlsx.importAsProjectModel()`
+- `xlsx.importIntoProjectModel()`
 - `patchJson.applyToProjectModel()`
 
 If you need the exact upstream file map or supporting design notes, read [references/upstream-map.md](references/upstream-map.md).
@@ -142,9 +164,11 @@ Treat these as hard errors:
 
 Treat these as soft errors:
 
-- upstream validators return warnings
+- upstream validation checks return warnings
 - some patch operations are ignored
 - workbook JSON contains unknown sheets or columns
+- unsupported workbook `XLSX` edits are ignored
+- merge imports apply only partial changes
 
 On soft errors, continue and report the warnings clearly.
 
@@ -156,6 +180,7 @@ Do not overreach beyond the MVP.
 - Do not claim business validity of the WBS itself
 - Do not add MCP-specific behavior unless the user asks for that expansion
 - Do not introduce extra skill splits unless the current single-skill design becomes limiting
+- Do not confuse structural workbook `XLSX` with `WBS XLSX`
 
 ## References
 
@@ -166,3 +191,7 @@ Read these only when needed:
 - [references/draft-import.md](references/draft-import.md) for `project_draft_view` acceptance and conversion rules
 - [references/patch-import.md](references/patch-import.md) for `Patch JSON` acceptance and apply rules
 - [references/workbook-handoff.md](references/workbook-handoff.md) for `mikuproject_workbook_json` handoff rules and prompt examples
+- [references/xml-import-export.md](references/xml-import-export.md) for `MS Project XML` import/export rules
+- [references/xlsx-import-export.md](references/xlsx-import-export.md) for structural workbook `XLSX` import/export rules
+- [references/workbook-import-export.md](references/workbook-import-export.md) for file-style workbook JSON import/export rules
+- [references/phase-b-examples.md](references/phase-b-examples.md) for short `xml/xlsx/workbook` import/export examples

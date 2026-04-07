@@ -115,18 +115,18 @@
 
 ### Phase B: Primary File Import/Export Workflow
 
-- [ ] `MS Project XML` の import 支援
-- [ ] `MS Project XML` の export 支援
-- [ ] `XLSX` の import 支援
-- [ ] `XLSX` の export 支援
-- [ ] `mikuproject_workbook_json` の import 支援
-- [ ] `mikuproject_workbook_json` の export 支援
+- [x] `MS Project XML` の import 支援
+- [x] `MS Project XML` の export 支援
+- [x] `XLSX` の import 支援
+- [x] `XLSX` の export 支援
+- [x] `mikuproject_workbook_json` の import 支援
+- [x] `mikuproject_workbook_json` の export 支援
 
 対象:
 
-- [ ] `MS Project XML`
-- [ ] `XLSX`
-- [ ] `mikuproject_workbook_json`
+- [x] `MS Project XML`
+- [x] `XLSX`
+- [x] `mikuproject_workbook_json`
 
 対象外:
 
@@ -143,6 +143,8 @@
 - [x] `docs/phase-b-msproject-xml-workflow.md` に `MS Project XML` 詳細仕様を作成する
 - [x] `docs/phase-b-workbook-json-workflow.md` に `mikuproject_workbook_json` 詳細仕様を作成する
 - [x] `docs/phase-b-xlsx-workflow.md` に `XLSX` 詳細仕様を作成する
+- [x] `skills/mikuproject/SKILL.md` に Phase B の操作を反映する
+- [x] `skills/mikuproject/references/` に `xml/xlsx/workbook` の短い利用例を追加する
 
 ### Phase C: Report / Presentation Outputs
 

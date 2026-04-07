@@ -184,7 +184,7 @@ Skill は次のように振る舞う。
 
 ### soft error
 
-- upstream validator が warning を返した
+- upstream の validation check が warning を返した
 - Patch の一部 operation が無視された
 - workbook JSON の未知列や未知 sheet が無視された
 
