@@ -3,7 +3,7 @@
 - 掲載先: Qiita
 - 公開記事タイトル: `[mikuproject] WBS 関連資料を XLSX / Markdown / SVG などで扱える OSSツールを作った`
 - URL: https://qiita.com/igapyon/items/e04a8224ff0fc71dc69d
-- スクリーンショット挿入: Qiita に直接アップロード方式 / 未確認
+- スクリーンショット挿入: Qiita に直接アップロード方式
 
 ## Qiita 掲載用属性情報
 
