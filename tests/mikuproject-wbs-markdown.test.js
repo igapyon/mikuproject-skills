@@ -66,7 +66,7 @@ describe("mikuproject wbs markdown", () => {
     expect(markdown.indexOf("# WBS ツリー")).toBeLessThan(markdown.indexOf("# WBS テーブル"));
     expect(markdown.indexOf("# WBS テーブル")).toBeLessThan(markdown.indexOf("# サマリ"));
     expect(markdown).toContain("| プロジェクト名 | mikuproject開発 |");
-    expect(markdown).toContain("~~~text");
+    expect(markdown).toContain("```text");
     expect(markdown).toContain("1 基盤整備 (3/16 - 3/17): 100%");
     expect(markdown).toContain("┗　1.1 着手 (3/16): 100%");
     expect(markdown).toContain("┗　1.1");
@@ -189,7 +189,7 @@ describe("mikuproject wbs markdown", () => {
       useBusinessDaysForProgressBand: true
     });
 
-    expect(markdown).toContain("~~~text");
+    expect(markdown).toContain("````text");
     expect(markdown).toContain("``` fenced name");
     expect(markdown).toContain("``` fenced note");
   });

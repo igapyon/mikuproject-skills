@@ -258,10 +258,8 @@
   function wrapFenceBlock(lines: string[], infoString: string): string[] {
     const content = lines.join("\n");
     const backtickRun = longestFenceRun(content, "`");
-    const tildeRun = longestFenceRun(content, "~");
-    const fenceChar = tildeRun <= backtickRun ? "~" : "`";
-    const fenceLength = Math.max(3, (fenceChar === "~" ? tildeRun : backtickRun) + 1);
-    const fence = fenceChar.repeat(fenceLength);
+    const fenceLength = Math.max(3, backtickRun + 1);
+    const fence = "`".repeat(fenceLength);
     return [`${fence}${infoString}`, ...lines, fence];
   }
 
