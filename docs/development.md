@@ -7,6 +7,10 @@
 - 設計メモ: [agent-skill-design.md](./agent-skill-design.md)
 - upstream 調査: [upstream-survey.md](./upstream-survey.md)
 - 次フェーズ案: [phase-b-primary-file-workflow.md](./phase-b-primary-file-workflow.md)
+- Phase B 詳細: [phase-b-msproject-xml-workflow.md](./phase-b-msproject-xml-workflow.md)
+- Phase B 詳細: [phase-b-workbook-json-workflow.md](./phase-b-workbook-json-workflow.md)
+- Phase B 詳細: [phase-b-xlsx-workflow.md](./phase-b-xlsx-workflow.md)
+- upstream 相談メモ: [upstream-xlsx-api-proposal.md](./upstream-xlsx-api-proposal.md)
 - 実装 TODO: [../TODO.md](../TODO.md)
 
 ## subtree 運用

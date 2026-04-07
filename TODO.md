@@ -107,6 +107,10 @@
 - [x] Skill の使い方を短くまとめる
 - [x] 今後の拡張候補を別枠で整理する
 
+## Cross-Cutting Note
+
+- [x] `mikuproject-skills` 側だけで無理に実装せず、upstream (`mikuproject`) 側の API 追加や公開面整理が妥当な場合は、その都度 `mikuproject` 側アクション候補として相談する
+
 ## 11. 将来拡張の候補
 
 ### Phase B: Primary File Import/Export Workflow
@@ -136,6 +140,9 @@
 設計メモ:
 
 - [x] `docs/phase-b-primary-file-workflow.md` に初期仕様メモを作成する
+- [x] `docs/phase-b-msproject-xml-workflow.md` に `MS Project XML` 詳細仕様を作成する
+- [x] `docs/phase-b-workbook-json-workflow.md` に `mikuproject_workbook_json` 詳細仕様を作成する
+- [x] `docs/phase-b-xlsx-workflow.md` に `XLSX` 詳細仕様を作成する
 
 ### Phase C: Report / Presentation Outputs
 
