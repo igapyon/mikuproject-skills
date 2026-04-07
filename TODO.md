@@ -109,8 +109,44 @@
 
 ## 11. 将来拡張の候補
 
+### Phase B: Primary File Import/Export Workflow
+
+- [ ] `MS Project XML` の import 支援
+- [ ] `MS Project XML` の export 支援
+- [ ] `XLSX` の import 支援
+- [ ] `XLSX` の export 支援
+- [ ] `mikuproject_workbook_json` の import 支援
+- [ ] `mikuproject_workbook_json` の export 支援
+
+対象:
+
+- [ ] `MS Project XML`
+- [ ] `XLSX`
+- [ ] `mikuproject_workbook_json`
+
+対象外:
+
+- [ ] `CSV`
+- [ ] AI 向け編集用 JSON 群
+  - `project_overview_view`
+  - `phase_detail_view`
+  - `task_edit_view`
+  - `full bundle`
+
+設計メモ:
+
+- [x] `docs/phase-b-primary-file-workflow.md` に初期仕様メモを作成する
+
+### Phase C: Report / Presentation Outputs
+
+- [ ] `WBS XLSX` 出力支援
+- [ ] `SVG` 出力各種の支援
+- [ ] `Markdown` 出力支援
+- [ ] `Mermaid` 出力支援
+
+### Other Future Candidates
+
 - [ ] MCP 対応
-- [ ] SVG / XLSX / Markdown 出力支援
 - [ ] WBS レビュー支援
 - [ ] スケジュール圧縮や分解の助言
 - [ ] 複数プロンプトテンプレートの整備

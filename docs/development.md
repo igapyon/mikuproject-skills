@@ -6,6 +6,7 @@
 
 - 設計メモ: [agent-skill-design.md](./agent-skill-design.md)
 - upstream 調査: [upstream-survey.md](./upstream-survey.md)
+- 次フェーズ案: [phase-b-primary-file-workflow.md](./phase-b-primary-file-workflow.md)
 - 実装 TODO: [../TODO.md](../TODO.md)
 
 ## subtree 運用
