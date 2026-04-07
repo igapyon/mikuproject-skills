@@ -64,6 +64,9 @@ single-file web app としての配布を維持しつつ、外部再利用向け
 - `workbookJson.exportDocument()` / `workbookJson.importAsProjectModel()` / `workbookJson.importIntoProjectModel()`
 - `xlsx.decodeWorkbook()` / `xlsx.encodeWorkbook()` / `xlsx.exportWorkbook()` / `xlsx.importAsProjectModel()` / `xlsx.importIntoProjectModel()`
 - `patchJson.applyToProjectModel()`
+- `report.wbsXlsx.exportWorkbook()` / `report.wbsXlsx.exportBytes()`
+- `report.svg.exportDaily()` / `report.svg.exportWeekly()` / `report.svg.exportMonthlyCalendar()`
+- `report.wbsMarkdown.export()` / `report.mermaid.exportGantt()`
 
 これにより、従来の UI 実装都合で分散していた `ProjectModel` 周りの入口を、外部利用者が 1 箇所から辿れるようにする。
 
