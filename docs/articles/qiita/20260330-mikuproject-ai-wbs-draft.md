@@ -3,7 +3,7 @@
 - 掲載先: Qiita
 - 公開記事タイトル: `[mikuproject] 生成AIに WBS の叩き台を作らせてみた`
 - URL: https://qiita.com/igapyon/items/0318f9a02b3a7dfa04f4
-- スクリーンショット挿入: Qiita に直接アップロード方式 / 未確認
+- スクリーンショット挿入: Qiita に直接アップロード方式
 
 ## Qiita 掲載用属性情報
 
