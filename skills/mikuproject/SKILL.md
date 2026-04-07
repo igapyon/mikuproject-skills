@@ -1,6 +1,6 @@
 ---
 name: mikuproject
-description: Work with mikuproject AI JSON workflows and primary file import/export workflows. Use when Codex needs to provide the mikuproject AI JSON spec, accept `project_draft_view`, apply `Patch JSON`, hand off `mikuproject_workbook_json`, or move between the current state and `MS Project XML` or structural workbook `XLSX`.
+description: Work with mikuproject AI JSON workflows, primary file import/export workflows, and Phase C report outputs. Use when Codex needs to provide the mikuproject AI JSON spec, accept `project_draft_view`, apply `Patch JSON`, hand off `mikuproject_workbook_json`, move between the current state and `MS Project XML` or structural workbook `XLSX`, or export `WBS XLSX` / `SVG` / `WBS Markdown` / `Mermaid`.
 ---
 
 # Mikuproject
@@ -10,7 +10,7 @@ Keep the focus on structured exchange and primary file workflows, not on replaci
 
 ## Core Workflow
 
-Treat the skill as one workflow with two layers of operations.
+Treat the skill as one workflow with three layers of operations.
 
 Phase A:
 
@@ -29,6 +29,15 @@ Phase B:
 - `workbook-import`: accept `mikuproject_workbook_json` as a replace import
 - `workbook-merge-import`: apply `mikuproject_workbook_json` onto an existing state
 - `workbook-export`: return current `mikuproject_workbook_json` as a file-oriented export
+
+Phase C:
+
+- `wbs-xlsx-export`: return current `WBS XLSX`
+- `daily-svg-export`: return current daily `SVG`
+- `weekly-svg-export`: return current weekly `SVG`
+- `monthly-calendar-svg-export`: return current monthly calendar `SVG` entries
+- `wbs-markdown-export`: return current `WBS Markdown`
+- `mermaid-export`: return current Mermaid gantt text
 
 At the conversation boundary, prefer `mikuproject_workbook_json` as the state exchange format.
 When processing input, convert through upstream APIs as needed.
@@ -61,6 +70,13 @@ Use these functions first:
 - `xlsx.importAsProjectModel()`
 - `xlsx.importIntoProjectModel()`
 - `patchJson.applyToProjectModel()`
+- `report.wbsXlsx.exportWorkbook()`
+- `report.wbsXlsx.exportBytes()`
+- `report.svg.exportDaily()`
+- `report.svg.exportWeekly()`
+- `report.svg.exportMonthlyCalendar()`
+- `report.wbsMarkdown.export()`
+- `report.mermaid.exportGantt()`
 
 If you need the exact upstream file map or supporting design notes, read [references/upstream-map.md](references/upstream-map.md).
 
@@ -153,6 +169,41 @@ Use this response shape:
 
 Do not add extra review comments unless the user asks for review.
 
+### Phase C report exports
+
+Require a current project state before running any report export.
+If the current state is `mikuproject_workbook_json`, rebuild a `ProjectModel` first.
+Prefer the unified `report` entrypoints on `__mikuprojectCoreApi`.
+
+Supported operations:
+
+- `wbs-xlsx-export`: use `report.wbsXlsx.exportBytes()` for file export, or `report.wbsXlsx.exportWorkbook()` when workbook-level inspection is needed
+- `daily-svg-export`: use `report.svg.exportDaily()`
+- `weekly-svg-export`: use `report.svg.exportWeekly()`
+- `monthly-calendar-svg-export`: use `report.svg.exportMonthlyCalendar()`
+- `wbs-markdown-export`: use `report.wbsMarkdown.export()`
+- `mermaid-export`: use `report.mermaid.exportGantt()`
+
+Use this processing order:
+
+1. require the current state
+2. convert `mikuproject_workbook_json` into a base `ProjectModel` when needed
+3. choose the matching `report.*` export entrypoint
+4. run the export with minimal options unless the user asked for specific export controls
+5. return the generated artifact or text with one short explanation
+
+Use this response shape:
+
+- one short line saying which report export this is
+- option summary, only when relevant
+- the generated artifact, text, or entry list
+
+For Phase C outputs, keep the distinction clear:
+
+- `WBS XLSX` is a report export and is not the same as structural workbook `XLSX`
+- `Mermaid` should be returned as gantt text, not necessarily fenced Markdown, unless the user asks for fencing
+- monthly calendar `SVG` may return multiple entries rather than a single file
+
 ## Error Handling
 
 Treat these as hard errors:
@@ -169,6 +220,8 @@ Treat these as soft errors:
 - workbook JSON contains unknown sheets or columns
 - unsupported workbook `XLSX` edits are ignored
 - merge imports apply only partial changes
+- some report export options may be rounded to upstream defaults
+- report outputs may simplify information compared with the full interactive UI
 
 On soft errors, continue and report the warnings clearly.
 

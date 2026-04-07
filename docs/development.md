@@ -5,6 +5,7 @@
 ## 文書の場所
 
 - 設計メモ: [agent-skill-design.md](./agent-skill-design.md)
+- skill 配置手順: [skill-installation.md](./skill-installation.md)
 - upstream 調査: [upstream-survey.md](./upstream-survey.md)
 - 次フェーズ案: [phase-b-primary-file-workflow.md](./phase-b-primary-file-workflow.md)
 - Phase B 詳細: [phase-b-msproject-xml-workflow.md](./phase-b-msproject-xml-workflow.md)
