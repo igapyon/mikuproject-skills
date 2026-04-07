@@ -118,6 +118,16 @@ npm test
 
 開発用コマンドの詳細、テスト運用、`local-data/` の扱いは [docs/development.md](docs/development.md) を参照してください。
 
+## 再利用 API
+
+single-file web app 向けの既存 `globalThis.__mikuproject*` 群は維持しつつ、Agent Skills / CLI / MCP から使いやすい集約入口として `globalThis.__mikuprojectCoreApi` を公開しています。
+
+- `getAiJsonSpec()` / `getAiJsonSpecText()`: `mikuproject-ai-json-spec` の安定取得
+- `parseAiJsonText()` / `importAiJsonDocument()` / `importAiJsonText()`: `project_draft_view` / Patch JSON / workbook JSON の UI 非依存な共通入口
+- `projectModel`, `msProject`, `aiViews`, `workbookJson`, `patchJson`: `ProjectModel` 周りの import / export / validate の集約 entrypoint
+
+`AI JSON spec` 単体の取得用には `globalThis.__mikuprojectAiJsonSpec` も公開しています。
+
 ## 関連ドキュメント
 
 - [docs/architecture.md](docs/architecture.md)

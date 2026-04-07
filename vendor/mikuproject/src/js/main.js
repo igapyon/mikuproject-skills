@@ -11,6 +11,7 @@
     if (!mikuprojectAiJsonUtil) {
         throw new Error("mikuproject AI JSON util module is not loaded");
     }
+    const mikuprojectAiJsonSpec = globalThis.__mikuprojectAiJsonSpec;
     const mikuprojectMainUtil = globalThis.__mikuprojectMainUtil;
     if (!mikuprojectMainUtil) {
         throw new Error("mikuproject main util module is not loaded");
@@ -188,6 +189,9 @@
     }
     function getAiPromptText() {
         var _a;
+        if (mikuprojectAiJsonSpec && typeof mikuprojectAiJsonSpec.getAiJsonSpecText === "function") {
+            return mikuprojectAiJsonSpec.getAiJsonSpecText().trim();
+        }
         const template = document.getElementById("aiPromptTemplate");
         if (!template) {
             return "";

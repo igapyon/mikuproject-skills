@@ -46,6 +46,25 @@
 
 `mikuproject.html` は `mikuproject-src.html` をもとに、ローカル CSS / JS を単一 HTML へインライン展開して生成する。
 
+## Reusable Entry Points
+
+single-file web app としての配布を維持しつつ、外部再利用向けには UI 非依存の公開入口も持つ。
+
+- `globalThis.__mikuprojectAiJsonSpec`: `mikuproject-ai-json-spec` を安定取得するための小さな公開面
+- `globalThis.__mikuprojectCoreApi`: Agent Skills / CLI / MCP から再利用するための集約 entrypoint
+
+`__mikuprojectCoreApi` は少なくとも次をまとめる。
+
+- `getAiJsonSpec()` / `getAiJsonSpecText()`
+- `parseAiJsonText()` / `importAiJsonDocument()` / `importAiJsonText()`
+- `projectModel.normalize()` / `projectModel.validate()`
+- `msProject.importFromXml()` / `msProject.exportToXml()` / `msProject.importFromCsvParentId()` / `msProject.exportToCsvParentId()`
+- `aiViews.buildProjectDraftRequest()` / `aiViews.importProjectDraftView()` / `aiViews.exportProjectOverviewView()` / `aiViews.exportPhaseDetailView()` / `aiViews.exportTaskEditView()`
+- `workbookJson.exportDocument()` / `workbookJson.importAsProjectModel()` / `workbookJson.importIntoProjectModel()`
+- `patchJson.applyToProjectModel()`
+
+これにより、従来の UI 実装都合で分散していた `ProjectModel` 周りの入口を、外部利用者が 1 箇所から辿れるようにする。
+
 ## リポジトリ構成
 
 - `mikuproject.html`: 生成済みの単一 HTML アプリ
