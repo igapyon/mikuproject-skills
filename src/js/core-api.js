@@ -27,6 +27,18 @@
     if (!mikuprojectExcelIo) {
         throw new Error("mikuproject Excel IO module is not loaded");
     }
+    const mikuprojectWbsXlsx = globalThis.__mikuprojectWbsXlsx;
+    if (!mikuprojectWbsXlsx) {
+        throw new Error("mikuproject WBS XLSX module is not loaded");
+    }
+    const mikuprojectNativeSvg = globalThis.__mikuprojectNativeSvg;
+    if (!mikuprojectNativeSvg) {
+        throw new Error("mikuproject native SVG module is not loaded");
+    }
+    const mikuprojectWbsMarkdown = globalThis.__mikuprojectWbsMarkdown;
+    if (!mikuprojectWbsMarkdown) {
+        throw new Error("mikuproject WBS Markdown module is not loaded");
+    }
     const mikuprojectProjectPatchJson = globalThis.__mikuprojectProjectPatchJson;
     if (!mikuprojectProjectPatchJson) {
         throw new Error("mikuproject Project Patch JSON module is not loaded");
@@ -210,6 +222,23 @@
         patchJson: {
             validateDocument: mikuprojectProjectPatchJson.validatePatchDocument,
             applyToProjectModel: mikuprojectProjectPatchJson.importProjectPatchJson
+        },
+        report: {
+            wbsXlsx: {
+                exportWorkbook: mikuprojectWbsXlsx.exportWbsWorkbook,
+                exportBytes: (model, options = {}) => new mikuprojectExcelIo.XlsxWorkbookCodec().exportWorkbook(mikuprojectWbsXlsx.exportWbsWorkbook(model, options))
+            },
+            svg: {
+                exportDaily: mikuprojectNativeSvg.exportNativeSvg,
+                exportWeekly: mikuprojectNativeSvg.exportWeeklyNativeSvg,
+                exportMonthlyCalendar: mikuprojectNativeSvg.exportMonthlyWbsCalendarSvgArchive
+            },
+            wbsMarkdown: {
+                export: mikuprojectWbsMarkdown.exportWbsMarkdown
+            },
+            mermaid: {
+                exportGantt: mikuprojectXml.exportMermaidGantt
+            }
         }
     };
 })();
