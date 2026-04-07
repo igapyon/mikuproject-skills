@@ -13,6 +13,12 @@ Use this reference when you need the exact vendored `mikuproject` locations behi
 
 - `vendor/mikuproject/docs/mikuproject-ai-json-spec.md`
   - canonical AI JSON prompt/spec document
+- `MS Project XML`
+  - imported through `__mikuprojectCoreApi.msProject.importFromXml()`
+  - exported through `__mikuprojectCoreApi.msProject.exportToXml()`
+- workbook `XLSX`
+  - handled through `__mikuprojectCoreApi.xlsx.*`
+  - or `__mikuprojectCoreApi.importExternal(...)`
 - `project_draft_view`
   - imported through `__mikuprojectCoreApi.importAiJsonDocument()` or `importAiJsonText()`
 - `Patch JSON`
@@ -32,6 +38,10 @@ Use this reference when you need the exact vendored `mikuproject` locations behi
   - contains workbook JSON import/export
 - `vendor/mikuproject/src/ts/project-patch-json.ts`
   - contains Patch JSON validation and apply logic
+- `vendor/mikuproject/src/ts/project-xlsx.ts`
+  - contains structural workbook `XLSX` import/export
+- `vendor/mikuproject/src/ts/excel-io.ts`
+  - contains workbook binary encode/decode
 
 ## Working Assumption
 
