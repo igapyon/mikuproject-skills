@@ -52,6 +52,12 @@
     throw new Error("mikuproject AI JSON util module is not loaded");
   }
 
+  const mikuprojectAiJsonSpec = (globalThis as typeof globalThis & {
+    __mikuprojectAiJsonSpec?: {
+      getAiJsonSpecText: () => string;
+    };
+  }).__mikuprojectAiJsonSpec;
+
   const mikuprojectMainUtil = (globalThis as typeof globalThis & {
     __mikuprojectMainUtil?: {
       parseOptionalNonNegativeInteger: (raw: string) => number | undefined;
@@ -424,6 +430,9 @@
   }
 
   function getAiPromptText(): string {
+    if (mikuprojectAiJsonSpec && typeof mikuprojectAiJsonSpec.getAiJsonSpecText === "function") {
+      return mikuprojectAiJsonSpec.getAiJsonSpecText().trim();
+    }
     const template = document.getElementById("aiPromptTemplate") as HTMLTemplateElement | null;
     if (!template) {
       return "";
