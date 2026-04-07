@@ -153,6 +153,15 @@
 - [ ] `Markdown` 出力支援
 - [ ] `Mermaid` 出力支援
 
+設計メモ:
+
+- [x] `docs/phase-c-wbs-xlsx-workflow.md` に `WBS XLSX` 詳細仕様メモを作成する
+- [x] `docs/upstream-wbs-xlsx-api-proposal.md` に upstream 相談メモを作成する
+- [x] `docs/phase-c-svg-workflow.md` に `SVG` 詳細仕様メモを作成する
+- [x] `docs/upstream-svg-api-proposal.md` に upstream 相談メモを作成する
+- [x] `docs/phase-c-markdown-mermaid-workflow.md` に `Markdown / Mermaid` 詳細仕様メモを作成する
+- [x] `docs/upstream-markdown-mermaid-api-proposal.md` に upstream 相談メモを作成する
+
 ### Other Future Candidates
 
 - [ ] MCP 対応
