@@ -21,6 +21,7 @@ const TARGETS = [
       "src/ts/types.ts",
       "src/ts/markdown-escape.ts",
       "src/ts/ai-json-util.ts",
+      "src/ts/ai-json-spec.ts",
       "src/ts/main-util.ts",
       "src/ts/excel-io.ts",
       "src/ts/msproject-xml.ts",
@@ -28,6 +29,7 @@ const TARGETS = [
       "src/ts/project-xlsx.ts",
       "src/ts/project-workbook-json.ts",
       "src/ts/project-patch-json.ts",
+      "src/ts/core-api.ts",
       "src/ts/wbs-xlsx.ts",
       "src/ts/wbs-markdown.ts",
       "src/ts/wbs-svg.ts",
@@ -74,7 +76,7 @@ function transpileTypeScript(target, tsModule) {
       relTsPath.replace("/ts/", "/js/").replace(/\.ts$/, ".js")
     );
 
-    const source = fs.readFileSync(tsPath, "utf8");
+    const source = applyTemplateValues(fs.readFileSync(tsPath, "utf8"));
     let outputText = source;
     if (tsModule) {
       const result = tsModule.transpileModule(source, {
@@ -112,6 +114,7 @@ function transpileTypeScript(target, tsModule) {
 function applyTemplateValues(source) {
   return source
     .replaceAll("{{BUILD_DATE}}", formatBuildDate(new Date()))
+    .replaceAll("{{AI_PROMPT_TEXT_JSON}}", JSON.stringify(loadAiPromptText()))
     .replaceAll("{{AI_PROMPT_TEXT}}", escapeHtml(loadAiPromptText()));
 }
 
