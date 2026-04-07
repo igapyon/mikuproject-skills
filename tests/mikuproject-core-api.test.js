@@ -33,6 +33,10 @@ const projectXlsxCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-xlsx.js"),
   "utf8"
 );
+const excelIoCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io.js"),
+  "utf8"
+);
 const projectWorkbookJsonCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-workbook-json.js"),
   "utf8"
@@ -57,6 +61,7 @@ function bootModules() {
     aiJsonSpecCode,
     msProjectXmlCode,
     projectWorkbookSchemaCode,
+    excelIoCode,
     projectXlsxCode,
     projectWorkbookJsonCode,
     projectPatchJsonCode,
@@ -71,6 +76,7 @@ describe("mikuproject core api", () => {
     delete globalThis.__mikuprojectAiJsonSpec;
     delete globalThis.__mikuprojectXml;
     delete globalThis.__mikuprojectProjectWorkbookSchema;
+    delete globalThis.__mikuprojectExcelIo;
     delete globalThis.__mikuprojectProjectXlsx;
     delete globalThis.__mikuprojectProjectWorkbookJson;
     delete globalThis.__mikuprojectProjectPatchJson;
@@ -142,6 +148,86 @@ describe("mikuproject core api", () => {
     expect(Array.isArray(mergeResult.changes)).toBe(true);
   });
 
+  it("exposes xlsx encode/decode and workbook import/export through the unified entrypoint", () => {
+    const api = bootModules();
+    const baseModel = api.msProject.importFromXml(dependencyXml);
+    const workbook = api.xlsx.exportWorkbook(baseModel);
+    const projectNameRow = workbook.sheets
+      .find((sheet) => sheet.name === "Project")
+      .rows.find((row) => row.cells[0]?.value === "Name");
+
+    projectNameRow.cells[1].value = "Core API xlsx import";
+
+    const bytes = api.xlsx.encodeWorkbook(workbook);
+    const decodedWorkbook = api.xlsx.decodeWorkbook(bytes);
+    const replaceModel = api.xlsx.importAsProjectModel(decodedWorkbook);
+    const mergedModel = api.xlsx.importIntoProjectModel(decodedWorkbook, baseModel);
+
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(decodedWorkbook.sheets.some((sheet) => sheet.name === "Tasks")).toBe(true);
+    expect(replaceModel.project.name).toBe("Core API xlsx import");
+    expect(mergedModel.project.name).toBe("Core API xlsx import");
+  });
+
+  it("imports external formats through importExternal", () => {
+    const api = bootModules();
+    const baseModel = api.msProject.importFromXml(dependencyXml);
+    const workbook = api.xlsx.exportWorkbook(baseModel);
+    workbook.sheets.find((sheet) => sheet.name === "Project").rows.find((row) => row.cells[0]?.value === "Name").cells[1].value = "Core API external xlsx";
+    const xlsxBytes = api.xlsx.encodeWorkbook(workbook);
+    const workbookJson = api.workbookJson.exportDocument(baseModel);
+    workbookJson.sheets.Project.find((row) => row.Field === "Name").Value = "Core API external workbook json";
+
+    const xmlResult = api.importExternal({
+      source: { format: "ms_project_xml", text: dependencyXml },
+      mode: "replace"
+    });
+    const xlsxReplaceResult = api.importExternal({
+      source: { format: "xlsx", bytes: xlsxBytes },
+      mode: "replace"
+    });
+    const xlsxMergeResult = api.importExternal({
+      source: { format: "xlsx", bytes: xlsxBytes },
+      mode: "merge",
+      baseModel
+    });
+    const workbookJsonMergeResult = api.importExternal({
+      source: { format: "workbook_json", document: workbookJson },
+      mode: "merge",
+      baseModel
+    });
+    const patchResult = api.importExternal({
+      source: {
+        format: "patch_json",
+        document: {
+          operations: [
+            {
+              op: "update_project",
+              fields: {
+                name: "Core API external patch"
+              }
+            }
+          ]
+        }
+      },
+      mode: "patch",
+      baseModel
+    });
+
+    expect(xmlResult.kind).toBe("ms_project_xml");
+    expect(xmlResult.mode).toBe("replace");
+    expect(xlsxReplaceResult.kind).toBe("xlsx");
+    expect(xlsxReplaceResult.model.project.name).toBe("Core API external xlsx");
+    expect(xlsxMergeResult.kind).toBe("xlsx");
+    expect(xlsxMergeResult.mode).toBe("merge");
+    expect(Array.isArray(xlsxMergeResult.changes)).toBe(true);
+    expect(workbookJsonMergeResult.kind).toBe("workbook_json");
+    expect(workbookJsonMergeResult.mode).toBe("merge");
+    expect(workbookJsonMergeResult.model.project.name).toBe("Core API external workbook json");
+    expect(patchResult.kind).toBe("patch_json");
+    expect(patchResult.model.project.name).toBe("Core API external patch");
+  });
+
   it("applies patch json through the unified entrypoint", () => {
     const api = bootModules();
     const baseModel = api.msProject.importFromXml(dependencyXml);
@@ -167,5 +253,31 @@ describe("mikuproject core api", () => {
     const api = bootModules();
 
     expect(() => api.importAiJsonDocument({ operations: [] })).toThrow("baseModel");
+  });
+
+  it("rejects unsupported format and mode combinations in importExternal", () => {
+    const api = bootModules();
+    const baseModel = api.msProject.importFromXml(dependencyXml);
+
+    expect(() => api.importExternal({
+      source: { format: "ms_project_xml", text: dependencyXml },
+      mode: "merge",
+      baseModel
+    })).toThrow("replace");
+    expect(() => api.importExternal({
+      source: { format: "patch_json", document: { operations: [] } },
+      mode: "replace",
+      baseModel
+    })).toThrow("patch");
+    expect(() => api.importExternal({
+      source: { format: "xlsx", bytes: new Uint8Array() },
+      mode: "patch",
+      baseModel
+    })).toThrow("replace または merge");
+    expect(() => api.importExternal({
+      source: { format: "workbook_json", document: {} },
+      mode: "patch",
+      baseModel
+    })).toThrow("patch import");
   });
 });

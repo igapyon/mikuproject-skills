@@ -20,6 +20,8 @@
   };
 
   type AiJsonDocumentKind = "workbook_json" | "project_draft_view" | "patch_json";
+  type ExternalImportFormat = "ms_project_xml" | "xlsx" | "workbook_json" | "project_draft_view" | "patch_json";
+  type ExternalImportMode = "replace" | "merge" | "patch";
 
   const mikuprojectXml = (globalThis as typeof globalThis & {
     __mikuprojectXml?: {
@@ -106,6 +108,63 @@
 
   if (!mikuprojectProjectWorkbookJson) {
     throw new Error("mikuproject Project Workbook JSON module is not loaded");
+  }
+
+  type XlsxCellLike = {
+    value?: string | number | boolean;
+    numberFormat?: "general" | "integer" | "decimal" | "date" | "datetime" | "percent";
+    horizontalAlign?: "left" | "center" | "right";
+    bold?: boolean;
+    fontSize?: number;
+    fillColor?: string;
+    border?: "thin";
+  };
+
+  type XlsxWorkbookLike = {
+    sheets: Array<{
+      name: string;
+      columns?: Array<{ width?: number }>;
+      mergedRanges?: string[];
+      dataValidations?: Array<{
+        type: "list";
+        sqref: string;
+        formula1: string;
+        allowBlank?: boolean;
+      }>;
+      rows: Array<{
+        height?: number;
+        cells: XlsxCellLike[];
+      }>;
+    }>;
+  };
+
+  const mikuprojectProjectXlsx = (globalThis as typeof globalThis & {
+    __mikuprojectProjectXlsx?: {
+      exportProjectWorkbook: (model: ProjectModel) => XlsxWorkbookLike;
+      importProjectWorkbook: (workbook: XlsxWorkbookLike, baseModel: ProjectModel) => ProjectModel;
+      importProjectWorkbookAsProjectModel: (workbook: XlsxWorkbookLike) => ProjectModel;
+      importProjectWorkbookDetailed?: (workbook: XlsxWorkbookLike, baseModel: ProjectModel) => {
+        model: ProjectModel;
+        changes: ImportChange[];
+      };
+    };
+  }).__mikuprojectProjectXlsx;
+
+  if (!mikuprojectProjectXlsx) {
+    throw new Error("mikuproject Project XLSX module is not loaded");
+  }
+
+  const mikuprojectExcelIo = (globalThis as typeof globalThis & {
+    __mikuprojectExcelIo?: {
+      XlsxWorkbookCodec: new () => {
+        exportWorkbook: (workbook: XlsxWorkbookLike) => Uint8Array;
+        importWorkbook: (bytes: Uint8Array) => XlsxWorkbookLike;
+      };
+    };
+  }).__mikuprojectExcelIo;
+
+  if (!mikuprojectExcelIo) {
+    throw new Error("mikuproject Excel IO module is not loaded");
   }
 
   const mikuprojectProjectPatchJson = (globalThis as typeof globalThis & {
@@ -242,6 +301,114 @@
     };
   }
 
+  type ExternalImportSource =
+    | { format: "ms_project_xml"; text: string }
+    | { format: "xlsx"; bytes: Uint8Array }
+    | { format: "workbook_json"; document: unknown }
+    | { format: "project_draft_view"; document: unknown }
+    | { format: "patch_json"; document: unknown };
+
+  function importExternal(input: {
+    source: ExternalImportSource;
+    mode: ExternalImportMode;
+    baseModel?: ProjectModel;
+  }):
+    | {
+      kind: "ms_project_xml";
+      mode: "replace";
+      model: ProjectModel;
+      warnings: [];
+    }
+    | {
+      kind: "xlsx";
+      mode: "replace";
+      model: ProjectModel;
+      warnings: [];
+    }
+    | {
+      kind: "xlsx";
+      mode: "merge";
+      model: ProjectModel;
+      changes: ImportChange[];
+      warnings: [];
+    }
+    | ReturnType<typeof importAiJsonDocument> {
+    const { source, mode, baseModel } = input;
+
+    if (source.format === "ms_project_xml") {
+      if (mode !== "replace") {
+        throw new Error("MS Project XML は replace import のみ対応です");
+      }
+      return {
+        kind: "ms_project_xml",
+        mode,
+        model: mikuprojectXml.importMsProjectXml(source.text),
+        warnings: []
+      };
+    }
+
+    if (source.format === "xlsx") {
+      if (mode === "patch") {
+        throw new Error("XLSX は replace または merge import のみ対応です");
+      }
+      const workbook = new mikuprojectExcelIo.XlsxWorkbookCodec().importWorkbook(source.bytes);
+      if (mode === "replace") {
+        return {
+          kind: "xlsx",
+          mode,
+          model: mikuprojectProjectXlsx.importProjectWorkbookAsProjectModel(workbook),
+          warnings: []
+        };
+      }
+      if (mode === "merge") {
+        if (!baseModel) {
+          throw new Error("XLSX merge import には baseModel が必要です");
+        }
+        if (typeof mikuprojectProjectXlsx.importProjectWorkbookDetailed === "function") {
+          return {
+            kind: "xlsx",
+            mode,
+            ...mikuprojectProjectXlsx.importProjectWorkbookDetailed(workbook, baseModel),
+            warnings: []
+          };
+        }
+        return {
+          kind: "xlsx",
+          mode,
+          model: mikuprojectProjectXlsx.importProjectWorkbook(workbook, baseModel),
+          changes: [],
+          warnings: []
+        };
+      }
+    }
+
+    if (source.format === "workbook_json") {
+      if (mode === "patch") {
+        throw new Error("workbook JSON は patch import に対応していません");
+      }
+      if (mode === "merge" && !baseModel) {
+        throw new Error("workbook JSON merge import には baseModel が必要です");
+      }
+      return importAiJsonDocument(source.document, mode === "merge" ? { baseModel } : {});
+    }
+
+    if (source.format === "project_draft_view") {
+      if (mode !== "replace") {
+        throw new Error("project_draft_view は replace import のみ対応です");
+      }
+      return importAiJsonDocument(source.document);
+    }
+
+    if (source.format === "patch_json") {
+      if (mode !== "patch") {
+        throw new Error("patch JSON は patch import のみ対応です");
+      }
+      return importAiJsonDocument(source.document, { baseModel });
+    }
+
+    throw new Error(`未対応の import format です: ${(source as { format?: string }).format || "unknown"}`);
+  }
+
   (globalThis as typeof globalThis & {
     __mikuprojectCoreApi?: {
       version: 1;
@@ -260,6 +427,7 @@
       };
       importAiJsonDocument: typeof importAiJsonDocument;
       importAiJsonText: typeof importAiJsonText;
+      importExternal: typeof importExternal;
       samples: {
         getSampleXml: () => string;
         getSampleProjectDraftView: () => unknown;
@@ -313,6 +481,13 @@
           warnings: Array<{ message: string }>;
         };
       };
+      xlsx: {
+        decodeWorkbook: (bytes: Uint8Array) => XlsxWorkbookLike;
+        encodeWorkbook: (workbook: XlsxWorkbookLike) => Uint8Array;
+        exportWorkbook: (model: ProjectModel) => XlsxWorkbookLike;
+        importAsProjectModel: (workbook: XlsxWorkbookLike) => ProjectModel;
+        importIntoProjectModel: (workbook: XlsxWorkbookLike, baseModel: ProjectModel) => ProjectModel;
+      };
       patchJson: {
         validateDocument: (documentLike: unknown) => {
           document: unknown;
@@ -333,6 +508,7 @@
     parseAiJsonText,
     importAiJsonDocument,
     importAiJsonText,
+    importExternal,
     samples: {
       getSampleXml: () => mikuprojectXml.SAMPLE_XML,
       getSampleProjectDraftView: () => mikuprojectXml.SAMPLE_PROJECT_DRAFT_VIEW
@@ -360,6 +536,13 @@
       validateDocument: mikuprojectProjectWorkbookJson.validateWorkbookJsonDocument,
       importAsProjectModel: mikuprojectProjectWorkbookJson.importProjectWorkbookJsonAsProjectModel,
       importIntoProjectModel: mikuprojectProjectWorkbookJson.importProjectWorkbookJson
+    },
+    xlsx: {
+      decodeWorkbook: (bytes: Uint8Array) => new mikuprojectExcelIo.XlsxWorkbookCodec().importWorkbook(bytes),
+      encodeWorkbook: (workbook: XlsxWorkbookLike) => new mikuprojectExcelIo.XlsxWorkbookCodec().exportWorkbook(workbook),
+      exportWorkbook: mikuprojectProjectXlsx.exportProjectWorkbook,
+      importAsProjectModel: mikuprojectProjectXlsx.importProjectWorkbookAsProjectModel,
+      importIntoProjectModel: mikuprojectProjectXlsx.importProjectWorkbook
     },
     patchJson: {
       validateDocument: mikuprojectProjectPatchJson.validatePatchDocument,
