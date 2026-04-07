@@ -13,11 +13,15 @@ const CORE_API_MODULE_RELATIVE_PATHS = [
   "src/js/ai-json-util.js",
   "src/js/ai-json-spec.js",
   "src/js/msproject-xml.js",
+  "src/js/markdown-escape.js",
   "src/js/project-workbook-schema.js",
   "src/js/excel-io.js",
   "src/js/project-xlsx.js",
   "src/js/project-workbook-json.js",
   "src/js/project-patch-json.js",
+  "src/js/wbs-xlsx.js",
+  "src/js/wbs-svg.js",
+  "src/js/wbs-markdown.js",
   "src/js/core-api.js"
 ];
 
@@ -65,11 +69,15 @@ function clearMikuprojectGlobals() {
   delete globalThis.__mikuprojectAiJsonUtil;
   delete globalThis.__mikuprojectAiJsonSpec;
   delete globalThis.__mikuprojectXml;
+  delete globalThis.__mikuprojectMarkdownEscape;
   delete globalThis.__mikuprojectProjectWorkbookSchema;
   delete globalThis.__mikuprojectExcelIo;
   delete globalThis.__mikuprojectProjectXlsx;
   delete globalThis.__mikuprojectProjectWorkbookJson;
   delete globalThis.__mikuprojectProjectPatchJson;
+  delete globalThis.__mikuprojectWbsXlsx;
+  delete globalThis.__mikuprojectNativeSvg;
+  delete globalThis.__mikuprojectWbsMarkdown;
   delete globalThis.__mikuprojectCoreApi;
 }
 
