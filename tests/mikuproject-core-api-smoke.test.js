@@ -3,57 +3,30 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+
+import { loadMikuprojectCoreApi } from "../vendor/mikuproject/scripts/lib/core-api-loader.mjs";
 
 const ROOT = process.cwd();
-
-function readVendored(relativePath) {
-  return readFileSync(path.resolve(ROOT, "vendor/mikuproject", relativePath), "utf8");
-}
-
-const typesCode = readVendored("src/js/types.js");
-const aiJsonUtilCode = readVendored("src/js/ai-json-util.js");
-const aiJsonSpecCode = readVendored("src/js/ai-json-spec.js");
-const msProjectXmlCode = readVendored("src/js/msproject-xml.js");
-const projectWorkbookSchemaCode = readVendored("src/js/project-workbook-schema.js");
-const excelIoCode = readVendored("src/js/excel-io.js");
-const projectXlsxCode = readVendored("src/js/project-xlsx.js");
-const projectWorkbookJsonCode = readVendored("src/js/project-workbook-json.js");
-const projectPatchJsonCode = readVendored("src/js/project-patch-json.js");
-const coreApiCode = readVendored("src/js/core-api.js");
-const dependencyXml = readVendored("testdata/dependency.xml");
+const dependencyXml = readFileSync(path.resolve(ROOT, "vendor/mikuproject/testdata/dependency.xml"), "utf8");
 
 function bootModules() {
-  new Function([
-    typesCode,
-    aiJsonUtilCode,
-    aiJsonSpecCode,
-    msProjectXmlCode,
-    projectWorkbookSchemaCode,
-    excelIoCode,
-    projectXlsxCode,
-    projectWorkbookJsonCode,
-    projectPatchJsonCode,
-    coreApiCode
-  ].join("\n"))();
-  return globalThis.__mikuprojectCoreApi;
+  return loadMikuprojectCoreApi({
+    rootDir: path.resolve(ROOT, "vendor/mikuproject")
+  });
 }
 
 describe("mikuproject core api smoke", () => {
-  beforeEach(() => {
-    delete globalThis.__mikuprojectAiJsonUtil;
-    delete globalThis.__mikuprojectAiJsonSpec;
-    delete globalThis.__mikuprojectXml;
-    delete globalThis.__mikuprojectProjectWorkbookSchema;
-    delete globalThis.__mikuprojectExcelIo;
-    delete globalThis.__mikuprojectProjectXlsx;
-    delete globalThis.__mikuprojectProjectWorkbookJson;
-    delete globalThis.__mikuprojectProjectPatchJson;
-    delete globalThis.__mikuprojectCoreApi;
+  let loaded = null;
+
+  afterEach(() => {
+    loaded?.dispose();
+    loaded = null;
   });
 
-  it("supports spec, draft, patch, workbook, and xlsx flows", () => {
-    const api = bootModules();
+  it("supports spec, draft, patch, workbook, xlsx, and report flows", () => {
+    loaded = bootModules();
+    const { api } = loaded;
 
     const spec = api.getAiJsonSpec();
     expect(spec.id).toBe("mikuproject-ai-json-spec");
@@ -124,5 +97,25 @@ describe("mikuproject core api smoke", () => {
     expect(xlsxMerge.kind).toBe("xlsx");
     expect(xlsxMerge.mode).toBe("merge");
     expect(Array.isArray(xlsxMerge.changes)).toBe(true);
+
+    const wbsWorkbook = api.report.wbsXlsx.exportWorkbook(baseModel, {
+      displayDaysBeforeBaseDate: 1,
+      displayDaysAfterBaseDate: 2
+    });
+    const wbsBytes = api.report.wbsXlsx.exportBytes(baseModel);
+    const dailySvg = api.report.svg.exportDaily(baseModel, { labelMode: "list" });
+    const weeklySvg = api.report.svg.exportWeekly(baseModel);
+    const monthlyCalendar = api.report.svg.exportMonthlyCalendar(baseModel);
+    const wbsMarkdown = api.report.wbsMarkdown.export(baseModel);
+    const mermaidText = api.report.mermaid.exportGantt(baseModel);
+
+    expect(wbsWorkbook.sheets.length).toBeGreaterThan(0);
+    expect(wbsBytes).toBeInstanceOf(Uint8Array);
+    expect(dailySvg).toContain("<svg");
+    expect(weeklySvg).toContain("<svg");
+    expect(monthlyCalendar.entries.length).toBeGreaterThan(0);
+    expect(monthlyCalendar.zipBytes).toBeInstanceOf(Uint8Array);
+    expect(wbsMarkdown).toContain("# WBS テーブル");
+    expect(mermaidText).toContain("gantt");
   });
 });
