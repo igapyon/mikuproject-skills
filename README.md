@@ -26,6 +26,8 @@ This MVP covers four operations:
 At the conversation boundary, the MVP passes state around as
 `mikuproject_workbook_json`.
 It does not try to replace the `mikuproject` browser UI.
+It also does not yet automate agent-to-agent execution between this skill
+and another model; the current MVP is a handoff-style workflow.
 
 The repository also now documents a Phase B primary file workflow for
 `MS Project XML`, structural workbook `XLSX`, and `mikuproject_workbook_json`.
@@ -64,6 +66,8 @@ Developer-oriented documents are available under [`docs/`](./docs/):
 
 会話境界では、MVP は state を `mikuproject_workbook_json` として持ち回ります。
 `mikuproject` のブラウザ UI を置き換えることは目指しません。
+また、現時点の MVP は handoff 型であり、この skill と別の生成AIのあいだを
+自動的に agent-to-agent 連携するところまでは扱いません。
 
 あわせて、このリポジトリでは `MS Project XML`、構造忠実 workbook `XLSX`、
 `mikuproject_workbook_json` を扱う Phase B の primary file workflow も整理しています。
@@ -86,6 +90,7 @@ Notes:
 
 - This skill does not replace the `mikuproject` browser UI.
 - For the MVP, state is passed around as `mikuproject_workbook_json` at the conversation boundary.
+- The current MVP returns handoff text on screen rather than automatically sending it to another model.
 
 ---
 
@@ -103,3 +108,4 @@ Notes:
 
 - この skill は `mikuproject` のブラウザ UI を置き換えるものではありません。
 - MVP では、会話境界の state は `mikuproject_workbook_json` として扱います。
+- 現在の MVP は handoff 型であり、`spec` や workbook の返却内容が画面に表示されます。

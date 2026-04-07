@@ -5,6 +5,7 @@
 ## 文書の場所
 
 - 設計メモ: [agent-skill-design.md](./agent-skill-design.md)
+- 自動連携メモ: [agent-to-agent-runner.md](./agent-to-agent-runner.md)
 - skill 配置手順: [skill-installation.md](./skill-installation.md)
 - upstream 調査: [upstream-survey.md](./upstream-survey.md)
 - 次フェーズ案: [phase-b-primary-file-workflow.md](./phase-b-primary-file-workflow.md)
