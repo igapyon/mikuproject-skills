@@ -57,10 +57,12 @@ single-file web app としての配布を維持しつつ、外部再利用向け
 
 - `getAiJsonSpec()` / `getAiJsonSpecText()`
 - `parseAiJsonText()` / `importAiJsonDocument()` / `importAiJsonText()`
+- `importExternal()`
 - `projectModel.normalize()` / `projectModel.validate()`
 - `msProject.importFromXml()` / `msProject.exportToXml()` / `msProject.importFromCsvParentId()` / `msProject.exportToCsvParentId()`
 - `aiViews.buildProjectDraftRequest()` / `aiViews.importProjectDraftView()` / `aiViews.exportProjectOverviewView()` / `aiViews.exportPhaseDetailView()` / `aiViews.exportTaskEditView()`
 - `workbookJson.exportDocument()` / `workbookJson.importAsProjectModel()` / `workbookJson.importIntoProjectModel()`
+- `xlsx.decodeWorkbook()` / `xlsx.encodeWorkbook()` / `xlsx.exportWorkbook()` / `xlsx.importAsProjectModel()` / `xlsx.importIntoProjectModel()`
 - `patchJson.applyToProjectModel()`
 
 これにより、従来の UI 実装都合で分散していた `ProjectModel` 周りの入口を、外部利用者が 1 箇所から辿れるようにする。
