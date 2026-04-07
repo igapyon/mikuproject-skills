@@ -1,7 +1,11 @@
 # mikuproject-skills
 
-`mikuproject-skills` is an Agent Skills project that reuses the full
-[`mikuproject`](./vendor/mikuproject) repository via `git subtree`.
+`mikuproject-skills` is an Agent Skills project designed around the open
+Agent Skills standard published by Anthropic on December 18, 2025.
+
+This repository reuses the full [`mikuproject`](./vendor/mikuproject)
+repository via `git subtree` and builds AI-agent-facing skills on top of
+the vendored upstream implementation.
 
 ## Positioning
 
@@ -18,10 +22,13 @@ In short:
 
 ## Current State
 
-The initial subtree import has already been applied.
+The subtree sync that includes the reusable upstream APIs has been applied.
 
-- local commit: `20a09b6`
-- imported upstream commit: `30e961cd94a52610e064ca586afe5afbb85cc7dd`
+- local commit: `8845721`
+- imported upstream commit: `ad15ace2e99a24348956fad04e5b052baf50fa65`
+- included upstream API additions:
+  - `globalThis.__mikuprojectAiJsonSpec`
+  - `globalThis.__mikuprojectCoreApi`
 
 ## Sync Workflow
 
@@ -47,6 +54,7 @@ git subtree add --prefix=vendor/mikuproject https://github.com/igapyon/mikuproje
 
 This wording is safe for README files and project explanations:
 
-`mikuproject-skills` is an Agent Skills project that incorporates the full
-`mikuproject` repository into `vendor/mikuproject/` via `git subtree` and
-syncs upstream changes as needed.
+`mikuproject-skills` is an Agent Skills project designed around the open
+Agent Skills standard and incorporates the full `mikuproject` repository
+into `vendor/mikuproject/` via `git subtree`, syncing upstream changes as
+needed.
