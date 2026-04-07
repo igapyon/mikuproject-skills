@@ -7,6 +7,9 @@ This repository reuses the full [`mikuproject`](./vendor/mikuproject)
 repository via `git subtree` and builds AI-agent-facing skills on top of
 the vendored upstream implementation.
 
+The initial skill scaffold for this repository is available at
+[`skills/mikuproject`](./skills/mikuproject).
+
 ## Positioning
 
 This repository does not reference `mikuproject` as a git submodule.

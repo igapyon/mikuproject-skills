@@ -37,16 +37,16 @@
 
 ## 4. Skill 雛形の作成
 
-- [ ] Skill ディレクトリを作成する
-- [ ] `SKILL.md` の初版を作成する
-- [ ] 必要なら補助ファイルを配置する
-- [ ] README または利用メモから Skill への導線を用意する
+- [x] Skill ディレクトリを作成する
+- [x] `SKILL.md` の初版を作成する
+- [x] 必要なら補助ファイルを配置する
+- [x] README または利用メモから Skill への導線を用意する
 
 ## 5. `spec` 提供機能
 
 - [x] `mikuproject-ai-json-spec` を参照または抽出する方法を決める
-- [ ] Skill から利用者へ提示する手順を記述する
-- [ ] 生成AIへ渡す最小プロンプト例を用意する
+- [x] Skill から利用者へ提示する手順を記述する
+- [x] 生成AIへ渡す最小プロンプト例を用意する
 
 前提:
 
@@ -54,10 +54,10 @@
 
 ## 6. `project_draft_view` 取込機能
 
-- [ ] 受け取り方法を定義する
-- [ ] JSON の最低限の妥当性確認方針を決める
-- [ ] `mikuproject` へ取り込む手順を記述する
-- [ ] 取込結果の確認方法を記述する
+- [x] 受け取り方法を定義する
+- [x] JSON の最低限の妥当性確認方針を決める
+- [x] `mikuproject` へ取り込む手順を記述する
+- [x] 取込結果の確認方法を記述する
 
 前提:
 
@@ -65,10 +65,10 @@
 
 ## 7. `Patch JSON` 取込機能
 
-- [ ] 受け取り方法を定義する
-- [ ] Patch の最低限の妥当性確認方針を決める
-- [ ] `mikuproject` へ反映する手順を記述する
-- [ ] 反映後の確認方法を記述する
+- [x] 受け取り方法を定義する
+- [x] Patch の最低限の妥当性確認方針を決める
+- [x] `mikuproject` へ反映する手順を記述する
+- [x] 反映後の確認方法を記述する
 
 前提:
 
@@ -77,9 +77,9 @@
 
 ## 8. `mikuproject_workbook_json` 引き渡し機能
 
-- [ ] 現在の WBS 状態から `mikuproject_workbook_json` を取得する方法を決める
-- [ ] 生成AIへ渡すときの定型プロンプトを決める
-- [ ] 差分修正依頼につながる会話例を用意する
+- [x] 現在の WBS 状態から `mikuproject_workbook_json` を取得する方法を決める
+- [x] 生成AIへ渡すときの定型プロンプトを決める
+- [x] 差分修正依頼につながる会話例を用意する
 
 前提:
 
@@ -87,11 +87,18 @@
 
 ## 9. 動作確認
 
-- [ ] `spec` 提供の動作確認を行う
-- [ ] `project_draft_view` 取込の動作確認を行う
-- [ ] `Patch JSON` 取込の動作確認を行う
-- [ ] `mikuproject_workbook_json` 引き渡しの動作確認を行う
-- [ ] MVP の往復シナリオを一連で確認する
+- [x] `spec` 提供の動作確認を行う
+- [x] `project_draft_view` 取込の動作確認を行う
+- [x] `Patch JSON` 取込の動作確認を行う
+- [x] `mikuproject_workbook_json` 引き渡しの動作確認を行う
+- [x] MVP の往復シナリオを一連で確認する
+
+検証メモ:
+
+- root の `vitest` を有効化した
+- `tests/mikuproject-core-api-smoke.test.js` を追加した
+- `vendor/mikuproject/tests/**/*.test.js` も root から実行できるようにした
+- `npm test` で 24 files / 208 tests passed を確認した
 
 ## 10. 文書化
 

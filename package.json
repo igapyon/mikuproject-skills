@@ -1,0 +1,16 @@
+{
+  "name": "mikuproject-skills",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent Skills for mikuproject",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
+  }
+}
