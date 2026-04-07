@@ -9,6 +9,10 @@
 - `Mermaid` 出力は Markdown / 設計資料向けに残しつつ、見た目を制御しやすい `WBS SVG` 描画を別系統で追加するか検討する
 - `WBS SVG` について、今の既定である `近接ラベル` 表示だけを残し、左側にテキストを描画する `一覧ラベル` モードは将来的に廃止したい
 - `mikuproject` の主要入出力を CLI からも扱えるようにするか検討する
+  - ただし優先度は直近では上げず、まずは `__mikuprojectCoreApi` / `importExternal(...)` / Node 側 loader の運用を先に見る
+  - CLI を作る場合は、`core API` の薄い wrapper として設計し、独自ロジックを持ち込みすぎない
+- `importExternal(...)` の次段として、format / mode 不一致時の error 文言と利用例をさらに整える
+- `importExternal(...)` を Agent Skills / CLI / MCP 側から使うための sample code または小さな adapter を追加する
 - 作成するテキストファイルについて、BOM 付き / なしを切り替えるスイッチを追加する
 - `local-data/` 配下のファイルを、参照用・検証用・生成物で整理する
 - `local-data/` に置くべきでない生成物や一時ファイルがないか見直す
