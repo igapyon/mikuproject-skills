@@ -4,17 +4,17 @@
 
 ## 1. MVP 仕様の明文化
 
-- [ ] MVP の対象機能を 4 点に固定する
-- [ ] 各機能の責務を文章で定義する
-- [ ] MVP の対象外を明記する
-- [ ] 利用者向けの想定ユースケースを整理する
+- [x] MVP の対象機能を 4 点に固定する
+- [x] 各機能の責務を文章で定義する
+- [x] MVP の対象外を明記する
+- [x] 利用者向けの想定ユースケースを整理する
 
 対象機能:
 
-- [ ] `mikuproject-ai-json-spec` の提供
-- [ ] `project_draft_view` の受け取りと処理
-- [ ] `Patch JSON` の受け取りと処理
-- [ ] `mikuproject_workbook_json` の生成と引き渡し
+- [x] `mikuproject-ai-json-spec` の提供
+- [x] `project_draft_view` の受け取りと処理
+- [x] `Patch JSON` の受け取りと処理
+- [x] `mikuproject_workbook_json` の生成と引き渡し
 
 ## 2. upstream 調査
 
@@ -102,10 +102,10 @@
 
 ## 10. 文書化
 
-- [ ] README に MVP の説明を追記する
-- [ ] README に `subtree sync` 前提の運用を書き分ける
-- [ ] Skill の使い方を短くまとめる
-- [ ] 今後の拡張候補を別枠で整理する
+- [x] README に MVP の説明を追記する
+- [x] README に `subtree sync` 前提の運用を書き分ける
+- [x] Skill の使い方を短くまとめる
+- [x] 今後の拡張候補を別枠で整理する
 
 ## 11. 将来拡張の候補
 
