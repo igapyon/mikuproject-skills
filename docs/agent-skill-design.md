@@ -173,6 +173,130 @@ Skill は次のように振る舞う。
 利用者が document kind を明示しなくても、中身から判定する。
 判定不能ならエラーにする。
 
+## handoff 型と agent-to-agent 型
+
+MVP の現在設計は handoff 型である。
+
+これは、skill が `spec` や `mikuproject_workbook_json` を画面に返し、
+その返却内容を利用者または上位エージェントが次の生成AIへ渡す形を意味する。
+
+たとえば `spec` では、skill 自身が外部の生成AIと自動対話するのではなく、
+次の AI ターンへ渡すための `mikuproject-ai-json-spec` を返す。
+
+したがって、`spec` 実行時に spec 本文や handoff 用プロンプトが画面に表示されるのは、
+MVP の想定どおりの挙動である。
+
+一方で、将来の理想形としては agent-to-agent 型もありうる。
+
+これは、skill の返却内容を画面にそのまま見せるのではなく、
+オーケストレータまたは上位エージェントが内部的に次の生成AI呼び出しへ接続する方式である。
+
+整理すると次の違いがある。
+
+- handoff 型
+  - `spec` や `workbook` を画面に返す
+  - 人手または上位エージェントが次の AI に渡す
+  - MVP の現行設計
+- agent-to-agent 型
+  - skill 出力を内部的に次の AI 呼び出しへ渡す
+  - 画面には中間 spec や handoff 文を必ずしも出さない
+  - skill 単体ではなく、実行基盤またはオーケストレーション設計が必要
+
+MVP では後者までは扱わない。
+まずは構造化 I/O と state 持ち回りを安定させることを優先する。
+
+## agent-to-agent 型へ進める場合の拡張方針
+
+将来 agent-to-agent 型へ進める場合は、skill 本体だけで完結させるより、
+上位の実行基盤またはオーケストレータで吸収する方が整合的である。
+
+理由:
+
+- 現在の skill は構造化 I/O と format 変換に責務を絞っている
+- 外部生成AIの呼び出しを skill 自体に埋め込むと、モデル依存や認証、失敗時制御まで抱え込む
+- `spec` / `draft` / `patch` / `workbook` の境界が崩れやすい
+
+### 推奨アーキテクチャ
+
+役割は次のように分ける。
+
+- `mikuproject` skill
+  - `spec` を返す
+  - `project_draft_view` を `mikuproject_workbook_json` に変換する
+  - `Patch JSON` を base state に適用する
+  - workbook / xml / xlsx / report を入出力する
+- オーケストレータ
+  - 利用者要求を受ける
+  - `spec` の返却内容を次の生成AIに内部連携する
+  - 返ってきた `project_draft_view` や `Patch JSON` を再度 skill に渡す
+  - 途中状態として `mikuproject_workbook_json` を保持する
+- 別の生成AI
+  - `project_draft_view` を生成する
+  - `Patch JSON` を生成する
+
+### 最小の内部連携シーケンス
+
+新規草案では次の流れを想定する。
+
+1. 利用者が要件を入力する
+2. オーケストレータが `mikuproject` skill の `spec` を呼ぶ
+3. オーケストレータが `spec` と利用者要件を別の生成AIへ渡す
+4. 生成AI が `project_draft_view` を返す
+5. オーケストレータがその結果を skill の `draft` に渡す
+6. skill が `mikuproject_workbook_json` を返す
+7. オーケストレータがその workbook state を次ターン用 state として保持する
+
+既存 WBS の修正では次の流れを想定する。
+
+1. オーケストレータが現在の `mikuproject_workbook_json` を保持している
+2. オーケストレータが workbook と変更要求を別の生成AIへ渡す
+3. 生成AI が `Patch JSON` を返す
+4. オーケストレータがその結果を skill の `patch` に渡す
+5. skill が更新後の `mikuproject_workbook_json` を返す
+6. オーケストレータが更新後 state を保持する
+
+### 必要な基盤機能
+
+agent-to-agent 型にするには、少なくとも次の基盤機能が必要になる。
+
+- skill 呼び出し結果を画面表示せず次段へ内部連携する制御
+- どの返却値を次の生成AIへ渡すかを決めるルーティング
+- `mikuproject_workbook_json` の会話境界 state 保存
+- 失敗時の再試行または中断制御
+- 生成AI の応答 kind 判定失敗時に `draft` / `patch` / `workbook` のどこへ戻すかの制御
+
+### 画面表示を抑えるための考え方
+
+`spec` の本文や handoff 文を画面にそのまま出したくない場合、
+skill 側で spec を返さなくするのではなく、
+オーケストレータ側で「中間出力」として扱うのが自然である。
+
+つまり:
+
+- skill の返却は維持する
+- その返却を UI へ出すか、次段の AI に回すかを基盤側で決める
+
+この方が handoff 型と agent-to-agent 型の両方を同じ skill 定義で支えやすい。
+
+### 非推奨の進め方
+
+次の方向は、現時点では非推奨とする。
+
+- `spec` operation の中で直接外部生成AIを呼ぶ
+- skill の責務として API key 管理やモデル選択を持たせる
+- `draft` / `patch` の kind 判定と外部 LLM 再呼び出しを一体化する
+
+これらは skill の責務を広げすぎ、再利用性と可観測性を落としやすい。
+
+### 将来の追加候補
+
+将来拡張としては次が考えられる。
+
+- `spec` の返却を `display` 用と `handoff` 用に分けるメタデータ
+- `draft` / `patch` の処理結果に次の推奨 action を添える
+- orchestrated run 用のサンプルフロー文書
+- 中間 state を workbook JSON で保存する runner 実装
+
 ## エラー方針
 
 ### hard error
@@ -198,6 +322,79 @@ MVP では次は人手または別会話に委ねる。
 - `mikuproject` ブラウザ UI 上での目視確認
 - WBS 内容の業務妥当性判断
 - SVG / XLSX / Markdown の出力活用
+
+## やさしい説明
+
+ここまでの話を、難しい言葉を使わずに言い換える。
+
+### 今の動き
+
+今の `mikuproject` skill は、次のように動く。
+
+1. `spec` を実行する
+2. skill が「次の AI に渡すための説明文」を返す
+3. その説明文が画面に表示される
+4. その先は、人が別の AI に渡す
+
+つまり今は、
+「skill が別の AI と自動で会話する」のではなく、
+「skill が次に渡す文章を出す」方式である。
+
+### いま困っている点
+
+あなたが気にしているのはここである。
+
+- `spec` の結果が画面に見えてしまう
+- 本当は、その結果を画面に出さずに、次の AI に自動で渡してほしい
+
+これは自然な要望である。
+ただし、今の MVP はそこまでは作っていない。
+
+### 何が足りないか
+
+足りないのは `mikuproject` skill 本体ではなく、
+「skill の結果を受け取って、次の AI に自動で渡す仕組み」である。
+
+この文書ではそれをオーケストレータと呼んでいたが、
+ここでは単に「つなぎ役」と呼ぶ。
+
+### つなぎ役がやること
+
+つなぎ役は、次の順で動く。
+
+1. 利用者の依頼を受ける
+2. `mikuproject` skill から `spec` を受け取る
+3. その内容を画面に出さず、次の AI に渡す
+4. 次の AI から返ってきた `project_draft_view` や `Patch JSON` を受け取る
+5. それをまた `mikuproject` skill に渡す
+6. 更新後の workbook state を保持する
+
+### つまり何を作ればよいか
+
+次に必要なのは、`mikuproject` skill の大改造ではない。
+まず必要なのは次の仕組みである。
+
+- skill の返り値を画面表示せず受け取る
+- その返り値を別の AI にそのまま渡す
+- 返ってきた JSON をもう一度 skill に戻す
+- `mikuproject_workbook_json` を途中状態として持ち回る
+
+### 先に決めるべきこと
+
+実装前に決めるべき点は少ない。
+
+1. どの AI に `spec` や workbook を渡すか
+2. 中間の返り値を画面に見せるか見せないか
+3. workbook state をどこに保持するか
+
+### いまの結論
+
+結論は次のとおり。
+
+- 今の挙動は不具合ではない
+- ただし、理想形には足りない
+- 足りないのは skill よりも「つなぎ役」
+- 次に進めるなら、その「つなぎ役」の要件を書き出すのがよい
 
 ## MVP 以外
 
