@@ -25,6 +25,10 @@ const msProjectXmlCode = readFileSync(
   path.resolve(__dirname, "../src/js/msproject-xml.js"),
   "utf8"
 );
+const markdownEscapeCode = readFileSync(
+  path.resolve(__dirname, "../src/js/markdown-escape.js"),
+  "utf8"
+);
 const projectWorkbookSchemaCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-workbook-schema.js"),
   "utf8"
@@ -45,6 +49,18 @@ const projectPatchJsonCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-patch-json.js"),
   "utf8"
 );
+const wbsXlsxCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx.js"),
+  "utf8"
+);
+const wbsSvgCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg.js"),
+  "utf8"
+);
+const wbsMarkdownCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-markdown.js"),
+  "utf8"
+);
 const coreApiCode = readFileSync(
   path.resolve(__dirname, "../src/js/core-api.js"),
   "utf8"
@@ -60,11 +76,15 @@ function bootModules() {
     aiJsonUtilCode,
     aiJsonSpecCode,
     msProjectXmlCode,
+    markdownEscapeCode,
     projectWorkbookSchemaCode,
     excelIoCode,
     projectXlsxCode,
     projectWorkbookJsonCode,
     projectPatchJsonCode,
+    wbsXlsxCode,
+    wbsSvgCode,
+    wbsMarkdownCode,
     coreApiCode
   ].join("\n"))();
   return globalThis.__mikuprojectCoreApi;
@@ -75,11 +95,15 @@ describe("mikuproject core api", () => {
     delete globalThis.__mikuprojectAiJsonUtil;
     delete globalThis.__mikuprojectAiJsonSpec;
     delete globalThis.__mikuprojectXml;
+    delete globalThis.__mikuprojectMarkdownEscape;
     delete globalThis.__mikuprojectProjectWorkbookSchema;
     delete globalThis.__mikuprojectExcelIo;
     delete globalThis.__mikuprojectProjectXlsx;
     delete globalThis.__mikuprojectProjectWorkbookJson;
     delete globalThis.__mikuprojectProjectPatchJson;
+    delete globalThis.__mikuprojectWbsXlsx;
+    delete globalThis.__mikuprojectNativeSvg;
+    delete globalThis.__mikuprojectWbsMarkdown;
     delete globalThis.__mikuprojectCoreApi;
   });
 
@@ -247,6 +271,31 @@ describe("mikuproject core api", () => {
     expect(result.mode).toBe("patch");
     expect(result.model.project.name).toBe("Core API patch import");
     expect(result.changes.some((change) => String(change.field).toLowerCase() === "name")).toBe(true);
+  });
+
+  it("exposes report exports through the unified entrypoint", () => {
+    const api = bootModules();
+    const model = api.msProject.importFromXml(dependencyXml);
+
+    const wbsWorkbook = api.report.wbsXlsx.exportWorkbook(model, {
+      displayDaysBeforeBaseDate: 1,
+      displayDaysAfterBaseDate: 2
+    });
+    const wbsBytes = api.report.wbsXlsx.exportBytes(model);
+    const dailySvg = api.report.svg.exportDaily(model, { labelMode: "list" });
+    const weeklySvg = api.report.svg.exportWeekly(model);
+    const monthlyCalendar = api.report.svg.exportMonthlyCalendar(model);
+    const wbsMarkdown = api.report.wbsMarkdown.export(model);
+    const mermaidText = api.report.mermaid.exportGantt(model);
+
+    expect(wbsWorkbook.sheets.length).toBeGreaterThan(0);
+    expect(wbsBytes).toBeInstanceOf(Uint8Array);
+    expect(dailySvg).toContain("<svg");
+    expect(weeklySvg).toContain("<svg");
+    expect(monthlyCalendar.entries.length).toBeGreaterThan(0);
+    expect(monthlyCalendar.zipBytes).toBeInstanceOf(Uint8Array);
+    expect(wbsMarkdown).toContain("# WBS テーブル");
+    expect(mermaidText).toContain("gantt");
   });
 
   it("rejects patch json when baseModel is missing", () => {
