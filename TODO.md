@@ -107,10 +107,53 @@
 - [x] Skill の使い方を短くまとめる
 - [x] 今後の拡張候補を別枠で整理する
 
+## Cross-Cutting Note
+
+- [x] `mikuproject-skills` 側だけで無理に実装せず、upstream (`mikuproject`) 側の API 追加や公開面整理が妥当な場合は、その都度 `mikuproject` 側アクション候補として相談する
+
 ## 11. 将来拡張の候補
 
+### Phase B: Primary File Import/Export Workflow
+
+- [ ] `MS Project XML` の import 支援
+- [ ] `MS Project XML` の export 支援
+- [ ] `XLSX` の import 支援
+- [ ] `XLSX` の export 支援
+- [ ] `mikuproject_workbook_json` の import 支援
+- [ ] `mikuproject_workbook_json` の export 支援
+
+対象:
+
+- [ ] `MS Project XML`
+- [ ] `XLSX`
+- [ ] `mikuproject_workbook_json`
+
+対象外:
+
+- [ ] `CSV`
+- [ ] AI 向け編集用 JSON 群
+  - `project_overview_view`
+  - `phase_detail_view`
+  - `task_edit_view`
+  - `full bundle`
+
+設計メモ:
+
+- [x] `docs/phase-b-primary-file-workflow.md` に初期仕様メモを作成する
+- [x] `docs/phase-b-msproject-xml-workflow.md` に `MS Project XML` 詳細仕様を作成する
+- [x] `docs/phase-b-workbook-json-workflow.md` に `mikuproject_workbook_json` 詳細仕様を作成する
+- [x] `docs/phase-b-xlsx-workflow.md` に `XLSX` 詳細仕様を作成する
+
+### Phase C: Report / Presentation Outputs
+
+- [ ] `WBS XLSX` 出力支援
+- [ ] `SVG` 出力各種の支援
+- [ ] `Markdown` 出力支援
+- [ ] `Mermaid` 出力支援
+
+### Other Future Candidates
+
 - [ ] MCP 対応
-- [ ] SVG / XLSX / Markdown 出力支援
 - [ ] WBS レビュー支援
 - [ ] スケジュール圧縮や分解の助言
 - [ ] 複数プロンプトテンプレートの整備

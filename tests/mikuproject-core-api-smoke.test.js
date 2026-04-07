@@ -16,6 +16,7 @@ const aiJsonUtilCode = readVendored("src/js/ai-json-util.js");
 const aiJsonSpecCode = readVendored("src/js/ai-json-spec.js");
 const msProjectXmlCode = readVendored("src/js/msproject-xml.js");
 const projectWorkbookSchemaCode = readVendored("src/js/project-workbook-schema.js");
+const excelIoCode = readVendored("src/js/excel-io.js");
 const projectXlsxCode = readVendored("src/js/project-xlsx.js");
 const projectWorkbookJsonCode = readVendored("src/js/project-workbook-json.js");
 const projectPatchJsonCode = readVendored("src/js/project-patch-json.js");
@@ -29,6 +30,7 @@ function bootModules() {
     aiJsonSpecCode,
     msProjectXmlCode,
     projectWorkbookSchemaCode,
+    excelIoCode,
     projectXlsxCode,
     projectWorkbookJsonCode,
     projectPatchJsonCode,
@@ -43,13 +45,14 @@ describe("mikuproject core api smoke", () => {
     delete globalThis.__mikuprojectAiJsonSpec;
     delete globalThis.__mikuprojectXml;
     delete globalThis.__mikuprojectProjectWorkbookSchema;
+    delete globalThis.__mikuprojectExcelIo;
     delete globalThis.__mikuprojectProjectXlsx;
     delete globalThis.__mikuprojectProjectWorkbookJson;
     delete globalThis.__mikuprojectProjectPatchJson;
     delete globalThis.__mikuprojectCoreApi;
   });
 
-  it("supports spec, draft, patch, and workbook flows", () => {
+  it("supports spec, draft, patch, workbook, and xlsx flows", () => {
     const api = bootModules();
 
     const spec = api.getAiJsonSpec();
@@ -96,5 +99,30 @@ describe("mikuproject core api smoke", () => {
     expect(patchResult.kind).toBe("patch_json");
     expect(patchResult.mode).toBe("patch");
     expect(patchResult.model.project.name).toBe("Smoke Patch");
+
+    const xlsxWorkbook = api.xlsx.exportWorkbook(baseModel);
+    xlsxWorkbook.sheets
+      .find((sheet) => sheet.name === "Project")
+      .rows.find((row) => row.cells[0]?.value === "Name")
+      .cells[1].value = "Smoke Xlsx";
+
+    const xlsxBytes = api.xlsx.encodeWorkbook(xlsxWorkbook);
+    const xlsxReplace = api.importExternal({
+      source: { format: "xlsx", bytes: xlsxBytes },
+      mode: "replace"
+    });
+    const xlsxMerge = api.importExternal({
+      source: { format: "xlsx", bytes: xlsxBytes },
+      mode: "merge",
+      baseModel
+    });
+
+    expect(xlsxBytes).toBeInstanceOf(Uint8Array);
+    expect(xlsxReplace.kind).toBe("xlsx");
+    expect(xlsxReplace.mode).toBe("replace");
+    expect(xlsxReplace.model.project.name).toBe("Smoke Xlsx");
+    expect(xlsxMerge.kind).toBe("xlsx");
+    expect(xlsxMerge.mode).toBe("merge");
+    expect(Array.isArray(xlsxMerge.changes)).toBe(true);
   });
 });
