@@ -22,6 +22,15 @@
   type AiJsonDocumentKind = "workbook_json" | "project_draft_view" | "patch_json";
   type ExternalImportFormat = "ms_project_xml" | "xlsx" | "workbook_json" | "project_draft_view" | "patch_json";
   type ExternalImportMode = "replace" | "merge" | "patch";
+  type ReportDisplayRangeOptions = {
+    holidayDates?: string[];
+    displayDaysBeforeBaseDate?: number;
+    displayDaysAfterBaseDate?: number;
+    useBusinessDaysForDisplayRange?: boolean;
+  };
+  type ReportProgressOptions = ReportDisplayRangeOptions & {
+    useBusinessDaysForProgressBand?: boolean;
+  };
 
   const mikuprojectXml = (globalThis as typeof globalThis & {
     __mikuprojectXml?: {
@@ -165,6 +174,44 @@
 
   if (!mikuprojectExcelIo) {
     throw new Error("mikuproject Excel IO module is not loaded");
+  }
+
+  const mikuprojectWbsXlsx = (globalThis as typeof globalThis & {
+    __mikuprojectWbsXlsx?: {
+      exportWbsWorkbook: (model: ProjectModel, options?: ReportProgressOptions) => XlsxWorkbookLike;
+    };
+  }).__mikuprojectWbsXlsx;
+
+  if (!mikuprojectWbsXlsx) {
+    throw new Error("mikuproject WBS XLSX module is not loaded");
+  }
+
+  const mikuprojectNativeSvg = (globalThis as typeof globalThis & {
+    __mikuprojectNativeSvg?: {
+      exportNativeSvg: (
+        model: ProjectModel,
+        options?: ReportProgressOptions & { labelMode?: "near" | "list" }
+      ) => string;
+      exportWeeklyNativeSvg: (model: ProjectModel, options?: ReportDisplayRangeOptions) => string;
+      exportMonthlyWbsCalendarSvgArchive: (model: ProjectModel) => {
+        entries: Array<{ fileName: string; svg: string }>;
+        zipBytes: Uint8Array;
+      };
+    };
+  }).__mikuprojectNativeSvg;
+
+  if (!mikuprojectNativeSvg) {
+    throw new Error("mikuproject native SVG module is not loaded");
+  }
+
+  const mikuprojectWbsMarkdown = (globalThis as typeof globalThis & {
+    __mikuprojectWbsMarkdown?: {
+      exportWbsMarkdown: (model: ProjectModel, options?: ReportProgressOptions) => string;
+    };
+  }).__mikuprojectWbsMarkdown;
+
+  if (!mikuprojectWbsMarkdown) {
+    throw new Error("mikuproject WBS Markdown module is not loaded");
   }
 
   const mikuprojectProjectPatchJson = (globalThis as typeof globalThis & {
@@ -499,6 +546,29 @@
           warnings: ScopedWarning[];
         };
       };
+      report: {
+        wbsXlsx: {
+          exportWorkbook: (model: ProjectModel, options?: ReportProgressOptions) => XlsxWorkbookLike;
+          exportBytes: (model: ProjectModel, options?: ReportProgressOptions) => Uint8Array;
+        };
+        svg: {
+          exportDaily: (
+            model: ProjectModel,
+            options?: ReportProgressOptions & { labelMode?: "near" | "list" }
+          ) => string;
+          exportWeekly: (model: ProjectModel, options?: ReportDisplayRangeOptions) => string;
+          exportMonthlyCalendar: (model: ProjectModel) => {
+            entries: Array<{ fileName: string; svg: string }>;
+            zipBytes: Uint8Array;
+          };
+        };
+        wbsMarkdown: {
+          export: (model: ProjectModel, options?: ReportProgressOptions) => string;
+        };
+        mermaid: {
+          exportGantt: (model: ProjectModel) => string;
+        };
+      };
     };
   }).__mikuprojectCoreApi = {
     version: 1,
@@ -547,6 +617,24 @@
     patchJson: {
       validateDocument: mikuprojectProjectPatchJson.validatePatchDocument,
       applyToProjectModel: mikuprojectProjectPatchJson.importProjectPatchJson
+    },
+    report: {
+      wbsXlsx: {
+        exportWorkbook: mikuprojectWbsXlsx.exportWbsWorkbook,
+        exportBytes: (model: ProjectModel, options: ReportProgressOptions = {}) =>
+          new mikuprojectExcelIo.XlsxWorkbookCodec().exportWorkbook(mikuprojectWbsXlsx.exportWbsWorkbook(model, options))
+      },
+      svg: {
+        exportDaily: mikuprojectNativeSvg.exportNativeSvg,
+        exportWeekly: mikuprojectNativeSvg.exportWeeklyNativeSvg,
+        exportMonthlyCalendar: mikuprojectNativeSvg.exportMonthlyWbsCalendarSvgArchive
+      },
+      wbsMarkdown: {
+        export: mikuprojectWbsMarkdown.exportWbsMarkdown
+      },
+      mermaid: {
+        exportGantt: mikuprojectXml.exportMermaidGantt
+      }
     }
   };
 })();
