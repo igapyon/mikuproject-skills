@@ -9,10 +9,7 @@
 - `patch`
 - `workbook`
 - `mikuproject` CLI の `workbook-json` / `xml` / `xlsx`
-
-未対応:
-
-- `report` 系 CLI
+- `mikuproject` CLI の `wbs-xlsx` / `daily-svg` / `weekly-svg` / `monthly-calendar-svg` / `wbs-markdown` / `mermaid`
 
 この時点で向いている相手:
 
@@ -63,6 +60,7 @@ bundle/skill-bundle/
     mikuproject/
       runtime/
         mikuproject/
+        mikuproject-cli-bundle/
 ```
 
 その中身を skill home にコピーします。
@@ -101,6 +99,35 @@ npm run build
 - `npm test`
 - `npm run build:bundle`
 - `npm run build:bundle:zip`
+
+### 4. 生成物の置き場所を決める
+
+WBS 関連の生成物は、workspace ルートへ直置きせず、専用ディレクトリへ寄せるのを推奨します。
+
+推奨構成:
+
+```text
+mikuproject/
+  state/
+  report/
+  tmp/
+```
+
+使い分け:
+
+- `mikuproject/state/`: workbook JSON、draft JSON、Patch JSON などの状態ファイル
+- `mikuproject/report/`: `WBS XLSX`、`SVG`、`Markdown`、Mermaid などの成果物
+- `mikuproject/tmp/`: 一時ファイル
+
+ファイル名は、同じ実行単位で同じ prefix を使うと整理しやすくなります。
+
+推奨例:
+
+- `YYYYMMDDHHmm-workbook.json`
+- `YYYYMMDDHHmm-wbs.xlsx`
+- `YYYYMMDDHHmm-daily.svg`
+- `YYYYMMDDHHmm-weekly.svg`
+- `YYYYMMDDHHmm-patch.json`
 
 ## まず試す流れ
 
@@ -207,7 +234,7 @@ spec を出して
 
 - 現在の `mikuproject_workbook_json` が返る
 
-### 6. Markdown や Mermaid に変換する
+### 6. Markdown / Mermaid / Excel ガントに変換する
 
 export を頼むときは、補助スクリプトを作るのではなく、`mikuproject` の正式 export を使うのが期待動作です。
 
@@ -221,10 +248,16 @@ export を頼むときは、補助スクリプトを作るのではなく、`mik
 これを Mermaid 化して
 ```
 
+```text
+Excelガントが欲しい
+```
+
 期待すること:
 
 - `markdown化` は `wbs-markdown-export` として扱われる
 - `Mermaid 化` は `mermaid-export` として扱われる
+- `Excelガント` や `xlsxでガント` は通常 `WBS XLSX` として扱われる
+- この場合は `wbs-xlsx-export` を使い、一般的な表計算ライブラリ探索や ad-hoc な `.xlsx` 生成へ逸れない
 - 通常運用では `tmp/*.mjs` のような補助スクリプトを作らない
 - 依存不足で export できない場合だけ、その不足を短く報告する
 
@@ -249,6 +282,8 @@ mikuproject report mermaid
 ```
 
 この CLI は、上位エージェントが内部で使う前提で考えます。
+
+bundle 配布物では、必要なら `skills/mikuproject/runtime/mikuproject-cli-bundle` 側の self-contained CLI bundle も使えます。
 
 ## いまの利用イメージ
 
