@@ -2,7 +2,7 @@
 
 Use this reference when the user wants file-style import/export around `mikuproject_workbook_json`.
 
-This is different from the Phase A handoff use case because the focus here is primary file workflow.
+This is different from the conversational handoff use case because the focus here is primary file workflow.
 
 ## Upstream API
 
