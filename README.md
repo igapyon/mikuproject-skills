@@ -2,138 +2,94 @@
 
 ## English
 
-`mikuproject-skills` is an Agent Skills project designed around the open
-Agent Skills standard published by Anthropic on December 18, 2025.
+`mikuproject-skills` is a set of skills for creating and revising WBS plans with `mikuproject`.
 
-This repository reuses the full [`mikuproject`](./vendor/mikuproject)
-repository via `git subtree` and builds AI-agent-facing skills on top of
-the vendored upstream implementation.
+What users should care about first:
 
-For an AI agent, `mikuproject` mainly provides three things:
+- you can start by saying `mikuproject`
+- you can create a WBS through conversation
+- you can revise and update an existing plan
+- you can export results as `XLSX`, `Markdown`, `SVG`, and other useful formats
+- when needed, you can also handle plan data in forms that are easy to save, reuse, and hand off
 
-- a structured way to draft a new WBS
-- a structured way to revise an existing WBS
-- a way to keep project state and export it into useful formats
+At the moment, the main skill in this repository is [`skills/mikuproject`](./skills/mikuproject).
 
-In other words, the agent focuses on planning decisions, while `mikuproject`
-provides the structure, state, and format conversion around that work.
+## Quick Start
 
-The initial skill scaffold for this repository is available at
-[`skills/mikuproject`](./skills/mikuproject).
+1. Install dependencies with `npm install`.
+2. Verify the repository with `npm test`.
+3. Build the distributable skill bundle with `npm run build:bundle`.
+4. Open [`skills/mikuproject`](./skills/mikuproject) or install the generated bundle into your skill home.
+5. In conversation, start with a prompt such as `mikuproject, create a WBS for ...`.
 
-## MVP
+Typical things you can ask for:
 
-The current MVP focuses on one skill, [`skills/mikuproject`](./skills/mikuproject).
+- create a new WBS from requirements or constraints
+- revise an existing WBS
+- export the current result as `XLSX`
+- export the current result as `Markdown`
+- export the current result as daily or weekly `SVG`
 
-This MVP covers four operations:
+## Notes
 
-- `spec`: provide `mikuproject-ai-json-spec`
-- `draft`: accept AI-produced `project_draft_view`
-- `patch`: accept AI-produced `Patch JSON`
-- `workbook`: hand off `mikuproject_workbook_json`
+- This repository does not aim to replace the `mikuproject` browser UI.
+- For advanced workflows, the skill can also work with structured plan data such as workbook JSON.
+- If you are evaluating or developing the repository itself, see the documents under [`docs/`](./docs/).
 
-At the conversation boundary, the MVP passes state around as
-`mikuproject_workbook_json`.
-It does not try to replace the `mikuproject` browser UI.
-The preferred mode is agent-internal execution that keeps intermediate artifacts off-screen.
-If the host runtime cannot do that, the workflow may fall back to handoff-style display.
-
-The repository also now documents a Phase B primary file workflow for
-`MS Project XML`, structural workbook `XLSX`, and `mikuproject_workbook_json`.
-
-Developer-oriented documents are available under [`docs/`](./docs/):
+Developer-oriented entry points:
 
 - [`docs/quickstart.md`](./docs/quickstart.md)
 - [`docs/agent-skill-design.md`](./docs/agent-skill-design.md)
-- [`docs/upstream-survey.md`](./docs/upstream-survey.md)
 - [`docs/development.md`](./docs/development.md)
+
+## License
+
+This project is licensed under the Apache License 2.0. See [`LICENSE`](./LICENSE).
 
 ---
 
 ## 日本語
 
-`mikuproject-skills` は、Anthropic が 2025年12月18日に open standard として
-公開した Agent Skills の考え方に沿って構成するプロジェクトです。
+`mikuproject-skills` は、`mikuproject` を使って WBS を作成・修正できる skill 集です。
 
-このリポジトリは [`mikuproject`](./vendor/mikuproject) 全体を `git subtree` で
-取り込み、その vendored upstream 実装の上に AI エージェント向け skill を
-構築します。
+まずユーザーにとって重要なのは次の点です。
 
-生成AIにとって `mikuproject` が与えるものは、主に次の 3 つです。
+- `mikuproject` と言って使い始められること
+- 対話から WBS を作成できること
+- 既存の計画を修正・更新できること
+- `XLSX`、`Markdown`、`SVG` などの形で出力できること
+- 必要に応じて、計画データを保存・再利用・受け渡ししやすい形でも扱えること
 
-- 新規 WBS を草案化するための型
-- 既存 WBS を修正するための型
-- project の状態を保持し、各形式へ変換するための仕組み
+現在、このリポジトリの中心となる skill は [`skills/mikuproject`](./skills/mikuproject) です。
 
-言い換えると、生成AIは計画そのものを考えることに集中し、
-`mikuproject` はそのまわりの構造、状態保持、形式変換を受け持ちます。
-
-このリポジトリにおける初期 skill 雛形は
-[`skills/mikuproject`](./skills/mikuproject) にあります。
-
-### MVP
-
-現在の MVP は 1 つの skill、[`skills/mikuproject`](./skills/mikuproject) に
-焦点を当てています。
-
-この MVP は次の 4 操作を対象にします。
-
-- `spec`: `mikuproject-ai-json-spec` を提示する
-- `draft`: 生成AIが返した `project_draft_view` を受け取る
-- `patch`: 生成AIが返した `Patch JSON` を受け取る
-- `workbook`: `mikuproject_workbook_json` を引き渡す
-
-会話境界では、MVP は state を `mikuproject_workbook_json` として持ち回ります。
-`mikuproject` のブラウザ UI を置き換えることは目指しません。
-また、望ましい運用は、この skill の中間出力を
-上位エージェント内部で隠しながら処理する agent-internal execution です。
-実行環境がそれに対応できない場合だけ、handoff 型にフォールバックします。
-
-あわせて、このリポジトリでは `MS Project XML`、構造忠実 workbook `XLSX`、
-`mikuproject_workbook_json` を扱う Phase B の primary file workflow も整理しています。
-
-開発者向け文書は [`docs/`](./docs/) にあります。
-
-- [`docs/quickstart.md`](./docs/quickstart.md)
-- [`docs/agent-skill-design.md`](./docs/agent-skill-design.md)
-- [`docs/upstream-survey.md`](./docs/upstream-survey.md)
-- [`docs/development.md`](./docs/development.md)
-
-## How To Use
-
-### English
-
-1. Install dependencies with `npm install`.
-2. Verify the repository state with `npm test`.
-3. Open the skill at [`skills/mikuproject`](./skills/mikuproject).
-4. Start with the `spec` flow and hand `mikuproject-ai-json-spec` to another AI.
-5. Receive `project_draft_view` and convert it into `mikuproject_workbook_json`.
-6. Pass the workbook JSON to another AI and request `Patch JSON`.
-7. Apply the patch and continue the loop while carrying state as `mikuproject_workbook_json`.
-
-Notes:
-
-- This skill does not replace the `mikuproject` browser UI.
-- For the MVP, state is passed around as `mikuproject_workbook_json` at the conversation boundary.
-- The preferred mode is to keep intermediate artifacts in agent-internal state and only fall back to handoff-style display when needed.
-- `report` CLI commands are available for `wbs-xlsx`, `daily-svg`, `weekly-svg`, `monthly-calendar-svg`, `wbs-markdown`, and `mermaid`.
-
----
-
-### 日本語
+## はじめかた
 
 1. `npm install` で依存関係をインストールします。
 2. `npm test` でリポジトリの状態を確認します。
-3. [`skills/mikuproject`](./skills/mikuproject) の skill を参照します。
-4. まず `spec` の流れで `mikuproject-ai-json-spec` を別の生成AIへ渡します。
-5. 返ってきた `project_draft_view` を `mikuproject_workbook_json` に変換します。
-6. その workbook JSON を別の生成AIへ渡し、`Patch JSON` を依頼します。
-7. 返ってきた patch を適用し、`mikuproject_workbook_json` を state として持ち回りながら往復を続けます。
+3. `npm run build:bundle` で配布用 skill bundle を作成します。
+4. [`skills/mikuproject`](./skills/mikuproject) を参照するか、生成された bundle を skill home に配置します。
+5. 会話では、たとえば `mikuproject で WBS を作って` のように始めます。
 
-補足:
+よくある使い方:
 
-- この skill は `mikuproject` のブラウザ UI を置き換えるものではありません。
-- MVP では、会話境界の state は `mikuproject_workbook_json` として扱います。
-- 望ましい既定は agent-internal execution であり、`spec` や workbook の中間出力は通常は画面に出さず内部保持します。
-- 実行環境が対応できない場合だけ、handoff 型として中間出力を表示します。
-- `report` 系 CLI は `wbs-xlsx` / `daily-svg` / `weekly-svg` / `monthly-calendar-svg` / `wbs-markdown` / `mermaid` を扱えます。
+- 要件や制約から新しい WBS を作る
+- 既存の WBS を修正する
+- 現在の結果を `XLSX` として出力する
+- 現在の結果を `Markdown` として出力する
+- 現在の結果を日次または週次の `SVG` として出力する
+
+## 補足
+
+- このリポジトリは `mikuproject` のブラウザ UI を置き換えることを目的にはしていません。
+- より高度な運用では、workbook JSON などの構造化された計画データも扱えます。
+- リポジトリ自体の評価や開発を行う場合は [`docs/`](./docs/) 以下の文書を参照してください。
+
+開発者向けの入口:
+
+- [`docs/quickstart.md`](./docs/quickstart.md)
+- [`docs/agent-skill-design.md`](./docs/agent-skill-design.md)
+- [`docs/development.md`](./docs/development.md)
+
+## ライセンス
+
+このプロジェクトは Apache License 2.0 のもとで提供されています。詳細は [`LICENSE`](./LICENSE) を参照してください。
