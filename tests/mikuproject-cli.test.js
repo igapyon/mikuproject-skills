@@ -113,6 +113,66 @@ describe("mikuproject cli", () => {
     expect(result.stdout.subarray(0, 2).toString("utf8")).toBe("PK");
   });
 
+  it("exports report wbs-xlsx bytes from workbook state", () => {
+    const workbookPath = writeTempJson("workbook.json", buildWorkbookState("CLI report wbs-xlsx"));
+
+    const result = runCli(["report", "wbs-xlsx", "--in", workbookPath], { encoding: "buffer" });
+
+    expect(result.status).toBe(0);
+    expect(Buffer.isBuffer(result.stdout)).toBe(true);
+    expect(result.stdout.subarray(0, 2).toString("utf8")).toBe("PK");
+  });
+
+  it("exports report daily-svg from workbook state", () => {
+    const workbookPath = writeTempJson("workbook.json", buildWorkbookState("CLI report daily-svg"));
+
+    const result = runCli(["report", "daily-svg", "--in", workbookPath]);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("<svg");
+    expect(result.stdout).toContain("CLI report daily-svg");
+  });
+
+  it("exports report weekly-svg from workbook state", () => {
+    const workbookPath = writeTempJson("workbook.json", buildWorkbookState("CLI report weekly-svg"));
+
+    const result = runCli(["report", "weekly-svg", "--in", workbookPath]);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("<svg");
+    expect(result.stdout).toContain("CLI report weekly-svg");
+  });
+
+  it("exports report monthly-calendar-svg as zip bytes from workbook state", () => {
+    const workbookPath = writeTempJson("workbook.json", buildWorkbookState("CLI report monthly-calendar-svg"));
+
+    const result = runCli(["report", "monthly-calendar-svg", "--in", workbookPath], { encoding: "buffer" });
+
+    expect(result.status).toBe(0);
+    expect(Buffer.isBuffer(result.stdout)).toBe(true);
+    expect(result.stdout.subarray(0, 2).toString("utf8")).toBe("PK");
+  });
+
+  it("exports report wbs-markdown from workbook state", () => {
+    const workbookPath = writeTempJson("workbook.json", buildWorkbookState("CLI report wbs-markdown"));
+
+    const result = runCli(["report", "wbs-markdown", "--in", workbookPath]);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("# プロジェクト情報");
+    expect(result.stdout).toContain("CLI report wbs-markdown");
+  });
+
+  it("exports report mermaid from workbook state", () => {
+    const workbookPath = writeTempJson("workbook.json", buildWorkbookState("CLI report mermaid"));
+
+    const result = runCli(["report", "mermaid", "--in", workbookPath]);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("gantt");
+    expect(result.stdout).toContain("title CLI report mermaid");
+  });
+
   it("builds a self-contained cli bundle that runs outside the repo", () => {
     const bundleRoot = path.join(createTempDir("mikuproject-cli-bundle-test-"), "bundle");
     const buildResult = spawnSync(process.execPath, [cliBundleBuildPath, "--out", bundleRoot], {
