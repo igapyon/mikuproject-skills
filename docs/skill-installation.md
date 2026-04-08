@@ -6,6 +6,7 @@
 
 - このリポジトリ内の開発用配置: `skills/mikuproject`
 - Codex の利用可能 skill 配置先: `$CODEX_HOME/skills/mikuproject`
+- 配布用には `bundle/skill-bundle` を生成できる
 - `skills/` だけのコピーでは不足しやすい
 - 最短手順は、この `mikuproject-skills` リポジトリ全体を workspace に置いて開くこと
 - `.codex/skills` と workspace 側 `vendor/` は役割が違う
@@ -104,7 +105,49 @@ npm install
 npm test
 ```
 
-4. 配置先ディレクトリを確認する
+4. 配布までまとめて実行するなら `build` を使う
+
+```bash
+npm run build
+```
+
+これで次が順に実行されます。
+
+- `npm test`
+- `npm run build:bundle`
+- `npm run build:bundle:zip`
+
+5. 配布用 bundle を個別に作る
+
+```bash
+npm run build:bundle
+```
+
+生成先:
+
+```text
+bundle/skill-bundle/
+  skills/
+    mikuproject/
+  vendor/
+    mikuproject/
+```
+
+この bundle は `.codex` 配下へそのまま展開できる first cut です。
+
+zip 配布物も必要なら、次を使えます。
+
+```bash
+npm run build:bundle:zip
+```
+
+生成先:
+
+```text
+bundle/skill-bundle.zip
+```
+
+6. 配置先ディレクトリを確認する
 
 `CODEX_HOME` が設定されているなら、その配下の `skills/` を使います。
 
@@ -112,7 +155,7 @@ npm test
 printf '%s\n' "$CODEX_HOME"
 ```
 
-5. `CODEX_HOME` が未設定なら、実体候補を確認する
+7. `CODEX_HOME` が未設定なら、実体候補を確認する
 
 この環境では `/Users/igapyon/.codex` が候補です。
 したがって配置先候補は次です。
@@ -121,18 +164,25 @@ printf '%s\n' "$CODEX_HOME"
 /Users/igapyon/.codex/skills/mikuproject
 ```
 
-6. `skills/mikuproject` を配置先へコピーまたは同期する
+8. `bundle/skill-bundle` の中身を skill home 配下へコピーする
 
 例:
 
 ```bash
-mkdir -p /Users/igapyon/.codex/skills
-cp -R skills/mikuproject /Users/igapyon/.codex/skills/mikuproject
+cp -R bundle/skill-bundle/. "$CODEX_HOME"/
 ```
 
-既に配置済みで更新だけしたいなら、上書きコピーではなく同期方法を決めて運用します。
+これで次の構成になります。
 
-7. Codex 側で skill 一覧に出ることを確認する
+```text
+.codex/
+  skills/
+    mikuproject/
+  vendor/
+    mikuproject/
+```
+
+9. Codex 側で skill 一覧に出ることを確認する
 
 この会話のように `Available skills` に `mikuproject` が出れば、登録済み skill として扱われます。
 
