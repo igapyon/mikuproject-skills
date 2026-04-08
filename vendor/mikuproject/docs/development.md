@@ -6,6 +6,12 @@
 npm install
 ```
 
+補足:
+
+- CLI の XML parse / serialize は `@xmldom/xmldom` を優先利用する
+- `jsdom` は CLI 上の HTML / Blob / File など、XML 以外の Web API 補完にも使っているため依存として残す
+- XML DOM の入口は `globalThis.__mikuprojectXmlDom` で、`msproject-xml` と `excel-io` が参照する
+
 ## よく使うコマンド
 
 ```bash
