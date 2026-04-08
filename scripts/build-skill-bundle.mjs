@@ -10,7 +10,10 @@ const repoRoot = path.resolve(__dirname, "..");
 
 const bundleRoot = path.resolve(repoRoot, "bundle/skill-bundle");
 const bundleSkillsRoot = path.resolve(bundleRoot, "skills");
-const bundleVendorRoot = path.resolve(bundleRoot, "vendor");
+const bundledVendorRoot = path.resolve(
+  bundleRoot,
+  "skills/mikuproject/_bundled/vendor"
+);
 const sourceSkillRoot = path.resolve(repoRoot, "skills/mikuproject");
 const sourceVendorRoot = path.resolve(repoRoot, "vendor/mikuproject");
 
@@ -22,12 +25,12 @@ function main() {
 
   fs.rmSync(bundleRoot, { recursive: true, force: true });
   fs.mkdirSync(bundleSkillsRoot, { recursive: true });
-  fs.mkdirSync(bundleVendorRoot, { recursive: true });
+  fs.mkdirSync(bundledVendorRoot, { recursive: true });
 
   fs.cpSync(sourceSkillRoot, path.resolve(bundleSkillsRoot, "mikuproject"), {
     recursive: true
   });
-  fs.cpSync(sourceVendorRoot, path.resolve(bundleVendorRoot, "mikuproject"), {
+  fs.cpSync(sourceVendorRoot, path.resolve(bundledVendorRoot, "mikuproject"), {
     recursive: true
   });
 
@@ -38,7 +41,7 @@ function main() {
     "[build:bundle] copy this directory's contents under your skill home root",
     "[build:bundle] included:",
     "  - skills/mikuproject",
-    "  - vendor/mikuproject"
+    "  - skills/mikuproject/_bundled/vendor/mikuproject"
   ].join("\n"));
   process.stdout.write("\n");
 }
@@ -59,7 +62,7 @@ function writeReadme() {
     "## What This Bundle Contains",
     "",
     "- `skills/mikuproject`",
-    "- `vendor/mikuproject`",
+    "- `skills/mikuproject/_bundled/vendor/mikuproject`",
     "",
     "Copy these contents under your skill home root so that the final layout becomes:",
     "",
@@ -67,16 +70,17 @@ function writeReadme() {
     "<skill-home>/",
     "  skills/",
     "    mikuproject/",
-    "  vendor/",
-    "    mikuproject/",
+    "      _bundled/",
+    "        vendor/",
+    "          mikuproject/",
     "```",
     "",
     "## What You Can Do Now",
     "",
-    "- Ask for `spec`",
-    "- Import `project_draft_view`",
-    "- Apply `Patch JSON`",
-    "- Hand off `mikuproject_workbook_json`",
+    "- Ask for a WBS directly and let the agent use `mikuproject` internally",
+    "- Import `project_draft_view` when you already have external JSON",
+    "- Apply `Patch JSON` when you already have external JSON",
+    "- Inspect or export workbook state when you explicitly need it",
     "- Use the bundled `mikuproject` CLI for:",
     "  - `ai spec`",
     "  - `state from-draft`",
@@ -87,13 +91,13 @@ function writeReadme() {
     "",
     "## Important Limitation",
     "",
-    "The preferred mode is agent-internal execution.",
+    "The intended mode is agent-internal execution.",
     "",
-    "That means the agent should keep intermediate artifacts off-screen when the host runtime supports it.",
+    "That means the agent should keep intermediate artifacts off-screen and should not stop at visible handoff JSON during normal WBS work.",
     "",
     "Fallback behavior:",
     "",
-    "- if the host runtime cannot keep intermediate state hidden, `spec` or workbook JSON may still appear on screen",
+    "- if the host runtime cannot keep intermediate state hidden, `spec`, `project_draft_view`, `Patch JSON`, or workbook JSON may still appear on screen",
     "- that fallback is usable, but it is not the preferred user experience",
     "",
     "So the target mode is agent-internal hidden workflow, with handoff-style display only as a fallback.",
@@ -107,7 +111,7 @@ function writeReadme() {
     "## Not Yet Included",
     "",
     "- `report` CLI commands",
-    "- fully hidden agent-internal execution",
+    "- guaranteed hidden execution in every host runtime",
     "",
     "## Quick Start",
     "",
@@ -115,7 +119,7 @@ function writeReadme() {
     "2. Restart or reopen your Codex environment if needed.",
     "3. Confirm that `mikuproject` appears in available skills.",
     "4. Start by asking:",
-    "   - `spec を出して`",
+    "   - `れでえいやあでWBSつくって`",
     "   - `この project_draft_view を取り込んで`",
     "   - `この Patch JSON を反映して`"
   ].join("\n");

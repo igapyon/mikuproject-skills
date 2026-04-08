@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,6 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..");
 const cliPath = path.resolve(repoRoot, "scripts/mikuproject-cli.mjs");
+const cliBundleBuildPath = path.resolve(repoRoot, "scripts/build-cli-bundle.mjs");
 
 const tempDirs = [];
 
@@ -111,6 +112,28 @@ describe("mikuproject cli", () => {
     expect(Buffer.isBuffer(result.stdout)).toBe(true);
     expect(result.stdout.subarray(0, 2).toString("utf8")).toBe("PK");
   });
+
+  it("builds a self-contained cli bundle that runs outside the repo", () => {
+    const bundleRoot = path.join(createTempDir("mikuproject-cli-bundle-test-"), "bundle");
+    const buildResult = spawnSync(process.execPath, [cliBundleBuildPath, "--out", bundleRoot], {
+      cwd: repoRoot,
+      encoding: "utf8"
+    });
+
+    expect(buildResult.status).toBe(0);
+    expect(existsSync(path.join(bundleRoot, "node_modules", "jsdom", "package.json"))).toBe(true);
+
+    const workbookPath = writeTempJson("bundle-workbook.json", buildWorkbookState("Bundled CLI export xml"));
+    const bundledCliPath = path.join(bundleRoot, "scripts", "mikuproject-cli.mjs");
+    const result = spawnSync(process.execPath, [bundledCliPath, "export", "xml", "--in", workbookPath], {
+      cwd: path.dirname(workbookPath),
+      encoding: "utf8"
+    });
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("<Project");
+    expect(result.stdout).toContain("<Name>Bundled CLI export xml</Name>");
+  });
 });
 
 function runCli(args, options = {}) {
@@ -121,11 +144,16 @@ function runCli(args, options = {}) {
 }
 
 function writeTempJson(fileName, documentLike) {
-  const dir = mkdtempSync(path.join(os.tmpdir(), "mikuproject-cli-test-"));
-  tempDirs.push(dir);
+  const dir = createTempDir("mikuproject-cli-test-");
   const filePath = path.join(dir, fileName);
   writeFileSync(filePath, `${JSON.stringify(documentLike, null, 2)}\n`, "utf8");
   return filePath;
+}
+
+function createTempDir(prefix) {
+  const dir = mkdtempSync(path.join(os.tmpdir(), prefix));
+  tempDirs.push(dir);
+  return dir;
 }
 
 function buildWorkbookState(projectName) {

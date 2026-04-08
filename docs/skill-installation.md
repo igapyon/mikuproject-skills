@@ -1,220 +1,185 @@
 # Mikuproject Skill Installation
 
-この文書は、`skills/mikuproject` を開発中のリポジトリ配置から、Codex が利用可能な skill として認識する配置へ持っていく手順を整理したものです。
+この文書は、配布された `skill-bundle.zip` をインストール先の環境で使えるようにする手順です。
+
+開発元リポジトリでの build 手順ではなく、受け取った bundle をどう配置するかに絞って説明します。
+
+## 対象
+
+この手順は、次のような人向けです。
+
+- `skill-bundle.zip` を受け取った
+- インストール先の環境で `mikuproject` skill を使いたい
+- 配布元リポジトリの `npm run build` は実行しない
+
+## 配布物
+
+受け取る想定の配布物は次です。
+
+- `skill-bundle.zip`
+
+展開すると、次のような構成になります。
+
+```text
+skill-bundle/
+  skills/
+    mikuproject/
+      _bundled/
+        vendor/
+          mikuproject/
+  README.md
+```
 
 ## 先に結論
 
-- このリポジトリ内の開発用配置: `skills/mikuproject`
-- Codex の利用可能 skill 配置先: `$CODEX_HOME/skills/mikuproject`
-- 配布用には `bundle/skill-bundle` を生成できる
-- `skills/` だけのコピーでは不足しやすい
-- 最短手順は、この `mikuproject-skills` リポジトリ全体を workspace に置いて開くこと
-- `.codex/skills` と workspace 側 `vendor/` は役割が違う
+やることは単純です。
 
-このセッションでは `CODEX_HOME` 環境変数は未設定でした。
-ただし、組み込み skill の実体が `/Users/igapyon/.codex/skills/.system/...` にあるため、実運用上の候補は `/Users/igapyon/.codex/skills/mikuproject` です。
+1. `skill-bundle.zip` を展開する
+2. 展開してできた `skill-bundle/` の中身を skill home の直下へコピーする
+3. 実行環境を再起動または再読込する
+4. 利用可能 skill 一覧に `mikuproject` が出ることを確認する
 
-## 前提
-
-- 開発元の skill は [`skills/mikuproject`](../skills/mikuproject) にある
-- `mikuproject` skill は [`vendor/mikuproject`](../vendor/mikuproject) にある upstream 実装や文書も参照する
-- 利用可能 skill の自動検出は、リポジトリ内の `skills/` をそのまま見るとは限らない
-- `.github/` は、この環境では skill の正規配置先として確認できていない
-
-## 配置の考え方
-
-Codex での skill 利用は、次の2層で考えます。
-
-- `.codex/skills/mikuproject`
-  Codex に skill を認識させるための配置
-- `<workspace>/vendor/mikuproject`
-  skill 実行時に参照される upstream 実装と文書の配置
-
-これは用途が違います。
-`skills` を `.codex` 配下へコピーしても、`vendor/mikuproject` が workspace 側に無ければ、`spec` や import/export 系で不足する可能性があります。
-
-## 推奨配置
-
-最も安全なのは、リポジトリ全体を workspace に置く形です。
+コピー後の想定構成は次です。
 
 ```text
-<workspace>/mikuproject-skills/
+<skill-home>/
   skills/
     mikuproject/
-  vendor/
-    mikuproject/
+      _bundled/
+        vendor/
+          mikuproject/
 ```
-
-そのうえで、必要なら skill を Codex 用に次へも配置します。
-
-```text
-~/.codex/
-  skills/
-    mikuproject/
-```
-
-## 最低限の構成
-
-workspace に最低限必要なのは次です。
-
-```text
-<workspace>/
-  vendor/
-    mikuproject/
-```
-
-Codex 側の認識用には次が必要です。
-
-```text
-~/.codex/
-  skills/
-    mikuproject/
-```
-
-つまり、次のように分担します。
-
-- `.codex/skills/mikuproject`
-  登録用
-- `<workspace>/vendor/mikuproject`
-  実行時参照用
 
 ## 手順
 
-1. まず workspace を揃える
+### 1. `skill-bundle.zip` を展開する
 
-推奨:
+まず、受け取った `skill-bundle.zip` を任意の作業用フォルダに展開します。
 
-- `mikuproject-skills` リポジトリ全体を workspace に置いて開く
+展開後は `skill-bundle/` ディレクトリが見えるはずです。
 
-最低限必要:
+### 2. skill home を確認する
+
+`mikuproject` skill は、bundle 版では `skills/mikuproject` の中に必要な upstream 実装を同梱しています。
+
+必要なのは次です。
 
 - `skills/mikuproject`
-- `vendor/mikuproject`
+- `skills/mikuproject/_bundled/vendor/mikuproject`
 
-`skills/` だけをコピーした構成では、`spec` や import/export 系の処理で参照先が欠ける可能性があります。
-
-2. 依存関係を入れる
-
-```bash
-npm install
-```
-
-3. リポジトリのテストを通す
-
-```bash
-npm test
-```
-
-4. 配布までまとめて実行するなら `build` を使う
-
-```bash
-npm run build
-```
-
-これで次が順に実行されます。
-
-- `npm test`
-- `npm run build:bundle`
-- `npm run build:bundle:zip`
-
-5. 配布用 bundle を個別に作る
-
-```bash
-npm run build:bundle
-```
-
-生成先:
+最終的な構成は次です。
 
 ```text
-bundle/skill-bundle/
+<skill-home>/
   skills/
     mikuproject/
-  vendor/
+      _bundled/
+        vendor/
+          mikuproject/
+```
+
+この文書では、この `<skill-home>` をインストール先の配置ルートと呼びます。
+
+### 3. `skill-bundle/` の中身を skill home へコピーする
+
+展開した `skill-bundle/` の中身を、そのまま skill home 直下へコピーします。
+
+重要なのは次です。
+
+- `skill-bundle/skills/mikuproject` を `<skill-home>/skills/mikuproject` に入れる
+- `skills/mikuproject` 配下の `_bundled/vendor/mikuproject` も一緒に入ることを保つ
+
+この bundle では、`skill-bundle/` の中身をそのまま `<skill-home>/` へコピーすれば足ります。
+
+### 4. 実行環境を再起動または再読込する
+
+skill 一覧は起動時に読まれることがあります。
+
+そのため、コピー後は次のどちらかを行います。
+
+- 実行環境を再起動する
+- skill 一覧を再読込できる場合は再読込する
+
+### 5. `mikuproject` が利用可能 skill に出ることを確認する
+
+利用可能 skill 一覧に `mikuproject` が出れば、インストール自体は完了です。
+
+ここで `mikuproject` が出ない場合は、まず次を確認します。
+
+- コピー先が skill home 直下になっているか
+- `skills/mikuproject/_bundled/vendor/mikuproject` があるか
+- 実行環境を再起動または再読込したか
+
+## よくある間違い
+
+### `skills/mikuproject` の一部だけをコピーする
+
+これは不足です。
+
+`mikuproject` skill は bundled upstream も参照します。
+`skills/mikuproject` の中身を欠いた状態では、`spec` や import/export 系で不足する可能性があります。
+
+### `_bundled/vendor/mikuproject` を落としてしまう
+
+これは不足です。
+
+今回の bundle 配布では、`vendor/mikuproject` は `skills/mikuproject/_bundled/vendor/mikuproject` に同梱されています。
+この bundled 部分を落とすと、実装本体が見つからず fallback に落ちる可能性があります。
+
+### `skill-bundle/` ディレクトリごと入れてしまう
+
+必要なのは `skill-bundle/` そのものではなく、その中身です。
+
+正しい配置:
+
+```text
+<skill-home>/
+  skills/
     mikuproject/
+      _bundled/
+        vendor/
+          mikuproject/
 ```
 
-この bundle は `.codex` 配下へそのまま展開できる first cut です。
-
-zip 配布物も必要なら、次を使えます。
-
-```bash
-npm run build:bundle:zip
-```
-
-生成先:
+避けたい配置:
 
 ```text
-bundle/skill-bundle.zip
+<skill-home>/
+  skill-bundle/
+    skills/
 ```
 
-6. 配置先ディレクトリを確認する
+## インストール後の最初の試し方
 
-`CODEX_HOME` が設定されているなら、その配下の `skills/` を使います。
-
-```bash
-printf '%s\n' "$CODEX_HOME"
-```
-
-7. `CODEX_HOME` が未設定なら、実体候補を確認する
-
-この環境では `/Users/igapyon/.codex` が候補です。
-したがって配置先候補は次です。
-
-```text
-/Users/igapyon/.codex/skills/mikuproject
-```
-
-8. `bundle/skill-bundle` の中身を skill home 配下へコピーする
+インストールできたら、まずは通常の依頼文で試します。
 
 例:
 
-```bash
-cp -R bundle/skill-bundle/. "$CODEX_HOME"/
-```
-
-これで次の構成になります。
-
 ```text
-.codex/
-  skills/
-    mikuproject/
-  vendor/
-    mikuproject/
+れでえいやあでWBSつくって
 ```
 
-9. Codex 側で skill 一覧に出ることを確認する
+望ましい動作は次です。
 
-この会話のように `Available skills` に `mikuproject` が出れば、登録済み skill として扱われます。
+- エージェントが内部で `mikuproject` を使う
+- 中間の `spec` や `project_draft_view` をそのまま画面に出さない
+- WBS 要約や結果だけを返す
 
-## 運用上の整理
+ただし実行環境によっては fallback があり、次が画面に出ることがあります。
 
-- `skills/mikuproject`
-  このリポジトリで編集・レビュー・テストする開発元
-- `$CODEX_HOME/skills/mikuproject`
-  Codex に認識させるための利用側配置
-- `vendor/mikuproject`
-  skill が参照する upstream 実装と canonical 文書
+- `spec`
+- `project_draft_view`
+- `Patch JSON`
+- `mikuproject_workbook_json`
 
-この2つは役割が違います。
-「repo にあること」と「このセッションで利用可能 skill として認識されること」は別です。
-さらに、`skills/` だけを別 workspace に持っていっても、参照先の `vendor/mikuproject` が無ければ不完全です。
-また、`vendor/mikuproject` は通常 `.codex` 配下ではなく、skill を使う workspace 側に置く前提で考えます。
+その場合でもインストール失敗とは限りません。
+まずは `mikuproject` が認識されているかと、処理自体が進むかを確認してください。
 
-## 利用フロー
+## まだ未対応のもの
 
-skill が利用可能になったら、MVP の基本フローは次です。
+- `report` 系 CLI
 
-1. `spec` で `mikuproject-ai-json-spec` を取得する
-2. その spec を AI に渡して `project_draft_view` を生成させる
-3. `draft` で `project_draft_view` を取り込み、`mikuproject_workbook_json` にする
-4. `workbook` で現在の workbook state を次の AI へ渡す
-5. AI から `Patch JSON` を受け取る
-6. `patch` で既存 workbook state に反映する
-7. 更新後の `mikuproject_workbook_json` を次ターンへ持ち回る
+## 関連文書
 
-## 注意
-
-- `Patch JSON` は単独では適用できない
-- base state として既存の `mikuproject_workbook_json` が必要
-- この skill は `mikuproject` のブラウザ UI を置き換えるものではない
-- MVP では会話境界の state は `mikuproject_workbook_json` を使う
+- 使い始め: [quickstart.md](./quickstart.md)
+- 設計メモ: [agent-skill-design.md](./agent-skill-design.md)
