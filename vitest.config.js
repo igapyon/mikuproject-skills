@@ -3,8 +3,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     include: [
-      "tests/**/*.test.js",
-      "vendor/mikuproject/tests/**/*.test.js"
+      "tests/**/*.test.js"
     ]
   }
 });
