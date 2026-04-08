@@ -172,6 +172,14 @@ async function runCommand(command, options, api) {
       };
     }
 
+    if (action === "all") {
+      const archive = api.report.all.export(model);
+      return {
+        output: archive.zipBytes,
+        diagnostics: []
+      };
+    }
+
     if (action === "wbs-markdown") {
       return {
         output: `${api.report.wbsMarkdown.export(model)}\n`,
@@ -293,6 +301,7 @@ function writeHelp(stream) {
     "  mikuproject report daily-svg [--in workbook.json] [--out report.svg]",
     "  mikuproject report weekly-svg [--in workbook.json] [--out report.svg]",
     "  mikuproject report monthly-calendar-svg [--in workbook.json] [--out report.zip]",
+    "  mikuproject report all [--in workbook.json] [--out report-bundle.zip]",
     "  mikuproject report wbs-markdown [--in workbook.json] [--out report.md]",
     "  mikuproject report mermaid [--in workbook.json] [--out report.mmd]"
   ].join("\n"));
