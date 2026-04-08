@@ -14,6 +14,10 @@ What users should care about first:
 
 At the moment, the main skill in this repository is [`skills/mikuproject`](./skills/mikuproject).
 
+Runtime requirement:
+
+- Node.js is required to build and run this skill
+
 ## Quick Start
 
 1. Install dependencies with `npm install`.
@@ -61,6 +65,10 @@ This project is licensed under the Apache License 2.0. See [`LICENSE`](./LICENSE
 - 必要に応じて、計画データを保存・再利用・受け渡ししやすい形でも扱えること
 
 現在、このリポジトリの中心となる skill は [`skills/mikuproject`](./skills/mikuproject) です。
+
+実行前提:
+
+- この skill の build と実行には Node.js が必要です
 
 ## はじめかた
 

@@ -1,4 +1,4 @@
-# Phase B Examples
+# File Workflow Examples
 
 Use these short examples when the user needs concrete prompts for the primary file workflow.
 
