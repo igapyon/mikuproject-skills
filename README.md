@@ -116,7 +116,7 @@ Notes:
 - This skill does not replace the `mikuproject` browser UI.
 - For the MVP, state is passed around as `mikuproject_workbook_json` at the conversation boundary.
 - The preferred mode is to keep intermediate artifacts in agent-internal state and only fall back to handoff-style display when needed.
-- `report` CLI commands are not implemented yet.
+- `report` CLI commands are available for `wbs-xlsx`, `daily-svg`, `weekly-svg`, `monthly-calendar-svg`, `wbs-markdown`, and `mermaid`.
 
 ---
 
@@ -136,4 +136,4 @@ Notes:
 - MVP では、会話境界の state は `mikuproject_workbook_json` として扱います。
 - 望ましい既定は agent-internal execution であり、`spec` や workbook の中間出力は通常は画面に出さず内部保持します。
 - 実行環境が対応できない場合だけ、handoff 型として中間出力を表示します。
-- `report` 系 CLI はまだ未実装です。
+- `report` 系 CLI は `wbs-xlsx` / `daily-svg` / `weekly-svg` / `monthly-calendar-svg` / `wbs-markdown` / `mermaid` を扱えます。

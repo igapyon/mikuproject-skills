@@ -1,13 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
 
 import { CORE_API_MODULE_RELATIVE_PATHS } from "./lib/core-api-loader.mjs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, "..");
+const ROOT = process.cwd();
 const requireFromRoot = createRequire(path.resolve(ROOT, "package.json"));
 
 const args = parseArgs(process.argv.slice(2));
@@ -114,6 +111,7 @@ function writeBundleReadme() {
 }
 
 function copyRuntimeNodeModules() {
+  const sourceNodeModulesDir = path.resolve(ROOT, "node_modules");
   const destinationNodeModulesDir = path.resolve(outDir, "node_modules");
   fs.mkdirSync(destinationNodeModulesDir, { recursive: true });
 
@@ -130,7 +128,6 @@ function copyRuntimeNodeModules() {
 
     const packageJson = readJson(packageJsonPath);
     const packageDir = path.dirname(packageJsonPath);
-    const sourceNodeModulesDir = findOwningNodeModulesDir(packageDir);
     const relativePackageDir = path.relative(sourceNodeModulesDir, packageDir);
     if (relativePackageDir.startsWith("..")) {
       throw new Error(`node_modules 配下でない package を検出しました: ${packageDir}`);
@@ -154,21 +151,6 @@ function copyRuntimeNodeModules() {
       }
       queue.push({ name: dependencyName, requireFn: packageRequire });
     }
-  }
-}
-
-function findOwningNodeModulesDir(packageDir) {
-  let currentDir = packageDir;
-  while (true) {
-    if (path.basename(currentDir) === "node_modules") {
-      return currentDir;
-    }
-
-    const parentDir = path.dirname(currentDir);
-    if (parentDir === currentDir) {
-      throw new Error(`node_modules 配下でない package を検出しました: ${packageDir}`);
-    }
-    currentDir = parentDir;
   }
 }
 

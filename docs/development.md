@@ -28,6 +28,14 @@
 
 `mikuproject` は `vendor/mikuproject/` に `git subtree` で取り込んでいます。
 
+運用方針:
+
+- `vendor/mikuproject/` は、できるだけ upstream をそのまま受信する場所として扱う
+- このリポジトリ固有の都合で `vendor/mikuproject/` のソースを常用的に書き換えない
+- skill 側や bundle 側の都合は、まず `skills/` や root 側の文書・補助コードで吸収する
+- `subtree pull` で競合した場合は、原則として upstream 側を優先して解消する
+- `vendor/mikuproject/` に local 修正を入れる場合は、次回同期で競合しやすくなることを理解したうえで、例外として扱う
+
 取得:
 
 ```bash
@@ -53,6 +61,13 @@ npm test
 
 - `tests/**/*.test.js`
 - `vendor/mikuproject/tests/**/*.test.js`
+
+ただし運用上は、`vendor/mikuproject/` 全体をこのリポジトリ側で常に検証対象にすることを主目的とはしません。
+
+- このリポジトリで重視するのは、skill 側の動作確認と最低限の smoke test
+- upstream `mikuproject` 自体の詳細な検証は、まず upstream 側で行われる前提とする
+- `vendor/mikuproject/tests/**/*.test.js` を毎回必須で回すかどうかは、変更範囲に応じて判断する
+- `vendor/mikuproject/` を単に同期しただけの場合は、upstream 全体テストをこのリポジトリで必須にしない
 
 ## 現在の MVP の前提
 

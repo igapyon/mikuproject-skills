@@ -177,9 +177,10 @@ skill 一覧は起動時に読まれることがあります。
 その場合でもインストール失敗とは限りません。
 まずは `mikuproject` が認識されているかと、処理自体が進むかを確認してください。
 
-## まだ未対応のもの
+## 補足
 
-- `report` 系 CLI
+- `report` 系 CLI は利用可能です
+- `wbs-xlsx` / `daily-svg` / `weekly-svg` / `monthly-calendar-svg` / `wbs-markdown` / `mermaid` を扱えます
 
 ## 関連文書
 

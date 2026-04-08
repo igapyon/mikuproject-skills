@@ -240,13 +240,15 @@ mikuproject state apply-patch
 mikuproject export workbook-json
 mikuproject export xml
 mikuproject export xlsx
+mikuproject report wbs-xlsx
+mikuproject report daily-svg
+mikuproject report weekly-svg
+mikuproject report monthly-calendar-svg
+mikuproject report wbs-markdown
+mikuproject report mermaid
 ```
 
 この CLI は、上位エージェントが内部で使う前提で考えます。
-
-現時点で未実装のもの:
-
-- `report` 系 CLI
 
 ## いまの利用イメージ
 
@@ -265,7 +267,7 @@ mikuproject export xlsx
 
 - `skills/` だけをコピーしても動かない
 - `Patch JSON` は base state なしでは適用できない
-- `report` 系はまだ CLI 未実装
+- `monthly-calendar-svg` は単一 SVG ではなく ZIP 出力
 - `spec` が画面に出る場合は fallback 動作の可能性がある
 
 ## 次に見る文書
