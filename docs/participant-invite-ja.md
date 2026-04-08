@@ -53,10 +53,14 @@
 
 まずは次のような依頼から試してください。
 
+- `mikuproject で、れでえいやあでWBSつくって`
+- `miku project で、れでえいやあでWBSつくって`
 - `spec を出して`
 - `この project_draft_view を取り込んで`
 - `この Patch JSON を反映して`
 - `現在の workbook を出して`
+
+この skill は、通常の planning 語だけでは自動起動せず、まず `mikuproject` または `miku project` を入れて始める前提です。
 
 ## 現時点の前提
 

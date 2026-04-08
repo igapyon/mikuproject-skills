@@ -148,12 +148,18 @@ mikuproject/
 ただしこの skill の通常会話では document kind を優先します。
 つまり、新規草案では `project_draft_view`、既存編集では `Patch JSON` と呼びます。
 
-### 1. まずはそのまま WBS 作成を依頼する
+### 1. まずは明示トリガー付きで WBS 作成を依頼する
 
-会話では、まず通常の依頼文で始めます。
+会話では、まず明示トリガー付きの依頼文で始めます。
 
 ```text
-れでえいやあでWBSつくって
+mikuproject で、れでえいやあでWBSつくって
+```
+
+または:
+
+```text
+miku project で、れでえいやあでWBSつくって
 ```
 
 期待すること:
@@ -171,6 +177,11 @@ mikuproject/
 - `task_edit_view` や `.editjson` の説明へ逸れる
 
 このような表示が出る場合は、fallback 動作になっている可能性があります。
+
+補足:
+
+- この skill は generic な planning 語だけでは自動起動しない
+- まず `mikuproject` または `miku project` を入れて始める
 
 ### 2. 明示的に spec を見たい場合だけ出す
 

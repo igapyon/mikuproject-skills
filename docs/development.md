@@ -104,6 +104,16 @@ npm run test:upstream
 - `vendor/mikuproject/tests/**/*.test.js` を毎回必須で回すかどうかは、変更範囲に応じて判断する
 - `vendor/mikuproject/` を単に同期しただけの場合は、upstream 全体テストをこのリポジトリで必須にしない
 
+## 既知メモ: CLI 速度
+
+現状の `mikuproject-cli-bundle` は、軽い処理でも CLI を毎回起動する固定費が目立ちます。
+
+- 簡易計測では、CLI 1 回あたりがおおむね 1 秒前後
+- 同じ条件の in-process 計測では、個別の import / patch / export 自体は数 ms から数十 ms 程度
+
+そのため、現時点では「JSON 処理そのもの」よりも、「CLI を毎回 spawn する構造」のほうが支配的に遅い可能性が高いです。
+ただし、現時点ではこの速度改善対応をこのリポジトリの作業対象には含めません。
+
 ## 現在の MVP の前提
 
 - skill は `skills/mikuproject` にある
