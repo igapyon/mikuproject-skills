@@ -116,7 +116,7 @@ npm run build
 npm test
 ```
 
-開発用コマンドの詳細、テスト運用、`local-data/` の扱いは [docs/development.md](docs/development.md) を参照してください。
+`npm run build` には `build:web`、`build:cli-bundle`、`test:fast` が含まれる。開発用コマンドの詳細、テスト運用、`local-data/` の扱いは [docs/development.md](docs/development.md) を参照してください。
 
 ## 再利用 API
 
@@ -193,6 +193,35 @@ mikuproject export xlsx --in workbook.json --out project.xlsx
 ```
 
 `report` 系の派生出力 CLI は次段候補として分離して扱う。
+
+## CLI bundle first cut
+
+`mikuproject` 側で CLI 実行に必要な runtime をまとめた自己完結ディレクトリ bundle を出力できるようにしている。
+
+```bash
+npm run build:cli-bundle
+```
+
+既定の出力先は `bundle/mikuproject-cli-bundle/` で、主に次を含む。
+
+```text
+bundle/
+  mikuproject-cli-bundle/
+    README.md
+    package.json
+    scripts/
+    src/
+    node_modules/
+```
+
+この bundle は追加の `npm install` なしで、そのまま CLI 実行に使える first cut を狙っている。たとえば次で動く。
+
+```bash
+node bundle/mikuproject-cli-bundle/scripts/mikuproject-cli.mjs ai spec
+node bundle/mikuproject-cli-bundle/scripts/mikuproject-cli.mjs export xml --in workbook.json --out project.xml
+```
+
+bundle 生成時は、repo root の `node_modules` にある `jsdom` とその runtime 依存を取り込む。そのため、bundle 生成前には一度 `npm install` 済みであることを前提とする。
 
 ## 関連ドキュメント
 
