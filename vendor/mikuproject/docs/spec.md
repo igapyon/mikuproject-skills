@@ -1061,6 +1061,7 @@ STEP 1 の中核処理は、次のような責務に分ける。
 - 仕様や表現方法に迷った場合は、`MS Project XML` の持ち方を優先する
 - 独自に扱いやすいモデル化は許容するが、`MS Project XML` との意味対応を壊さないことを優先する
 - 特にタスク階層や依存関係は、独自表現へ寄せすぎず、まず `MS Project` 側の表現を基準に考える
+- XML parser / serializer 実装は差し替え可能にし、モジュール側は `globalThis.__mikuprojectXmlDom` 経由で XML DOM を解決する
 
 ## テスト方針
 

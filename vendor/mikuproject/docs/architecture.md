@@ -70,6 +70,17 @@ single-file web app としての配布を維持しつつ、外部再利用向け
 
 これにより、従来の UI 実装都合で分散していた `ProjectModel` 周りの入口を、外部利用者が 1 箇所から辿れるようにする。
 
+## XML DOM 方針
+
+XML の parse / serialize は、ブラウザ DOM 直依存ではなく `globalThis.__mikuprojectXmlDom` を介して解決する。
+
+- `msproject-xml` と `excel-io` は `DOMParser` を `__mikuprojectXmlDom` から優先取得する
+- `msproject-xml` の XML export は `XMLSerializer` と `createDocument` も同じ経路で解決する
+- Web ではブラウザ標準の XML DOM を使う
+- CLI では `scripts/lib/core-api-loader.mjs` が `@xmldom/xmldom` を優先して注入し、未導入時のみ `jsdom` の XML 実装へフォールバックする
+
+この方針により、CLI の XML 処理は `jsdom` 全体に依存せず、XML 用 DOM 実装だけを差し替えられる。`jsdom` は引き続き CLI 上の HTML / Blob / File など、XML 以外の Web API 補完に使う。
+
 ## リポジトリ構成
 
 - `mikuproject.html`: 生成済みの単一 HTML アプリ
@@ -81,6 +92,7 @@ single-file web app としての配布を維持しつつ、外部再利用向け
 - `tests/`: Vitest ベースのテスト
 - `testdata/`: XML テストデータ
 - `scripts/`: ビルド補助スクリプト
+- `scripts/lib/core-api-loader.mjs`: CLI / 外部再利用向けに core API と XML DOM 実装を初期化する
 - `docs/spec.md`: 現行仕様メモ
 - `docs/gap-notes.md`: 保持項目や互換性のギャップメモ
 

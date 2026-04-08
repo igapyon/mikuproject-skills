@@ -166,7 +166,7 @@ first cut の対応は次のとおり。
 - `project_draft_view`: `replace` のみ
 - `patch_json`: `patch` のみ
 
-Node 側から `core API` を起動する最小 helper は [`scripts/lib/core-api-loader.mjs`](scripts/lib/core-api-loader.mjs) に置いている。`importExternal()` の利用例は [`scripts/core-api-import-external-example.mjs`](scripts/core-api-import-external-example.mjs) を参照。
+Node 側から `core API` を起動する最小 helper は [`scripts/lib/core-api-loader.mjs`](scripts/lib/core-api-loader.mjs) に置いている。CLI ではこの loader が `globalThis.__mikuprojectXmlDom` を初期化し、XML 系の `DOMParser` / `XMLSerializer` / XML document 生成を環境非依存に扱う。`importExternal()` の利用例は [`scripts/core-api-import-external-example.mjs`](scripts/core-api-import-external-example.mjs) を参照。
 
 `AI JSON spec` 単体の取得用には `globalThis.__mikuprojectAiJsonSpec` も公開しています。
 
@@ -237,7 +237,7 @@ node bundle/mikuproject-cli-bundle/scripts/mikuproject-cli.mjs ai spec
 node bundle/mikuproject-cli-bundle/scripts/mikuproject-cli.mjs export xml --in workbook.json --out project.xml
 ```
 
-bundle 生成時は、repo root の `node_modules` にある `jsdom` とその runtime 依存を取り込む。そのため、bundle 生成前には一度 `npm install` 済みであることを前提とする。
+bundle 生成時は、repo root の `node_modules` にある CLI runtime 依存を取り込む。現時点では `@xmldom/xmldom` を CLI の優先 XML DOM 実装として使い、`jsdom` は HTML / Blob / File など XML 以外の Web API 補完のために同梱する。そのため、bundle 生成前には一度 `npm install` 済みであることを前提とする。
 
 ## 関連ドキュメント
 

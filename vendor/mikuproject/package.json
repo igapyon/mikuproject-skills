@@ -25,6 +25,12 @@
     "test:full": "node scripts/run-tests.mjs full",
     "test:all": "node scripts/run-tests.mjs all"
   },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.10"
+  },
+  "overrides": {
+    "vite": "7.3.2"
+  },
   "devDependencies": {
     "jsdom": "^26.1.0",
     "typescript": "^5.8.2",
