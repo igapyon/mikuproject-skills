@@ -1,10 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
 
 import { CORE_API_MODULE_RELATIVE_PATHS } from "./lib/core-api-loader.mjs";
 
-const ROOT = process.cwd();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT = path.resolve(__dirname, "..");
 const requireFromRoot = createRequire(path.resolve(ROOT, "package.json"));
 
 const args = parseArgs(process.argv.slice(2));
