@@ -257,6 +257,8 @@ Excelガントが欲しい
 - `markdown化` は `wbs-markdown-export` として扱われる
 - `Mermaid 化` は `mermaid-export` として扱われる
 - `Excelガント` や `xlsxでガント` は通常 `WBS XLSX` として扱われる
+- `report を全部` / `一式で` / `まとめて` のような依頼では、report 一式をまとめた外側 ZIP を作る
+- この bundle では `monthly-calendar-svg` だけを内側 ZIP のまま残さず、月別 SVG 群を bundle 内へ展開して入れる
 - この場合は `wbs-xlsx-export` を使い、一般的な表計算ライブラリ探索や ad-hoc な `.xlsx` 生成へ逸れない
 - 通常運用では `tmp/*.mjs` のような補助スクリプトを作らない
 - 依存不足で export できない場合だけ、その不足を短く報告する
@@ -303,6 +305,7 @@ bundle 配布物では、必要なら `skills/mikuproject/runtime/mikuproject-cl
 - `skills/` だけをコピーしても動かない
 - `Patch JSON` は base state なしでは適用できない
 - `monthly-calendar-svg` は単一 SVG ではなく ZIP 出力
+- ただし `report 全部` の bundle 化では、外側 ZIP の中にさらに `monthly-calendar.zip` を入れず、月別 SVG 群をそのまま含める
 - `spec` が画面に出る場合は fallback 動作の可能性がある
 
 ## 次に見る文書

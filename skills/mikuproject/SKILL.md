@@ -14,8 +14,31 @@ description: Use mikuproject as a WBS planning tool for AI. It gives the agent a
 Use this skill when the agent should think about planning, while `mikuproject` handles state, import/apply, and export.
 Keep the focus on WBS planning workflows and state conversion, not on replacing the browser UI.
 
-For this skill, WBS-related work should default to `mikuproject` workflows first.
-Do not treat a normal WBS request as a request for an ad-hoc Markdown table, free-form checklist, or hand-written gantt unless the user explicitly asks for that fallback representation.
+For this skill, `mikuproject` should be opt-in by default.
+Do not trigger `mikuproject` from planning words or export-format words alone.
+
+Start `mikuproject` mode when at least one of these explicit triggers is present:
+
+- the user names `mikuproject`
+- the user writes `miku project`
+- the user writes `miku proj`
+- the user writes `miku prj`
+- the user writes `ミク プロジェクト`
+- the user writes `ミク プロジェク`
+- the user writes `ミク プロジェ`
+- the user writes `ミクプロジェクト`
+- the recent conversation is already in an active `mikuproject` workflow from an earlier explicit trigger
+
+Without one of these triggers, do not force `mikuproject` just because the request mentions `WBS`, `スケジュール`, `工程`, `計画`, `Excel`, `xlsx`, `画像`, `SVG`, `Mermaid`, `ガント`, or similar words.
+In that case, either answer normally or ask a brief clarifying question.
+
+Once `mikuproject` mode is active, prefer to keep handling follow-up work through `mikuproject` interfaces as long as that remains a reasonable fit.
+Inside an active `mikuproject` workflow:
+
+- prefer `draft`, `patch`, `workbook`, import, and export operations over ad-hoc reformats
+- treat follow-up requests as part of the same workbook-oriented flow unless the user clearly exits that context
+- do not fall back to plain Markdown tables, hand-written gantt text, or one-off conversion code when the `mikuproject` interface can handle the request cleanly
+- resolve ambiguous format words in `mikuproject` terms when that is the most natural continuation of the current workflow
 
 ## Default Mode
 
@@ -88,17 +111,49 @@ Do not describe a new-draft response as "editjson" unless the user explicitly as
 
 When the user asks to convert the current draft or state into a deliverable format, use the matching `mikuproject` export operation directly.
 When the user asks for a WBS, roadmap, gantt, schedule table, or planning output and does not name a different tool, prefer `mikuproject` as the first implementation path.
+For ambiguous report-style requests, prefer `WBS Markdown` first.
+Do not treat `Mermaid` as the default report format unless the user explicitly asks for it or clearly needs Mermaid-compatible text.
 
 Map normal user requests like this:
 
+- "report で出して" -> prefer `wbs-markdown-export`
+- "見やすく出して" -> prefer `wbs-markdown-export`
+- "共有しやすい形で出して" -> prefer `wbs-markdown-export`
 - "markdown化して" -> `wbs-markdown-export`
 - "Mermaid 化して" -> `mermaid-export`
+- "svg にして" -> ask or infer `daily-svg-export` / `weekly-svg-export` / `monthly-calendar-svg-export` from the requested time scale
 - "xlsx にして" -> `wbs-xlsx-export` or `xlsx-export`, depending on whether the user wants a report workbook or a structural workbook
 - "Excel ガントが欲しい" -> prefer `wbs-xlsx-export`
 - "xlsx でガントが欲しい" -> prefer `wbs-xlsx-export`
 - "xml にして" -> `xml-export`
 
 When the user asks for an Excel gantt, Excel schedule, or xlsx gantt in normal conversation, treat that as a request for `mikuproject` `WBS XLSX` unless the user explicitly asks for the structural workbook.
+When the user asks only for a generic report, generic export, or a human-readable deliverable, use `WBS Markdown` unless another target format is explicitly requested.
+Inside an active `mikuproject` workflow, treat short format requests like `markdown`, `xlsx`, `svg`, and `mermaid` as requests for the corresponding `mikuproject` exports unless the surrounding context clearly points somewhere else.
+When the user asks for all report outputs, a full report set, or a bundled deliverable such as `全部`, `一式`, or `まとめて`, generate the report set and package it as a single outer ZIP bundle.
+In that bundled case, do not keep `monthly-calendar-svg` as an inner ZIP. Place its extracted monthly SVG entries inside the outer report bundle so the result does not become ZIP-in-ZIP.
+
+Use keyword-level routing like this:
+
+- spreadsheet-like words such as `Excel`, `xlsx`, `xls`, `スプレッド`, `スプレッドシート` -> prefer `wbs-xlsx-export`
+- image-like words such as `画像`, `図`, `ビジュアル`, `見た目`, `表示` -> prefer `SVG`
+- `Mermaid` -> `mermaid-export`
+
+For `ガント` or `ガントチャート`, do not assume `Mermaid` by default.
+Resolve it in this order:
+
+1. if spreadsheet-like words are also present, prefer `wbs-xlsx-export`
+2. if image-like words are also present, prefer `SVG`
+3. if `Mermaid` is explicitly present, use `mermaid-export`
+4. otherwise, prefer `wbs-xlsx-export`
+
+For `SVG`, choose by time scale when possible:
+
+- `日`, `日次`, `daily` -> `daily-svg-export`
+- `週`, `週次`, `weekly` -> `weekly-svg-export`
+- `月`, `月間`, `monthly`, `calendar` -> `monthly-calendar-svg-export`
+
+If the user asks for `SVG` or image-like output without a clear time scale, ask briefly or make the smallest reasonable inference from nearby wording.
 
 Do not default to ad-hoc helper code for these requests.
 In normal skill operation, do not:
@@ -111,6 +166,49 @@ In normal skill operation, do not:
 
 If the matching runtime export cannot run because a required dependency is missing, report that dependency problem briefly.
 Do not replace the failed export path with a hand-written conversion script unless the user explicitly asks for that fallback.
+
+## Output Location Rules
+
+Unless the user explicitly requests another location, write generated files under the workspace-local `mikuproject/` tree.
+Do not write generated deliverables to the workspace root.
+Do not place user-facing artifacts inside the skill runtime directory.
+
+Use these default locations:
+
+- state-like artifacts -> `mikuproject/state/`
+- final report exports -> `mikuproject/report/`
+- temporary intermediate files -> `mikuproject/tmp/`
+
+Treat these as the standard mapping:
+
+- `project_draft_view` -> `mikuproject/state/`
+- `Patch JSON` -> `mikuproject/state/`
+- `mikuproject_workbook_json` -> `mikuproject/state/`
+- WBS Markdown, Mermaid, WBS XLSX, daily SVG, weekly SVG, monthly calendar ZIP -> `mikuproject/report/`
+- ad-hoc scratch files that are not final deliverables -> `mikuproject/tmp/`
+
+For bundled all-report requests:
+
+- create the individual report artifacts under `mikuproject/report/` with the shared timestamp prefix
+- create one outer archive such as `YYYYMMDDHHmm-report-bundle.zip`
+- include WBS Markdown, Mermaid, WBS XLSX, daily SVG, weekly SVG, and extracted monthly calendar SVG entries in that outer archive
+- do not create an inner `monthly-calendar.zip` inside the outer bundle
+
+Use a timestamp prefix in file names by default:
+
+- `YYYYMMDDHHmm-<kind>.<ext>`
+
+When one user request produces multiple related artifacts, reuse the same timestamp prefix for that run.
+If the target directories do not exist, create them first.
+
+When invoking `mikuproject` CLI for a file-producing operation, pass an explicit `--out` path under this output tree whenever the command supports it.
+Do not rely on default current-directory output for generated deliverables.
+
+Forbidden defaults:
+
+- workspace root outputs such as `./foo.svg` or `./bar.xlsx`
+- saving generated artifacts under `skills/mikuproject/runtime/...`
+- scattering multiple generations by incrementing suffixes in the root such as `-2`, `-gw2`, or similar
 
 ## Core Workflow
 
