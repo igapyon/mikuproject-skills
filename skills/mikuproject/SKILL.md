@@ -21,12 +21,6 @@ Start `mikuproject` mode when at least one of these explicit triggers is present
 
 - the user names `mikuproject`
 - the user writes `miku project`
-- the user writes `miku proj`
-- the user writes `miku prj`
-- the user writes `ミク プロジェクト`
-- the user writes `ミク プロジェク`
-- the user writes `ミク プロジェ`
-- the user writes `ミクプロジェクト`
 - the recent conversation is already in an active `mikuproject` workflow from an earlier explicit trigger
 
 Without one of these triggers, do not force `mikuproject` just because the request mentions `WBS`, `スケジュール`, `工程`, `計画`, `Excel`, `xlsx`, `画像`, `SVG`, `Mermaid`, `ガント`, or similar words.
@@ -39,6 +33,7 @@ Inside an active `mikuproject` workflow:
 - treat follow-up requests as part of the same workbook-oriented flow unless the user clearly exits that context
 - do not fall back to plain Markdown tables, hand-written gantt text, or one-off conversion code when the `mikuproject` interface can handle the request cleanly
 - resolve ambiguous format words in `mikuproject` terms when that is the most natural continuation of the current workflow
+- do not turn a normal WBS request into a runtime-inspection task unless the actual import or export path has failed
 
 ## Default Mode
 
@@ -130,8 +125,8 @@ Map normal user requests like this:
 When the user asks for an Excel gantt, Excel schedule, or xlsx gantt in normal conversation, treat that as a request for `mikuproject` `WBS XLSX` unless the user explicitly asks for the structural workbook.
 When the user asks only for a generic report, generic export, or a human-readable deliverable, use `WBS Markdown` unless another target format is explicitly requested.
 Inside an active `mikuproject` workflow, treat short format requests like `markdown`, `xlsx`, `svg`, and `mermaid` as requests for the corresponding `mikuproject` exports unless the surrounding context clearly points somewhere else.
-When the user asks for all report outputs, a full report set, or a bundled deliverable such as `全部`, `一式`, or `まとめて`, generate the report set and package it as a single outer ZIP bundle.
-In that bundled case, do not keep `monthly-calendar-svg` as an inner ZIP. Place its extracted monthly SVG entries inside the outer report bundle so the result does not become ZIP-in-ZIP.
+When the user asks for all report outputs, a full report set, or a bundled deliverable such as `全部`, `一式`, or `まとめて`, prefer the upstream `report all` export.
+Treat that as the canonical implementation path instead of assembling a local custom bundle in the skill.
 
 Use keyword-level routing like this:
 
@@ -165,6 +160,7 @@ In normal skill operation, do not:
 - replace a normal WBS flow with a generic Markdown table just because it is faster to print
 
 If the matching runtime export cannot run because a required dependency is missing, report that dependency problem briefly.
+When CLI execution is needed in a bundled environment, try the self-contained CLI bundle path before concluding that a dependency such as `jsdom` is missing.
 Do not replace the failed export path with a hand-written conversion script unless the user explicitly asks for that fallback.
 
 ## Output Location Rules
@@ -189,10 +185,9 @@ Treat these as the standard mapping:
 
 For bundled all-report requests:
 
-- create the individual report artifacts under `mikuproject/report/` with the shared timestamp prefix
-- create one outer archive such as `YYYYMMDDHHmm-report-bundle.zip`
-- include WBS Markdown, Mermaid, WBS XLSX, daily SVG, weekly SVG, and extracted monthly calendar SVG entries in that outer archive
-- do not create an inner `monthly-calendar.zip` inside the outer bundle
+- prefer one upstream-generated archive such as `YYYYMMDDHHmm-report-bundle.zip`
+- use `report all` when that public entrypoint is available
+- treat the bundle contents according to upstream semantics rather than inventing a separate local bundle layout
 
 Use a timestamp prefix in file names by default:
 
@@ -238,6 +233,7 @@ Phase C:
 - `daily-svg-export`: return current daily `SVG`
 - `weekly-svg-export`: return current weekly `SVG`
 - `monthly-calendar-svg-export`: return current monthly calendar `SVG` entries
+- `all-report-export`: return current report bundle `ZIP`
 - `wbs-markdown-export`: return current `WBS Markdown`
 - `mermaid-export`: return current Mermaid gantt text
 
@@ -252,14 +248,15 @@ Use these before falling back to direct file reads or UI-oriented flows.
 
 When this skill is installed from `skill-bundle`, prefer the bundled runtime first:
 
-- `skills/mikuproject/runtime/mikuproject`
+- `skills/mikuproject/runtime/mikuproject-cli-bundle`
 
 When working in the development repository, the source location is:
 
 - `vendor/mikuproject`
 
 Do not search broadly for alternate copies before checking these expected locations.
-In distributed environments, treat `skills/mikuproject/runtime/mikuproject` as the primary runtime location.
+In distributed environments, treat `skills/mikuproject/runtime/mikuproject-cli-bundle` as the primary bundled runtime location.
+When bundled execution is needed, prefer `skills/mikuproject/runtime/mikuproject-cli-bundle` before any non-bundled path.
 
 - `globalThis.__mikuprojectAiJsonSpec`
 - `globalThis.__mikuprojectCoreApi`
@@ -288,6 +285,7 @@ Use these functions first:
 - `report.svg.exportDaily()`
 - `report.svg.exportWeekly()`
 - `report.svg.exportMonthlyCalendar()`
+- `report.all.export()`
 - `report.wbsMarkdown.export()`
 - `report.mermaid.exportGantt()`
 
@@ -337,6 +335,8 @@ Use this response shape:
 If the user did not ask to see raw workbook JSON, prefer returning a short success summary and keep the workbook state internal.
 When the user asked for a WBS, do not stop after creating `project_draft_view`.
 Import it and continue to workbook state internally before responding.
+Do not pause this new-draft flow just to test a CLI entrypoint if the draft import can continue through the available runtime path.
+Do not turn a normal new-draft request into a dependency diagnosis step unless the actual import path fails.
 
 When the import succeeds, keep the explanation short.
 Do not add speculative schedule corrections or WBS advice unless the user asks for review.
@@ -412,6 +412,7 @@ Supported operations:
 - `daily-svg-export`: use `report.svg.exportDaily()`
 - `weekly-svg-export`: use `report.svg.exportWeekly()`
 - `monthly-calendar-svg-export`: use `report.svg.exportMonthlyCalendar()`
+- `all-report-export`: use `report.all.export()`
 - `wbs-markdown-export`: use `report.wbsMarkdown.export()`
 - `mermaid-export`: use `report.mermaid.exportGantt()`
 
