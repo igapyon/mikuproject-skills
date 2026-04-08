@@ -6,7 +6,10 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "npm test",
+    "build": "npm test && npm run build:bundle:zip",
+    "build:bundle": "node scripts/build-skill-bundle.mjs",
+    "build:bundle:zip": "npm run build:bundle && node scripts/build-skill-bundle-zip.mjs",
+    "build:full": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest"
   },

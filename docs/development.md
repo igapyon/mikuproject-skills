@@ -4,8 +4,10 @@
 
 ## 文書の場所
 
+- 実験参加者案内: [participant-invite-ja.md](./participant-invite-ja.md)
+- 利用開始手順: [quickstart.md](./quickstart.md)
 - 設計メモ: [agent-skill-design.md](./agent-skill-design.md)
-- 自動連携メモ: [agent-to-agent-runner.md](./agent-to-agent-runner.md)
+- agent 内部連携メモ: [agent-to-agent-runner.md](./agent-to-agent-runner.md)
 - skill 配置手順: [skill-installation.md](./skill-installation.md)
 - upstream 調査: [upstream-survey.md](./upstream-survey.md)
 - 次フェーズ案: [phase-b-primary-file-workflow.md](./phase-b-primary-file-workflow.md)

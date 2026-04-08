@@ -8,6 +8,21 @@ description: Work with mikuproject AI JSON workflows, primary file import/export
 Use this skill to drive the current workflow for `mikuproject` Agent Skills.
 Keep the focus on structured exchange and primary file workflows, not on replacing the browser UI.
 
+## Default Mode
+
+The default mode should be agent-internal.
+
+This means:
+
+- keep `spec`, `project_draft_view`, `Patch JSON`, and `mikuproject_workbook_json` in internal state when possible
+- do not show intermediate artifacts to the user unless the user explicitly asks to see them
+- only show final summaries or final exports by default
+
+If the host runtime cannot keep intermediate outputs internal, fall back to handoff-style display.
+That fallback is allowed, but it is not the preferred user experience.
+
+Visible handoff text is therefore a compatibility path, not the main path.
+
 ## Core Workflow
 
 Treat the skill as one workflow with three layers of operations.
@@ -85,17 +100,18 @@ If you need the exact upstream file map or supporting design notes, read [refere
 ### `spec`
 
 Get the spec from `getAiJsonSpecText()` or `getAiJsonSpec()` first.
-Return the full `mikuproject-ai-json-spec` text and, when useful, its version.
-Add only a short handoff note for the next AI turn.
+When the user explicitly asks to see the spec, return the full `mikuproject-ai-json-spec` text and, when useful, its version.
+Otherwise, prefer using it internally and continue the workflow without showing the full spec text.
 
-Use this response shape:
+When the user explicitly asks to see the spec, use this response shape:
 
 - one short line explaining that this is the `mikuproject-ai-json-spec`
 - the spec text itself
 - one short line telling the user what to ask the next AI to do
 
 Do not rewrite or summarize the spec unless the user explicitly asks for a summary.
-The default behavior is to hand off the upstream text as-is.
+The default behavior is to keep the upstream text internal when possible.
+If internal execution is available, do not print the full spec text by default.
 
 ### `draft`
 
@@ -117,7 +133,9 @@ Use this response shape:
 
 - one short line saying the draft was accepted or rejected
 - warnings, if any
-- the resulting `mikuproject_workbook_json`
+- the resulting `mikuproject_workbook_json`, only when the user explicitly wants the raw state
+
+If the user did not ask to see raw workbook JSON, prefer returning a short success summary and keep the workbook state internal.
 
 When the import succeeds, keep the explanation short.
 Do not add speculative schedule corrections or WBS advice unless the user asks for review.
@@ -144,9 +162,10 @@ Use this response shape:
 - one short line saying the patch was applied or rejected
 - warnings, if any
 - short change summary
-- the updated `mikuproject_workbook_json`
+- the updated `mikuproject_workbook_json`, only when the user explicitly wants the raw state
 
 If no changes were applied, say so explicitly and still report any warnings.
+If the user did not ask to see raw workbook JSON, prefer returning a short success summary and keep the updated state internal.
 
 ### `workbook`
 
@@ -154,12 +173,18 @@ Return the current `mikuproject_workbook_json` in a form the user can pass to an
 If the current state is still a `ProjectModel`, export it with `workbookJson.exportDocument()`.
 When useful, add one short prompt telling the next AI to respond with `Patch JSON`.
 
+Do not return raw workbook JSON unless one of these is true:
+
+- the user explicitly asks for workbook JSON
+- the host runtime requires handoff-style display
+
 Use this processing order:
 
 1. require the current state
 2. if needed, convert the current state into `mikuproject_workbook_json`
-3. return the workbook JSON
-4. add one short handoff prompt for the next AI turn when the user is asking for iterative editing
+3. keep the workbook JSON in internal state by default
+4. return the workbook JSON only when the user explicitly wants it or fallback display is required
+5. add one short handoff prompt only when visible handoff is actually being used
 
 Use this response shape:
 
@@ -168,6 +193,7 @@ Use this response shape:
 - one short prompt for the next AI turn, when useful
 
 Do not add extra review comments unless the user asks for review.
+Do not call this operation just to move state between internal steps when the host runtime can already keep the workbook state internally.
 
 ### Phase C report exports
 
@@ -224,6 +250,7 @@ Treat these as soft errors:
 - report outputs may simplify information compared with the full interactive UI
 
 On soft errors, continue and report the warnings clearly.
+Keep the warnings concise when the workflow is agent-internal and the user did not ask for raw intermediate detail.
 
 ## Boundaries
 
@@ -234,6 +261,7 @@ Do not overreach beyond the MVP.
 - Do not add MCP-specific behavior unless the user asks for that expansion
 - Do not introduce extra skill splits unless the current single-skill design becomes limiting
 - Do not confuse structural workbook `XLSX` with `WBS XLSX`
+- Do not prefer visible handoff output when hidden internal execution is available
 
 ## References
 

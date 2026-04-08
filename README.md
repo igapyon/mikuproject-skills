@@ -26,14 +26,15 @@ This MVP covers four operations:
 At the conversation boundary, the MVP passes state around as
 `mikuproject_workbook_json`.
 It does not try to replace the `mikuproject` browser UI.
-It also does not yet automate agent-to-agent execution between this skill
-and another model; the current MVP is a handoff-style workflow.
+The preferred mode is agent-internal execution that keeps intermediate artifacts off-screen.
+If the host runtime cannot do that, the workflow may fall back to handoff-style display.
 
 The repository also now documents a Phase B primary file workflow for
 `MS Project XML`, structural workbook `XLSX`, and `mikuproject_workbook_json`.
 
 Developer-oriented documents are available under [`docs/`](./docs/):
 
+- [`docs/quickstart.md`](./docs/quickstart.md)
 - [`docs/agent-skill-design.md`](./docs/agent-skill-design.md)
 - [`docs/upstream-survey.md`](./docs/upstream-survey.md)
 - [`docs/development.md`](./docs/development.md)
@@ -66,13 +67,19 @@ Developer-oriented documents are available under [`docs/`](./docs/):
 
 会話境界では、MVP は state を `mikuproject_workbook_json` として持ち回ります。
 `mikuproject` のブラウザ UI を置き換えることは目指しません。
-また、現時点の MVP は handoff 型であり、この skill と別の生成AIのあいだを
-自動的に agent-to-agent 連携するところまでは扱いません。
+また、望ましい運用は、この skill の中間出力を
+上位エージェント内部で隠しながら処理する agent-internal execution です。
+実行環境がそれに対応できない場合だけ、handoff 型にフォールバックします。
 
 あわせて、このリポジトリでは `MS Project XML`、構造忠実 workbook `XLSX`、
 `mikuproject_workbook_json` を扱う Phase B の primary file workflow も整理しています。
 
 開発者向け文書は [`docs/`](./docs/) にあります。
+
+- [`docs/quickstart.md`](./docs/quickstart.md)
+- [`docs/agent-skill-design.md`](./docs/agent-skill-design.md)
+- [`docs/upstream-survey.md`](./docs/upstream-survey.md)
+- [`docs/development.md`](./docs/development.md)
 
 ## How To Use
 
@@ -90,7 +97,8 @@ Notes:
 
 - This skill does not replace the `mikuproject` browser UI.
 - For the MVP, state is passed around as `mikuproject_workbook_json` at the conversation boundary.
-- The current MVP returns handoff text on screen rather than automatically sending it to another model.
+- The preferred mode is to keep intermediate artifacts in agent-internal state and only fall back to handoff-style display when needed.
+- `report` CLI commands are not implemented yet.
 
 ---
 
@@ -108,4 +116,6 @@ Notes:
 
 - この skill は `mikuproject` のブラウザ UI を置き換えるものではありません。
 - MVP では、会話境界の state は `mikuproject_workbook_json` として扱います。
-- 現在の MVP は handoff 型であり、`spec` や workbook の返却内容が画面に表示されます。
+- 望ましい既定は agent-internal execution であり、`spec` や workbook の中間出力は通常は画面に出さず内部保持します。
+- 実行環境が対応できない場合だけ、handoff 型として中間出力を表示します。
+- `report` 系 CLI はまだ未実装です。

@@ -48,7 +48,8 @@ If `baseModel` is missing, return a hard error.
 4. Apply the patch through the core API with `baseModel`
 5. Confirm the result mode is `patch`
 6. Export the resulting model with `__mikuprojectCoreApi.workbookJson.exportDocument()`
-7. Return the updated workbook JSON
+7. keep the updated workbook JSON in internal state when possible
+8. only return raw workbook JSON when the user explicitly wants the raw state, or when the host runtime requires fallback display
 
 ## Minimum Validation Expectation
 
@@ -68,7 +69,7 @@ Return in this order:
    `Patch JSON を反映しました。`
 2. Warnings if any exist
 3. A short change summary
-4. The updated `mikuproject_workbook_json`
+4. The updated `mikuproject_workbook_json`, only when raw state display is needed
 
 If the patch produces no changes, say that no changes were applied.
 Do not fabricate a changed workbook state when application fails.

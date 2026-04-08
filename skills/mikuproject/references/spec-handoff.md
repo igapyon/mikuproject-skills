@@ -1,6 +1,7 @@
 # Spec Handoff
 
-Use this reference when the user wants the `mikuproject-ai-json-spec` for the next AI turn.
+Use this reference when the user explicitly wants to see the `mikuproject-ai-json-spec`,
+or when the host runtime cannot keep the spec internal.
 
 ## Retrieval Rule
 
@@ -11,7 +12,15 @@ Prefer upstream API retrieval:
 
 Use the markdown file directly only if the stable API is unavailable.
 
-## Default Return Shape
+## Preferred Behavior
+
+The preferred behavior is agent-internal use.
+
+- retrieve the spec
+- keep it in internal state
+- do not show the full text unless the user explicitly asks to see it
+
+## Fallback Return Shape
 
 Return three parts in this order:
 

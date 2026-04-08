@@ -1,6 +1,7 @@
 # Workbook Handoff
 
-Use this reference when the user wants to hand the current WBS state to another AI.
+Use this reference when the user explicitly wants to see the current workbook JSON,
+or when the host runtime cannot keep workbook state internal.
 
 ## Retrieval Rule
 
@@ -10,7 +11,14 @@ If you have current state as `ProjectModel`, export it with:
 
 - `globalThis.__mikuprojectCoreApi.workbookJson.exportDocument(model)`
 
-## Default Return Shape
+## Preferred Behavior
+
+The preferred behavior is agent-internal use.
+
+- keep the current `mikuproject_workbook_json` in internal state
+- do not show raw workbook JSON unless the user explicitly asks for it
+
+## Fallback Return Shape
 
 Return three parts in this order:
 

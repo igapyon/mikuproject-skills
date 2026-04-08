@@ -34,7 +34,8 @@ If the detected kind is:
 3. Confirm the result mode is `replace`
 4. Take the returned `ProjectModel`
 5. Export it with `__mikuprojectCoreApi.workbookJson.exportDocument()`
-6. Return the workbook JSON to the user
+6. keep the workbook JSON in internal state when possible
+7. only return raw workbook JSON when the user explicitly wants the raw state, or when the host runtime requires fallback display
 
 ## Minimum Validation Expectation
 
@@ -52,6 +53,6 @@ Return in this order:
 1. One short line:
    `project_draft_view を取り込みました。`
 2. Warnings if any exist
-3. The resulting `mikuproject_workbook_json`
+3. The resulting `mikuproject_workbook_json`, only when raw state display is needed
 
 If import fails, return a short error explanation and do not fabricate a partial workbook state.

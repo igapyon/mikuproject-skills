@@ -1,29 +1,48 @@
-# CLI Runner Notes
+# Agent-Internal CLI Notes
 
-この文書は、`mikuproject` skill の返り値を別の生成AIへ自動で渡す
-CLI runner に必要な最小要件を整理したものです。
+この文書は、生成AIエージェントが `mikuproject` CLI を
+内部ツールとして使うときの最小要件を整理したものです。
 
 ここでは難しい設計用語は避け、まず何を入れて何を返し、
-途中で何を持てばよいか、どんなコマンドにするかだけを書く。
+途中で何を持てばよいかだけを書く。
 
 ## 採用方針
 
-最初の自動連携は CLI runner として作る。
+最初に目指すのは、外部で別の AI コマンドを呼ぶ runner ではない。
+生成AIエージェントが会話の内部で `mikuproject` CLI を呼ぶ形である。
+しかも、既定は handoff ではなく agent-internal hidden workflow とする。
 
 理由:
 
-- 挙動を固定しやすい
-- どこで失敗したか切り分けやすい
-- テストしやすい
-- 中間出力を画面に出すかどうかを制御しやすい
+- 利用者から見ると自然である
+- `spec` や workbook を画面に見せず内部 state として扱いやすい
+- 生成AI が `project_draft_view` や `Patch JSON` を内部で生成できる
+- `mikuproject` は変換と export の道具として分離しやすい
+
+この方針は、`mikuproject` 側で first cut の CLI が追加された前提で進める。
+
+現時点で使える `mikuproject` CLI は次である。
+
+- `mikuproject ai spec`
+- `mikuproject state from-draft`
+- `mikuproject state apply-patch`
+- `mikuproject export workbook-json`
+- `mikuproject export xml`
+- `mikuproject export xlsx`
+
+補足:
+
+- 主成果物は `stdout`
+- diagnostics は `stderr`
+- `report` 系 CLI は未実装
 
 ## 目的
 
 次をできるようにする。
 
-- `spec` の結果を画面にそのまま表示せず、別の生成AIへ渡す
-- 返ってきた `project_draft_view` を `mikuproject` skill に戻す
-- 返ってきた `Patch JSON` を `mikuproject` skill に戻す
+- `spec` の結果を画面にそのまま表示せず、エージェント内部で使う
+- エージェントが生成した `project_draft_view` を `mikuproject` に渡す
+- エージェントが生成した `Patch JSON` を `mikuproject` に渡す
 - 途中状態を `mikuproject_workbook_json` として持ち回る
 
 ## この仕組みが受け取るもの
@@ -74,118 +93,55 @@ CLI runner に必要な最小要件を整理したものです。
 ## 最小フロー 1: 新規草案
 
 1. 利用者が要件を書く
-2. つなぎ役が `mikuproject` skill に `spec` を要求する
-3. つなぎ役が `spec` 本文を別の生成AIへ渡す
-4. 別の生成AIが `project_draft_view` を返す
-5. つなぎ役がその JSON を `mikuproject` skill の `draft` に渡す
-6. `mikuproject` skill が `mikuproject_workbook_json` を返す
-7. つなぎ役がその workbook を現在状態として保存する
+2. エージェントが `mikuproject ai spec` を呼ぶ
+3. エージェントが `spec` を内部で参照しながら `project_draft_view` を生成する
+4. エージェントがその JSON を `mikuproject state from-draft` に渡す
+5. `mikuproject` CLI が `mikuproject_workbook_json` を返す
+6. エージェントがその workbook を現在状態として保存する
 
 ## 最小フロー 2: 既存 WBS の修正
 
-1. つなぎ役は現在の `mikuproject_workbook_json` を持っている
+1. エージェントは現在の `mikuproject_workbook_json` を持っている
 2. 利用者が変更内容を書く
-3. つなぎ役が workbook と変更内容を別の生成AIへ渡す
-4. 別の生成AIが `Patch JSON` を返す
-5. つなぎ役がその JSON を `mikuproject` skill の `patch` に渡す
-6. `mikuproject` skill が更新後の `mikuproject_workbook_json` を返す
-7. つなぎ役が更新後 workbook を保存する
+3. エージェントが workbook と変更要求をもとに `Patch JSON` を生成する
+4. エージェントがその JSON を `mikuproject state apply-patch` に渡す
+6. `mikuproject` CLI が `mikuproject_workbook_json` を返す
+5. `mikuproject` CLI が更新後の `mikuproject_workbook_json` を返す
+6. エージェントが更新後 workbook を保存する
 
 ## 最小フロー 3: 出力だけ欲しいとき
 
-1. つなぎ役は現在の `mikuproject_workbook_json` を持っている
+1. エージェントは現在の `mikuproject_workbook_json` を持っている
 2. 利用者が出力形式を指定する
-3. つなぎ役が `mikuproject` skill に export 操作を要求する
-4. skill が Mermaid / Markdown / SVG / XLSX を返す
-5. つなぎ役がそれを最終結果として表示する
+3. エージェントが `mikuproject export ...` を呼ぶ
+4. `mikuproject` CLI が workbook JSON / XML / XLSX を返す
+5. エージェントがそれを最終結果として表示する
 
-## 最初の CLI コマンド案
+## エージェントが内部で使う CLI
 
-最初は次の 3 つでよい。
+最初は次の 6 つでよい。
 
-### 1. 草案作成
+- `mikuproject ai spec`
+- `mikuproject state from-draft`
+- `mikuproject state apply-patch`
+- `mikuproject export workbook-json`
+- `mikuproject export xml`
+- `mikuproject export xlsx`
 
-役割:
-
-- 要件文から `project_draft_view` を生成させる
-- それを workbook state に変換して保存する
-
-入れるもの:
-
-- 要件文ファイル、または要件文文字列
-
-返すもの:
-
-- 保存後の `mikuproject_workbook_json`
-- warning の要約
-
-コマンド名候補:
-
-- `npm run runner:draft`
-- `node scripts/mikuproject-runner.mjs draft`
-
-### 2. 変更反映
-
-役割:
-
-- 現在の workbook state と変更要求から `Patch JSON` を生成させる
-- patch を適用して state を更新する
-
-入れるもの:
-
-- 変更要求文
-- 現在の workbook state
-
-返すもの:
-
-- 更新後の `mikuproject_workbook_json`
-- change summary
-- warning の要約
-
-コマンド名候補:
-
-- `npm run runner:patch`
-- `node scripts/mikuproject-runner.mjs patch`
-
-### 3. 出力
-
-役割:
-
-- 現在の workbook state から最終出力を作る
-
-入れるもの:
-
-- 出力種別
-  - `mermaid`
-  - `wbs-markdown`
-  - `daily-svg`
-  - `weekly-svg`
-  - `monthly-calendar-svg`
-  - `wbs-xlsx`
-
-返すもの:
-
-- 指定した形式の出力
-
-コマンド名候補:
-
-- `npm run runner:export`
-- `node scripts/mikuproject-runner.mjs export mermaid`
+`report` 系は `mikuproject` CLI 側で未実装のため、初期スコープの対象外とする。
 
 ## 画面に出さないもの
 
-CLI runner では、次は通常表示しない方がよい。
+生成AIエージェント内部では、次は通常表示しない方がよい。
 
 - `spec` 本文
 - handoff 用補助文
 - 途中の `project_draft_view`
 - 途中の `Patch JSON`
 
-必要なら `--debug` 時だけ表示する。
-
 ## 画面に出すもの
 
-理想形では、次は中間表示しない。
+既定では、次は中間表示しない。
 
 - `spec` 本文
 - handoff 用の補助文
@@ -198,15 +154,18 @@ CLI runner では、次は通常表示しない方がよい。
 - 最終結果
 - 必要なら warning の要約
 
+handoff 型は fallback にとどめる。
+つまり、`spec` や workbook を画面にそのまま出すのは、ユーザーが明示要求したときか、実行環境が内部保持に対応できないときだけにする。
+
 ## 失敗したときの扱い
 
 最低限、次を分けて扱う。
 
-- `project_draft_view` が返らなかった
-- `Patch JSON` が返らなかった
+- `project_draft_view` をエージェントが生成できなかった
+- `Patch JSON` をエージェントが生成できなかった
 - kind 判定に失敗した
 - `patch` に必要な base state が無い
-- `mikuproject` skill 側で warning または error が返った
+- `mikuproject` CLI 側で warning または error が返った
 
 ## 最初の実装を小さく保つための条件
 
@@ -218,37 +177,14 @@ CLI runner では、次は通常表示しない方がよい。
 
 最初から不要なもの:
 
+- 外部 AI コマンド呼び出し
+- API key 管理
 - 複数 AI の比較
 - 自動再試行の複雑な制御
 - UI 上の細かい可視化
-- 高度なローカル編集フロー
-
-## 実装前の確認事項
-
-CLI 採用を前提にすると、実装前に確認したいのは次の 3 点で足りる。
-
-1. 別の生成AIへ渡す呼び出し口を何にするか
-2. `mikuproject_workbook_json` をどの state ファイルに保存するか
-3. 中間出力を完全非表示にするか、デバッグ時だけ見せるか
-
-## 初期実装の形
-
-最初は 1 ファイルの CLI でよい。
-
-候補:
-
-- `scripts/mikuproject-runner.mjs`
-
-役割:
-
-- 引数を読む
-- state ファイルを読む
-- `mikuproject` 側の API を呼ぶ
-- 別の生成AIを呼ぶ
-- 結果を state ファイルへ保存する
-- 最終結果だけ表示する
 
 ## 結論
 
 `mikuproject` skill 自体は、すでに structured I/O の役割をかなり持っている。
-次に必要なのは、その前後をつないで自動で往復させる小さな CLI 実行役である。
+次に必要なのは、生成AIエージェントが `mikuproject` CLI を
+内部で呼びながら state を持ち回る運用である。

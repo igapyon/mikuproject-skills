@@ -1,4 +1,4 @@
 interface:
   display_name: "mikuproject"
   short_description: "AI JSON workflow for mikuproject WBS"
-  default_prompt: "Use $mikuproject to work with mikuproject AI JSON workflows for WBS drafting, workbook exchange, and patch application."
+  default_prompt: "Use $mikuproject to work with mikuproject AI JSON workflows for WBS drafting, workbook exchange, and patch application. Prefer agent-internal execution: keep spec, draft, patch, and workbook artifacts off-screen unless the user explicitly asks to see them."
