@@ -12,6 +12,7 @@ export const CORE_API_MODULE_RELATIVE_PATHS = [
   "src/js/types.js",
   "src/js/ai-json-util.js",
   "src/js/ai-json-spec.js",
+  "src/js/main-util.js",
   "src/js/msproject-xml.js",
   "src/js/markdown-escape.js",
   "src/js/project-workbook-schema.js",
@@ -68,6 +69,7 @@ function installWindowGlobals(window) {
 function clearMikuprojectGlobals() {
   delete globalThis.__mikuprojectAiJsonUtil;
   delete globalThis.__mikuprojectAiJsonSpec;
+  delete globalThis.__mikuprojectMainUtil;
   delete globalThis.__mikuprojectXml;
   delete globalThis.__mikuprojectMarkdownEscape;
   delete globalThis.__mikuprojectProjectWorkbookSchema;

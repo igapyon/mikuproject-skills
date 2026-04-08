@@ -15,8 +15,12 @@ const cliPath = path.resolve(repoRoot, "scripts/mikuproject-cli.mjs");
 const cliBundleBuildPath = path.resolve(repoRoot, "scripts/build-cli-bundle.mjs");
 
 const tempDirs = [];
+const disposers = [];
 
 afterEach(() => {
+  while (disposers.length > 0) {
+    disposers.pop()();
+  }
   while (tempDirs.length > 0) {
     rmSync(tempDirs.pop(), { recursive: true, force: true });
   }
@@ -151,6 +155,26 @@ describe("mikuproject cli", () => {
     expect(result.status).toBe(0);
     expect(Buffer.isBuffer(result.stdout)).toBe(true);
     expect(result.stdout.subarray(0, 2).toString("utf8")).toBe("PK");
+  });
+
+  it("exports report all as a zip bundle from workbook state", () => {
+    const workbookPath = writeTempJson("workbook.json", buildWorkbookState("CLI report all"));
+    const loaded = loadMikuprojectCoreApi({ rootDir: repoRoot });
+    disposers.push(() => loaded.dispose());
+
+    const result = runCli(["report", "all", "--in", workbookPath], { encoding: "buffer" });
+    const entryNames = new globalThis.__mikuprojectExcelIo.XlsxWorkbookCodec().listEntries(result.stdout);
+
+    expect(result.status).toBe(0);
+    expect(Buffer.isBuffer(result.stdout)).toBe(true);
+    expect(result.stdout.subarray(0, 2).toString("utf8")).toBe("PK");
+    expect(entryNames).toContain("wbs.xlsx");
+    expect(entryNames).toContain("wbs.md");
+    expect(entryNames).toContain("mermaid.mmd");
+    expect(entryNames).toContain("daily.svg");
+    expect(entryNames).toContain("weekly.svg");
+    expect(entryNames.some((name) => name.startsWith("monthly-calendar/"))).toBe(true);
+    expect(entryNames).not.toContain("monthly-calendar.zip");
   });
 
   it("exports report wbs-markdown from workbook state", () => {
