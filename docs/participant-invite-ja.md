@@ -7,12 +7,12 @@
 
 ## 配布物
 
-- `skill-bundle.zip`
+- `mikuproject-skills-YYYYMMDD.zip`
 
 ## セットアップ
 
-1. `skill-bundle.zip` を展開してください
-2. 展開してできた `skill-bundle/` の中身を、あなたの skill home 配下へコピーしてください
+1. `mikuproject-skills-YYYYMMDD.zip` を展開してください
+2. 展開してできた `skills/` を、あなたの skill home 配下へコピーしてください
 3. 環境を再起動または再読込してください
 4. 利用可能 skill 一覧に `mikuproject` が出ることを確認してください
 
@@ -23,7 +23,7 @@
   skills/
     mikuproject/
       runtime/
-        mikuproject/
+        mikuproject-cli-bundle/
 ```
 
 ## いま試せること
@@ -45,6 +45,7 @@
 - `mikuproject report daily-svg`
 - `mikuproject report weekly-svg`
 - `mikuproject report monthly-calendar-svg`
+- `mikuproject report all`
 - `mikuproject report wbs-markdown`
 - `mikuproject report mermaid`
 

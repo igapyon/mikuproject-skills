@@ -26,7 +26,7 @@
 最短で試すなら、次の条件を満たします。
 
 1. このリポジトリ全体を workspace に置く
-2. `bundle/skill-bundle` を作って skill home に展開する
+2. `bundle/mikuproject-skills` を作って skill home に展開する
 3. `npm install`
 4. `npm test`
 5. Codex との会話で `mikuproject` skill を使う
@@ -55,11 +55,10 @@ npm run build:bundle
 これで次が作られます。
 
 ```text
-bundle/skill-bundle/
+bundle/mikuproject-skills/
   skills/
     mikuproject/
       runtime/
-        mikuproject/
         mikuproject-cli-bundle/
 ```
 
@@ -74,7 +73,7 @@ npm run build:bundle:zip
 生成先:
 
 ```text
-bundle/skill-bundle.zip
+bundle/mikuproject-skills-YYYYMMDD.zip
 ```
 
 詳しくは [skill-installation.md](./skill-installation.md) を参照してください。
@@ -257,15 +256,14 @@ Excelガントが欲しい
 - `markdown化` は `wbs-markdown-export` として扱われる
 - `Mermaid 化` は `mermaid-export` として扱われる
 - `Excelガント` や `xlsxでガント` は通常 `WBS XLSX` として扱われる
-- `report を全部` / `一式で` / `まとめて` のような依頼では、report 一式をまとめた外側 ZIP を作る
-- この bundle では `monthly-calendar-svg` だけを内側 ZIP のまま残さず、月別 SVG 群を bundle 内へ展開して入れる
+- `report を全部` / `一式で` / `まとめて` のような依頼では、upstream の `report all` を使って report 一式 ZIP を出す
 - この場合は `wbs-xlsx-export` を使い、一般的な表計算ライブラリ探索や ad-hoc な `.xlsx` 生成へ逸れない
 - 通常運用では `tmp/*.mjs` のような補助スクリプトを作らない
 - 依存不足で export できない場合だけ、その不足を短く報告する
 
 ## `mikuproject` CLI でできること
 
-bundle 配布物では `skills/mikuproject/runtime/mikuproject` 側の first cut CLI が使えます。
+bundle 配布物では `skills/mikuproject/runtime/mikuproject-cli-bundle` 側の self-contained CLI bundle が使えます。
 開発元リポジトリでは `vendor/mikuproject` 側にあります。
 
 ```text
@@ -279,13 +277,12 @@ mikuproject report wbs-xlsx
 mikuproject report daily-svg
 mikuproject report weekly-svg
 mikuproject report monthly-calendar-svg
+mikuproject report all
 mikuproject report wbs-markdown
 mikuproject report mermaid
 ```
 
 この CLI は、上位エージェントが内部で使う前提で考えます。
-
-bundle 配布物では、必要なら `skills/mikuproject/runtime/mikuproject-cli-bundle` 側の self-contained CLI bundle も使えます。
 
 ## いまの利用イメージ
 
@@ -305,7 +302,7 @@ bundle 配布物では、必要なら `skills/mikuproject/runtime/mikuproject-cl
 - `skills/` だけをコピーしても動かない
 - `Patch JSON` は base state なしでは適用できない
 - `monthly-calendar-svg` は単一 SVG ではなく ZIP 出力
-- ただし `report 全部` の bundle 化では、外側 ZIP の中にさらに `monthly-calendar.zip` を入れず、月別 SVG 群をそのまま含める
+- `report all` は report 一式 ZIP を返し、`monthly-calendar/YYYY-MM.svg` を含む
 - `spec` が画面に出る場合は fallback 動作の可能性がある
 
 ## 次に見る文書
