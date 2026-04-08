@@ -41,6 +41,12 @@
 - `mikuproject export workbook-json`
 - `mikuproject export xml`
 - `mikuproject export xlsx`
+- `mikuproject report wbs-xlsx`
+- `mikuproject report daily-svg`
+- `mikuproject report weekly-svg`
+- `mikuproject report monthly-calendar-svg`
+- `mikuproject report wbs-markdown`
+- `mikuproject report mermaid`
 
 ## 使い始めの例
 
@@ -59,9 +65,10 @@
 ただし、実行環境によっては fallback として中間出力が画面に表示される場合があります。  
 その場合でも試用自体は可能です。
 
-## 未対応
+## 補足
 
-- `report` 系 CLI は未実装です
+- `report` 系 CLI も利用可能です
+- `monthly-calendar-svg` は月別 SVG 一式をまとめた ZIP を返します
 
 ## 見てほしい点
 

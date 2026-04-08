@@ -29,12 +29,17 @@
 - `mikuproject export workbook-json`
 - `mikuproject export xml`
 - `mikuproject export xlsx`
+- `mikuproject report wbs-xlsx`
+- `mikuproject report daily-svg`
+- `mikuproject report weekly-svg`
+- `mikuproject report monthly-calendar-svg`
+- `mikuproject report wbs-markdown`
+- `mikuproject report mermaid`
 
 補足:
 
 - 主成果物は `stdout`
 - diagnostics は `stderr`
-- `report` 系 CLI は未実装
 
 ## 目的
 
@@ -119,7 +124,7 @@
 
 ## エージェントが内部で使う CLI
 
-最初は次の 6 つでよい。
+最初は次の 12 個でよい。
 
 - `mikuproject ai spec`
 - `mikuproject state from-draft`
@@ -127,8 +132,12 @@
 - `mikuproject export workbook-json`
 - `mikuproject export xml`
 - `mikuproject export xlsx`
-
-`report` 系は `mikuproject` CLI 側で未実装のため、初期スコープの対象外とする。
+- `mikuproject report wbs-xlsx`
+- `mikuproject report daily-svg`
+- `mikuproject report weekly-svg`
+- `mikuproject report monthly-calendar-svg`
+- `mikuproject report wbs-markdown`
+- `mikuproject report mermaid`
 
 ## 画面に出さないもの
 

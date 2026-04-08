@@ -11,6 +11,7 @@
     "build:bundle:zip": "npm run build:bundle && node scripts/build-skill-bundle-zip.mjs",
     "build:full": "npm run build",
     "test": "vitest run",
+    "test:upstream": "vitest run vendor/mikuproject/tests/**/*.test.js",
     "test:watch": "vitest"
   },
   "devDependencies": {

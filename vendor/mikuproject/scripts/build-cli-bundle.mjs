@@ -111,6 +111,7 @@ function writeBundleReadme() {
 }
 
 function copyRuntimeNodeModules() {
+  const sourceNodeModulesDir = path.resolve(ROOT, "node_modules");
   const destinationNodeModulesDir = path.resolve(outDir, "node_modules");
   fs.mkdirSync(destinationNodeModulesDir, { recursive: true });
 
@@ -127,7 +128,6 @@ function copyRuntimeNodeModules() {
 
     const packageJson = readJson(packageJsonPath);
     const packageDir = path.dirname(packageJsonPath);
-    const sourceNodeModulesDir = findOwningNodeModulesDir(packageDir);
     const relativePackageDir = path.relative(sourceNodeModulesDir, packageDir);
     if (relativePackageDir.startsWith("..")) {
       throw new Error(`node_modules 配下でない package を検出しました: ${packageDir}`);
@@ -151,21 +151,6 @@ function copyRuntimeNodeModules() {
       }
       queue.push({ name: dependencyName, requireFn: packageRequire });
     }
-  }
-}
-
-function findOwningNodeModulesDir(packageDir) {
-  let currentDir = packageDir;
-  while (true) {
-    if (path.basename(currentDir) === "node_modules") {
-      return currentDir;
-    }
-
-    const parentDir = path.dirname(currentDir);
-    if (parentDir === currentDir) {
-      throw new Error(`node_modules 配下でない package を検出しました: ${packageDir}`);
-    }
-    currentDir = parentDir;
   }
 }
 

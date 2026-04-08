@@ -179,6 +179,12 @@ Node 側から `core API` を薄く包む最小 CLI first cut として、次の
 - `mikuproject export workbook-json`
 - `mikuproject export xml`
 - `mikuproject export xlsx`
+- `mikuproject report wbs-xlsx`
+- `mikuproject report daily-svg`
+- `mikuproject report weekly-svg`
+- `mikuproject report monthly-calendar-svg`
+- `mikuproject report wbs-markdown`
+- `mikuproject report mermaid`
 
 主成果物は `stdout`、warning / diagnostics は `stderr` を基本とする。
 
@@ -190,9 +196,15 @@ mikuproject state from-draft --in draft.json --out workbook.json
 mikuproject state apply-patch --state workbook.json --in patch.json --out workbook.next.json
 mikuproject export xml --in workbook.json --out project.xml
 mikuproject export xlsx --in workbook.json --out project.xlsx
+mikuproject report wbs-xlsx --in workbook.json --out project-wbs.xlsx
+mikuproject report daily-svg --in workbook.json --out project-daily.svg
+mikuproject report weekly-svg --in workbook.json --out project-weekly.svg
+mikuproject report monthly-calendar-svg --in workbook.json --out project-monthly.zip
+mikuproject report wbs-markdown --in workbook.json --out project-wbs.md
+mikuproject report mermaid --in workbook.json --out project.mmd
 ```
 
-`report` 系の派生出力 CLI は次段候補として分離して扱う。
+`report monthly-calendar-svg` は月別 SVG 一式をまとめた ZIP を出力する。
 
 ## CLI bundle first cut
 
