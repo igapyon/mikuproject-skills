@@ -9,6 +9,15 @@ This repository reuses the full [`mikuproject`](./vendor/mikuproject)
 repository via `git subtree` and builds AI-agent-facing skills on top of
 the vendored upstream implementation.
 
+For an AI agent, `mikuproject` mainly provides three things:
+
+- a structured way to draft a new WBS
+- a structured way to revise an existing WBS
+- a way to keep project state and export it into useful formats
+
+In other words, the agent focuses on planning decisions, while `mikuproject`
+provides the structure, state, and format conversion around that work.
+
 The initial skill scaffold for this repository is available at
 [`skills/mikuproject`](./skills/mikuproject).
 
@@ -49,6 +58,15 @@ Developer-oriented documents are available under [`docs/`](./docs/):
 このリポジトリは [`mikuproject`](./vendor/mikuproject) 全体を `git subtree` で
 取り込み、その vendored upstream 実装の上に AI エージェント向け skill を
 構築します。
+
+生成AIにとって `mikuproject` が与えるものは、主に次の 3 つです。
+
+- 新規 WBS を草案化するための型
+- 既存 WBS を修正するための型
+- project の状態を保持し、各形式へ変換するための仕組み
+
+言い換えると、生成AIは計画そのものを考えることに集中し、
+`mikuproject` はそのまわりの構造、状態保持、形式変換を受け持ちます。
 
 このリポジトリにおける初期 skill 雛形は
 [`skills/mikuproject`](./skills/mikuproject) にあります。

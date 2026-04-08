@@ -10,9 +10,9 @@ const repoRoot = path.resolve(__dirname, "..");
 
 const bundleRoot = path.resolve(repoRoot, "bundle/skill-bundle");
 const bundleSkillsRoot = path.resolve(bundleRoot, "skills");
-const bundledVendorRoot = path.resolve(
+const bundledRuntimeRoot = path.resolve(
   bundleRoot,
-  "skills/mikuproject/_bundled/vendor"
+  "skills/mikuproject/runtime"
 );
 const sourceSkillRoot = path.resolve(repoRoot, "skills/mikuproject");
 const sourceVendorRoot = path.resolve(repoRoot, "vendor/mikuproject");
@@ -25,12 +25,12 @@ function main() {
 
   fs.rmSync(bundleRoot, { recursive: true, force: true });
   fs.mkdirSync(bundleSkillsRoot, { recursive: true });
-  fs.mkdirSync(bundledVendorRoot, { recursive: true });
+  fs.mkdirSync(bundledRuntimeRoot, { recursive: true });
 
   fs.cpSync(sourceSkillRoot, path.resolve(bundleSkillsRoot, "mikuproject"), {
     recursive: true
   });
-  fs.cpSync(sourceVendorRoot, path.resolve(bundledVendorRoot, "mikuproject"), {
+  fs.cpSync(sourceVendorRoot, path.resolve(bundledRuntimeRoot, "mikuproject"), {
     recursive: true
   });
 
@@ -41,7 +41,7 @@ function main() {
     "[build:bundle] copy this directory's contents under your skill home root",
     "[build:bundle] included:",
     "  - skills/mikuproject",
-    "  - skills/mikuproject/_bundled/vendor/mikuproject"
+    "  - skills/mikuproject/runtime/mikuproject"
   ].join("\n"));
   process.stdout.write("\n");
 }
@@ -62,7 +62,7 @@ function writeReadme() {
     "## What This Bundle Contains",
     "",
     "- `skills/mikuproject`",
-    "- `skills/mikuproject/_bundled/vendor/mikuproject`",
+    "- `skills/mikuproject/runtime/mikuproject`",
     "",
     "Copy these contents under your skill home root so that the final layout becomes:",
     "",
@@ -70,9 +70,8 @@ function writeReadme() {
     "<skill-home>/",
     "  skills/",
     "    mikuproject/",
-    "      _bundled/",
-    "        vendor/",
-    "          mikuproject/",
+    "      runtime/",
+    "        mikuproject/",
     "```",
     "",
     "## What You Can Do Now",

@@ -61,9 +61,8 @@ npm run build:bundle
 bundle/skill-bundle/
   skills/
     mikuproject/
-      _bundled/
-        vendor/
-          mikuproject/
+      runtime/
+        mikuproject/
 ```
 
 その中身を skill home にコピーします。
@@ -105,6 +104,24 @@ npm run build
 
 ## まず試す流れ
 
+### 新規草案と既存編集の区別
+
+この skill では、ここを厳密に分けます。
+
+- 新規に WBS を作るとき: `project_draft_view`
+- 既存の WBS を直すとき: `Patch JSON`
+
+新規草案の会話で、次へ寄ってはいけません。
+
+- `task_edit_view`
+- `phase_detail_view`
+- `project_overview_view`
+
+`.editjson` は upstream 側で広い編集用 JSON 群の拡張子として使われることがあります。
+`project_draft_view` は JSON 文書であり、`.editjson` として受け渡してかまいません。
+ただしこの skill の通常会話では document kind を優先します。
+つまり、新規草案では `project_draft_view`、既存編集では `Patch JSON` と呼びます。
+
 ### 1. まずはそのまま WBS 作成を依頼する
 
 会話では、まず通常の依頼文で始めます。
@@ -125,6 +142,7 @@ npm run build
 - `spec` 本文がそのまま画面に出る
 - `project_draft_view` の JSON がそのまま画面に出る
 - `以下を mikuproject に渡せます` のような visible handoff で止まる
+- `task_edit_view` や `.editjson` の説明へ逸れる
 
 このような表示が出る場合は、fallback 動作になっている可能性があります。
 
@@ -189,9 +207,31 @@ spec を出して
 
 - 現在の `mikuproject_workbook_json` が返る
 
+### 6. Markdown や Mermaid に変換する
+
+export を頼むときは、補助スクリプトを作るのではなく、`mikuproject` の正式 export を使うのが期待動作です。
+
+例:
+
+```text
+これを markdown化して
+```
+
+```text
+これを Mermaid 化して
+```
+
+期待すること:
+
+- `markdown化` は `wbs-markdown-export` として扱われる
+- `Mermaid 化` は `mermaid-export` として扱われる
+- 通常運用では `tmp/*.mjs` のような補助スクリプトを作らない
+- 依存不足で export できない場合だけ、その不足を短く報告する
+
 ## `mikuproject` CLI でできること
 
-`vendor/mikuproject` 側の first cut CLI では、次が使えます。
+bundle 配布物では `skills/mikuproject/runtime/mikuproject` 側の first cut CLI が使えます。
+開発元リポジトリでは `vendor/mikuproject` 側にあります。
 
 ```text
 mikuproject ai spec

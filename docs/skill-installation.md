@@ -24,9 +24,8 @@
 skill-bundle/
   skills/
     mikuproject/
-      _bundled/
-        vendor/
-          mikuproject/
+      runtime/
+        mikuproject/
   README.md
 ```
 
@@ -45,9 +44,8 @@ skill-bundle/
 <skill-home>/
   skills/
     mikuproject/
-      _bundled/
-        vendor/
-          mikuproject/
+      runtime/
+        mikuproject/
 ```
 
 ## 手順
@@ -60,12 +58,12 @@ skill-bundle/
 
 ### 2. skill home を確認する
 
-`mikuproject` skill は、bundle 版では `skills/mikuproject` の中に必要な upstream 実装を同梱しています。
+`mikuproject` skill は、bundle 版では `skills/mikuproject` の中に必要な runtime 実装を同梱しています。
 
 必要なのは次です。
 
 - `skills/mikuproject`
-- `skills/mikuproject/_bundled/vendor/mikuproject`
+- `skills/mikuproject/runtime/mikuproject`
 
 最終的な構成は次です。
 
@@ -73,9 +71,8 @@ skill-bundle/
 <skill-home>/
   skills/
     mikuproject/
-      _bundled/
-        vendor/
-          mikuproject/
+      runtime/
+        mikuproject/
 ```
 
 この文書では、この `<skill-home>` をインストール先の配置ルートと呼びます。
@@ -87,7 +84,7 @@ skill-bundle/
 重要なのは次です。
 
 - `skill-bundle/skills/mikuproject` を `<skill-home>/skills/mikuproject` に入れる
-- `skills/mikuproject` 配下の `_bundled/vendor/mikuproject` も一緒に入ることを保つ
+- `skills/mikuproject` 配下の `runtime/mikuproject` も一緒に入ることを保つ
 
 この bundle では、`skill-bundle/` の中身をそのまま `<skill-home>/` へコピーすれば足ります。
 
@@ -107,7 +104,7 @@ skill 一覧は起動時に読まれることがあります。
 ここで `mikuproject` が出ない場合は、まず次を確認します。
 
 - コピー先が skill home 直下になっているか
-- `skills/mikuproject/_bundled/vendor/mikuproject` があるか
+- `skills/mikuproject/runtime/mikuproject` があるか
 - 実行環境を再起動または再読込したか
 
 ## よくある間違い
@@ -119,12 +116,12 @@ skill 一覧は起動時に読まれることがあります。
 `mikuproject` skill は bundled upstream も参照します。
 `skills/mikuproject` の中身を欠いた状態では、`spec` や import/export 系で不足する可能性があります。
 
-### `_bundled/vendor/mikuproject` を落としてしまう
+### `runtime/mikuproject` を落としてしまう
 
 これは不足です。
 
-今回の bundle 配布では、`vendor/mikuproject` は `skills/mikuproject/_bundled/vendor/mikuproject` に同梱されています。
-この bundled 部分を落とすと、実装本体が見つからず fallback に落ちる可能性があります。
+今回の bundle 配布では、`mikuproject` runtime は `skills/mikuproject/runtime/mikuproject` に同梱されています。
+この runtime 部分を落とすと、実装本体が見つからず fallback に落ちる可能性があります。
 
 ### `skill-bundle/` ディレクトリごと入れてしまう
 
@@ -136,9 +133,8 @@ skill 一覧は起動時に読まれることがあります。
 <skill-home>/
   skills/
     mikuproject/
-      _bundled/
-        vendor/
-          mikuproject/
+      runtime/
+        mikuproject/
 ```
 
 避けたい配置:
@@ -165,12 +161,18 @@ skill 一覧は起動時に読まれることがあります。
 - 中間の `spec` や `project_draft_view` をそのまま画面に出さない
 - WBS 要約や結果だけを返す
 
+ここでの `.editjson` は upstream 側で使われる拡張子名です。
+`project_draft_view` は JSON 文書であり、`.editjson` として受け渡してかまいません。
+ただしこの skill の通常会話では document kind を優先し、新規草案は `project_draft_view`、
+既存編集は `Patch JSON` として扱うのが期待動作です。
+
 ただし実行環境によっては fallback があり、次が画面に出ることがあります。
 
 - `spec`
 - `project_draft_view`
 - `Patch JSON`
 - `mikuproject_workbook_json`
+- `.editjson` という広い言い方
 
 その場合でもインストール失敗とは限りません。
 まずは `mikuproject` が認識されているかと、処理自体が進むかを確認してください。
