@@ -139,10 +139,7 @@
 
 設計メモ:
 
-- [x] `docs/phase-b-primary-file-workflow.md` に初期仕様メモを作成する
-- [x] `docs/phase-b-msproject-xml-workflow.md` に `MS Project XML` 詳細仕様を作成する
-- [x] `docs/phase-b-workbook-json-workflow.md` に `mikuproject_workbook_json` 詳細仕様を作成する
-- [x] `docs/phase-b-xlsx-workflow.md` に `XLSX` 詳細仕様を作成する
+- [x] `docs/file-import-export.md` に主要ファイル形式の import / export を統合して整理する
 - [x] `skills/mikuproject/SKILL.md` に Phase B の操作を反映する
 - [x] `skills/mikuproject/references/` に `xml/xlsx/workbook` の短い利用例を追加する
 
@@ -155,12 +152,7 @@
 
 設計メモ:
 
-- [x] `docs/phase-c-wbs-xlsx-workflow.md` に `WBS XLSX` 詳細仕様メモを作成する
-- [x] `docs/upstream-wbs-xlsx-api-proposal.md` に upstream 相談メモを作成する
-- [x] `docs/phase-c-svg-workflow.md` に `SVG` 詳細仕様メモを作成する
-- [x] `docs/upstream-svg-api-proposal.md` に upstream 相談メモを作成する
-- [x] `docs/phase-c-markdown-mermaid-workflow.md` に `Markdown / Mermaid` 詳細仕様メモを作成する
-- [x] `docs/upstream-markdown-mermaid-api-proposal.md` に upstream 相談メモを作成する
+- [x] `docs/report-export.md` に report / presentation 出力を統合して整理する
 
 ### Other Future Candidates
 

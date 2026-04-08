@@ -4,24 +4,12 @@
 
 ## 文書の場所
 
-- 実験参加者案内: [participant-invite-ja.md](./participant-invite-ja.md)
 - 利用開始手順: [quickstart.md](./quickstart.md)
 - 設計メモ: [agent-skill-design.md](./agent-skill-design.md)
 - agent 内部連携メモ: [agent-to-agent-runner.md](./agent-to-agent-runner.md)
 - skill 配置手順: [skill-installation.md](./skill-installation.md)
-- upstream 調査: [upstream-survey.md](./upstream-survey.md)
-- 次フェーズ案: [phase-b-primary-file-workflow.md](./phase-b-primary-file-workflow.md)
-- Phase B 詳細: [phase-b-msproject-xml-workflow.md](./phase-b-msproject-xml-workflow.md)
-- Phase B 詳細: [phase-b-workbook-json-workflow.md](./phase-b-workbook-json-workflow.md)
-- Phase B 詳細: [phase-b-xlsx-workflow.md](./phase-b-xlsx-workflow.md)
-- Phase C 詳細: [phase-c-wbs-xlsx-workflow.md](./phase-c-wbs-xlsx-workflow.md)
-- Phase C 詳細: [phase-c-svg-workflow.md](./phase-c-svg-workflow.md)
-- Phase C 詳細: [phase-c-markdown-mermaid-workflow.md](./phase-c-markdown-mermaid-workflow.md)
-- upstream 総論メモ: [upstream-phase-c-report-api-proposal.md](./upstream-phase-c-report-api-proposal.md)
-- upstream 相談メモ: [upstream-xlsx-api-proposal.md](./upstream-xlsx-api-proposal.md)
-- upstream 相談メモ: [upstream-wbs-xlsx-api-proposal.md](./upstream-wbs-xlsx-api-proposal.md)
-- upstream 相談メモ: [upstream-svg-api-proposal.md](./upstream-svg-api-proposal.md)
-- upstream 相談メモ: [upstream-markdown-mermaid-api-proposal.md](./upstream-markdown-mermaid-api-proposal.md)
+- ファイル入出力: [file-import-export.md](./file-import-export.md)
+- レポート出力: [report-export.md](./report-export.md)
 - 実装 TODO: [../TODO.md](../TODO.md)
 
 ## subtree 運用
