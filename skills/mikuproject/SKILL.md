@@ -23,6 +23,34 @@ That fallback is allowed, but it is not the preferred user experience.
 
 Visible handoff text is therefore a compatibility path, not the main path.
 
+## Response Discipline
+
+When the user asks for a WBS, schedule draft, or plan revision, do the internal `mikuproject` steps yourself when possible.
+Do not stop at "here is something you can hand to mikuproject" if this skill is already active.
+
+Prefer this sequence:
+
+1. understand the user intent
+2. retrieve the spec internally when needed
+3. produce `project_draft_view` or `Patch JSON` internally
+4. import or apply it through `mikuproject`
+5. keep the resulting workbook state internal
+6. show the user only a short summary, or a final export they explicitly asked for
+
+Do not default to any of these behaviors:
+
+- showing `project_draft_view` just because you created it
+- showing `Patch JSON` just because you created it
+- saying "Below is ..." or "以下を mikuproject に渡せます" unless visible handoff is truly required
+- asking the user to manually pass generated JSON back into the same active skill flow
+
+If the skill is active and the host runtime can continue internally, complete the import/apply step before responding.
+Only expose intermediate JSON when one of these is true:
+
+- the user explicitly asks to inspect the raw JSON
+- the host runtime cannot continue without visible handoff
+- debugging the intermediate artifact is necessary to explain a failure
+
 ## Core Workflow
 
 Treat the skill as one workflow with three layers of operations.
@@ -102,6 +130,7 @@ If you need the exact upstream file map or supporting design notes, read [refere
 Get the spec from `getAiJsonSpecText()` or `getAiJsonSpec()` first.
 When the user explicitly asks to see the spec, return the full `mikuproject-ai-json-spec` text and, when useful, its version.
 Otherwise, prefer using it internally and continue the workflow without showing the full spec text.
+Do not answer a normal planning request by first printing the spec.
 
 When the user explicitly asks to see the spec, use this response shape:
 
@@ -136,6 +165,8 @@ Use this response shape:
 - the resulting `mikuproject_workbook_json`, only when the user explicitly wants the raw state
 
 If the user did not ask to see raw workbook JSON, prefer returning a short success summary and keep the workbook state internal.
+When the user asked for a WBS, do not stop after creating `project_draft_view`.
+Import it and continue to workbook state internally before responding.
 
 When the import succeeds, keep the explanation short.
 Do not add speculative schedule corrections or WBS advice unless the user asks for review.
@@ -166,6 +197,8 @@ Use this response shape:
 
 If no changes were applied, say so explicitly and still report any warnings.
 If the user did not ask to see raw workbook JSON, prefer returning a short success summary and keep the updated state internal.
+When the user asked to revise the existing plan, do not stop after generating `Patch JSON`.
+Apply it internally before responding.
 
 ### `workbook`
 
@@ -194,6 +227,8 @@ Use this response shape:
 
 Do not add extra review comments unless the user asks for review.
 Do not call this operation just to move state between internal steps when the host runtime can already keep the workbook state internally.
+Do not use this operation as a default response to normal planning requests.
+Use it only for explicit workbook inspection or real fallback handoff.
 
 ### Phase C report exports
 

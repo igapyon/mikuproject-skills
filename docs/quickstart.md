@@ -61,8 +61,9 @@ npm run build:bundle
 bundle/skill-bundle/
   skills/
     mikuproject/
-  vendor/
-    mikuproject/
+      _bundled/
+        vendor/
+          mikuproject/
 ```
 
 その中身を skill home にコピーします。
@@ -104,7 +105,30 @@ npm run build
 
 ## まず試す流れ
 
-### 1. spec を出す
+### 1. まずはそのまま WBS 作成を依頼する
+
+会話では、まず通常の依頼文で始めます。
+
+```text
+れでえいやあでWBSつくって
+```
+
+期待すること:
+
+- エージェントが内部で `spec` を参照する
+- エージェントが内部で `project_draft_view` を作る
+- それを `mikuproject` に内部で取り込み、workbook state まで進める
+- ユーザーには WBS 要約や完成結果だけが返る
+
+避けたい挙動:
+
+- `spec` 本文がそのまま画面に出る
+- `project_draft_view` の JSON がそのまま画面に出る
+- `以下を mikuproject に渡せます` のような visible handoff で止まる
+
+このような表示が出る場合は、fallback 動作になっている可能性があります。
+
+### 2. 明示的に spec を見たい場合だけ出す
 
 会話で次のように依頼します。
 
@@ -115,18 +139,11 @@ spec を出して
 期待すること:
 
 - `mikuproject-ai-json-spec` が返る
-- 実行環境が agent-internal execution に対応していれば、これは内部保持される
-- 対応していない場合だけ fallback として画面に表示される
+- これは通常運用ではなく、raw spec を確認したいときの操作
 
-### 2. draft を作る
+### 3. すでにある `project_draft_view` を取り込む
 
-要件を与えて、`project_draft_view` を作らせます。
-
-```text
-次の要件で project_draft_view を作って
-```
-
-返ってきた `project_draft_view` を使って、次のように依頼します。
+外部で作った `project_draft_view` を取り込むときは、次のように依頼します。
 
 ```text
 この project_draft_view を取り込んで
@@ -136,15 +153,21 @@ spec を出して
 
 - `mikuproject_workbook_json` が返る
 
-### 3. patch を当てる
+### 4. patch を当てる
 
-現在の workbook state をもとに変更したいときは、変更要求を与えて `Patch JSON` を作らせます。
+現在の workbook state をもとに変更したいときは、通常は変更要求をそのまま伝えます。
 
 ```text
-この workbook をもとに Patch JSON を作って
+このWBSを1週間短くして
 ```
 
-返ってきた `Patch JSON` を使って、次のように依頼します。
+期待すること:
+
+- エージェントが内部で `Patch JSON` を作る
+- それを `mikuproject` に内部で適用する
+- ユーザーには更新後の内容だけを返す
+
+外部で作った `Patch JSON` を適用するときは、次のように依頼します。
 
 ```text
 この Patch JSON を反映して
@@ -154,7 +177,7 @@ spec を出して
 
 - 更新後の `mikuproject_workbook_json` が返る
 
-### 4. workbook を引き渡す
+### 5. workbook を引き渡す
 
 現在の state をもう一度 AI に渡したいときは、次のように依頼します。
 

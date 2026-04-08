@@ -31,13 +31,13 @@
 取得:
 
 ```bash
-git fetch https://github.com/igapyon/mikuproject.git main
+git fetch https://github.com/igapyon/mikuproject.git devel
 ```
 
 同期:
 
 ```bash
-git subtree pull --prefix=vendor/mikuproject https://github.com/igapyon/mikuproject.git main
+git subtree pull --prefix=vendor/mikuproject https://github.com/igapyon/mikuproject.git devel
 ```
 
 ## テスト
