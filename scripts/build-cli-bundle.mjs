@@ -16,6 +16,9 @@ const bundleName = path.basename(outDir);
 const rootPackageJson = readJson(path.resolve(ROOT, "package.json"));
 const jsdomPackageJsonPath = resolveInstalledPackageJson("jsdom", requireFromRoot);
 const jsdomPackageJson = readJson(jsdomPackageJsonPath);
+const xmldomPackageJsonPath = resolveInstalledPackageJson("@xmldom/xmldom", requireFromRoot);
+const xmldomPackageJson = readJson(xmldomPackageJsonPath);
+const CLI_RUNTIME_DEPENDENCIES = ["jsdom", "@xmldom/xmldom"];
 
 buildCliBundle();
 
@@ -84,7 +87,8 @@ function writeBundlePackageJson() {
       node: ">=18"
     },
     dependencies: {
-      jsdom: jsdomPackageJson.version
+      jsdom: jsdomPackageJson.version,
+      "@xmldom/xmldom": xmldomPackageJson.version
     }
   };
 
@@ -116,7 +120,7 @@ function copyRuntimeNodeModules() {
   fs.mkdirSync(destinationNodeModulesDir, { recursive: true });
 
   const visitedPackageJsonPaths = new Set();
-  const queue = [{ name: "jsdom", requireFn: requireFromRoot }];
+  const queue = CLI_RUNTIME_DEPENDENCIES.map((name) => ({ name, requireFn: requireFromRoot }));
 
   while (queue.length > 0) {
     const current = queue.shift();
