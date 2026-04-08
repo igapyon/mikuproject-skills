@@ -36,6 +36,36 @@
 - `subtree pull` で競合した場合は、原則として upstream 側を優先して解消する
 - `vendor/mikuproject/` に local 修正を入れる場合は、次回同期で競合しやすくなることを理解したうえで、例外として扱う
 
+## 生成物の配置方針
+
+WBS 関連の生成物は、workspace ルートへ散らさず、`mikuproject/` 配下へ寄せる方針を推奨します。
+
+推奨構成:
+
+```text
+mikuproject/
+  state/
+  report/
+  tmp/
+```
+
+使い分け:
+
+- `mikuproject/state/`: `mikuproject_workbook_json`、`project_draft_view`、`Patch JSON` などの状態ファイル
+- `mikuproject/report/`: `WBS XLSX`、`daily/weekly/monthly SVG`、`WBS Markdown`、Mermaid などの成果物
+- `mikuproject/tmp/`: 一時ファイル
+
+ファイル名は `YYYYMMDDHHmm-` の時系列 prefix を推奨します。
+同じ実行で出た複数成果物には、同一 prefix を使う前提で運用します。
+
+例:
+
+- `202604082215-workbook.json`
+- `202604082215-wbs.xlsx`
+- `202604082215-daily.svg`
+- `202604082215-weekly.svg`
+- `202604082215-patch.json`
+
 取得:
 
 ```bash
@@ -57,10 +87,15 @@ npm install
 npm test
 ```
 
-現状の test 対象:
+現状の既定 test 対象:
 
 - `tests/**/*.test.js`
-- `vendor/mikuproject/tests/**/*.test.js`
+
+upstream 側 test は必要時だけ明示的に実行します。
+
+```bash
+npm run test:upstream
+```
 
 ただし運用上は、`vendor/mikuproject/` 全体をこのリポジトリ側で常に検証対象にすることを主目的とはしません。
 

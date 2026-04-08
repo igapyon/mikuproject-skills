@@ -26,6 +26,7 @@ skill-bundle/
     mikuproject/
       runtime/
         mikuproject/
+        mikuproject-cli-bundle/
   README.md
 ```
 
@@ -46,6 +47,7 @@ skill-bundle/
     mikuproject/
       runtime/
         mikuproject/
+        mikuproject-cli-bundle/
 ```
 
 ## 手順
@@ -64,6 +66,7 @@ skill-bundle/
 
 - `skills/mikuproject`
 - `skills/mikuproject/runtime/mikuproject`
+- `skills/mikuproject/runtime/mikuproject-cli-bundle`
 
 最終的な構成は次です。
 
@@ -73,6 +76,7 @@ skill-bundle/
     mikuproject/
       runtime/
         mikuproject/
+        mikuproject-cli-bundle/
 ```
 
 この文書では、この `<skill-home>` をインストール先の配置ルートと呼びます。
@@ -85,6 +89,7 @@ skill-bundle/
 
 - `skill-bundle/skills/mikuproject` を `<skill-home>/skills/mikuproject` に入れる
 - `skills/mikuproject` 配下の `runtime/mikuproject` も一緒に入ることを保つ
+- `skills/mikuproject` 配下の `runtime/mikuproject-cli-bundle` も一緒に入ることを保つ
 
 この bundle では、`skill-bundle/` の中身をそのまま `<skill-home>/` へコピーすれば足ります。
 
@@ -105,6 +110,7 @@ skill 一覧は起動時に読まれることがあります。
 
 - コピー先が skill home 直下になっているか
 - `skills/mikuproject/runtime/mikuproject` があるか
+- `skills/mikuproject/runtime/mikuproject-cli-bundle` があるか
 - 実行環境を再起動または再読込したか
 
 ## よくある間違い
@@ -116,12 +122,13 @@ skill 一覧は起動時に読まれることがあります。
 `mikuproject` skill は bundled upstream も参照します。
 `skills/mikuproject` の中身を欠いた状態では、`spec` や import/export 系で不足する可能性があります。
 
-### `runtime/mikuproject` を落としてしまう
+### `runtime/mikuproject` や `runtime/mikuproject-cli-bundle` を落としてしまう
 
 これは不足です。
 
-今回の bundle 配布では、`mikuproject` runtime は `skills/mikuproject/runtime/mikuproject` に同梱されています。
-この runtime 部分を落とすと、実装本体が見つからず fallback に落ちる可能性があります。
+今回の bundle 配布では、`mikuproject` runtime は `skills/mikuproject/runtime/mikuproject` に、
+CLI 実行資産は `skills/mikuproject/runtime/mikuproject-cli-bundle` に同梱されています。
+この runtime 部分を落とすと、実装本体や CLI 実行資産が見つからず fallback に落ちる可能性があります。
 
 ### `skill-bundle/` ディレクトリごと入れてしまう
 
@@ -135,6 +142,7 @@ skill 一覧は起動時に読まれることがあります。
     mikuproject/
       runtime/
         mikuproject/
+        mikuproject-cli-bundle/
 ```
 
 避けたい配置:

@@ -14,6 +14,9 @@ description: Use mikuproject as a WBS planning tool for AI. It gives the agent a
 Use this skill when the agent should think about planning, while `mikuproject` handles state, import/apply, and export.
 Keep the focus on WBS planning workflows and state conversion, not on replacing the browser UI.
 
+For this skill, WBS-related work should default to `mikuproject` workflows first.
+Do not treat a normal WBS request as a request for an ad-hoc Markdown table, free-form checklist, or hand-written gantt unless the user explicitly asks for that fallback representation.
+
 ## Default Mode
 
 The default mode should be agent-internal.
@@ -49,6 +52,7 @@ Do not default to any of these behaviors:
 - showing `Patch JSON` just because you created it
 - saying "Below is ..." or "以下を mikuproject に渡せます" unless visible handoff is truly required
 - asking the user to manually pass generated JSON back into the same active skill flow
+- answering a WBS request with only a plain Markdown table when `mikuproject` drafting or export should be used first
 
 If the skill is active and the host runtime can continue internally, complete the import/apply step before responding.
 Only expose intermediate JSON when one of these is true:
@@ -83,20 +87,27 @@ Do not describe a new-draft response as "editjson" unless the user explicitly as
 ## Export Discipline
 
 When the user asks to convert the current draft or state into a deliverable format, use the matching `mikuproject` export operation directly.
+When the user asks for a WBS, roadmap, gantt, schedule table, or planning output and does not name a different tool, prefer `mikuproject` as the first implementation path.
 
 Map normal user requests like this:
 
 - "markdown化して" -> `wbs-markdown-export`
 - "Mermaid 化して" -> `mermaid-export`
 - "xlsx にして" -> `wbs-xlsx-export` or `xlsx-export`, depending on whether the user wants a report workbook or a structural workbook
+- "Excel ガントが欲しい" -> prefer `wbs-xlsx-export`
+- "xlsx でガントが欲しい" -> prefer `wbs-xlsx-export`
 - "xml にして" -> `xml-export`
+
+When the user asks for an Excel gantt, Excel schedule, or xlsx gantt in normal conversation, treat that as a request for `mikuproject` `WBS XLSX` unless the user explicitly asks for the structural workbook.
 
 Do not default to ad-hoc helper code for these requests.
 In normal skill operation, do not:
 
 - create `tmp/*.mjs` helper scripts
 - create one-off local converters just to bridge into the runtime
+- probe unrelated spreadsheet libraries such as `openpyxl` before using the built-in `mikuproject` export path
 - switch from skill flow to manual file transformation when the matching export operation already exists
+- replace a normal WBS flow with a generic Markdown table just because it is faster to print
 
 If the matching runtime export cannot run because a required dependency is missing, report that dependency problem briefly.
 Do not replace the failed export path with a hand-written conversion script unless the user explicitly asks for that fallback.
