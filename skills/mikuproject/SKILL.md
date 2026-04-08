@@ -1,6 +1,6 @@
 ---
 name: mikuproject
-description: Use mikuproject as a WBS planning tool for AI. It gives the agent a structured way to draft plans, revise existing plans, keep project state, and export results as workbook JSON, XML, XLSX, WBS Markdown, or Mermaid.
+description: Use only when the user explicitly says `mikuproject`, `miku project`, or `mikuku project` for mikuproject-specific WBS workflows. This skill handles mikuproject draft, patch, workbook, and export operations; do not auto-activate it for generic planning or project discussion.
 ---
 
 # Mikuproject
@@ -21,6 +21,7 @@ Start `mikuproject` mode when at least one of these explicit triggers is present
 
 - the user names `mikuproject`
 - the user writes `miku project`
+- the user writes `mikuku project`
 - the recent conversation is already in an active `mikuproject` workflow from an earlier explicit trigger
 
 Without one of these triggers, do not force `mikuproject` just because the request mentions `WBS`, `スケジュール`, `工程`, `計画`, `Excel`, `xlsx`, `画像`, `SVG`, `Mermaid`, `ガント`, or similar words.
