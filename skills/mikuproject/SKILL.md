@@ -1,12 +1,18 @@
 ---
 name: mikuproject
-description: Work with mikuproject AI JSON workflows, primary file import/export workflows, and Phase C report outputs. Use when Codex needs to provide the mikuproject AI JSON spec, accept `project_draft_view`, apply `Patch JSON`, hand off `mikuproject_workbook_json`, move between the current state and `MS Project XML` or structural workbook `XLSX`, or export `WBS XLSX` / `SVG` / `WBS Markdown` / `Mermaid`.
+description: Use mikuproject as a WBS planning tool for AI. It gives the agent a structured way to draft plans, revise existing plans, keep project state, and export results as workbook JSON, XML, XLSX, WBS Markdown, or Mermaid.
 ---
 
 # Mikuproject
 
-Use this skill to drive the current workflow for `mikuproject` Agent Skills.
-Keep the focus on structured exchange and primary file workflows, not on replacing the browser UI.
+`mikuproject` is a project-planning tool that gives an AI agent three things:
+
+- a structured way to draft a new WBS
+- a structured way to revise an existing WBS
+- a way to keep project state and convert it into useful output formats
+
+Use this skill when the agent should think about planning, while `mikuproject` handles state, import/apply, and export.
+Keep the focus on WBS planning workflows and state conversion, not on replacing the browser UI.
 
 ## Default Mode
 
@@ -51,6 +57,50 @@ Only expose intermediate JSON when one of these is true:
 - the host runtime cannot continue without visible handoff
 - debugging the intermediate artifact is necessary to explain a failure
 
+## New Draft vs Existing Edit
+
+Use these modes strictly:
+
+- new WBS drafting: produce `project_draft_view`
+- existing plan revision: produce `Patch JSON`
+
+When the user is starting a new WBS from rough requirements, do not switch to existing-project editing flows.
+In particular, do not default to:
+
+- `task_edit_view`
+- `phase_detail_view`
+- `project_overview_view`
+- generic `.editjson` handoff wording
+
+For this skill, `.editjson` is not the primary conversation concept.
+If a raw file extension must be mentioned, be explicit about the document kind:
+
+- new draft import: `project_draft_view`
+- existing revision: `Patch JSON`
+
+Do not describe a new-draft response as "editjson" unless the user explicitly asks about file naming or upstream UI file handling.
+
+## Export Discipline
+
+When the user asks to convert the current draft or state into a deliverable format, use the matching `mikuproject` export operation directly.
+
+Map normal user requests like this:
+
+- "markdown化して" -> `wbs-markdown-export`
+- "Mermaid 化して" -> `mermaid-export`
+- "xlsx にして" -> `wbs-xlsx-export` or `xlsx-export`, depending on whether the user wants a report workbook or a structural workbook
+- "xml にして" -> `xml-export`
+
+Do not default to ad-hoc helper code for these requests.
+In normal skill operation, do not:
+
+- create `tmp/*.mjs` helper scripts
+- create one-off local converters just to bridge into the runtime
+- switch from skill flow to manual file transformation when the matching export operation already exists
+
+If the matching runtime export cannot run because a required dependency is missing, report that dependency problem briefly.
+Do not replace the failed export path with a hand-written conversion script unless the user explicitly asks for that fallback.
+
 ## Core Workflow
 
 Treat the skill as one workflow with three layers of operations.
@@ -90,6 +140,17 @@ This means the MVP passes state around as `mikuproject_workbook_json`, rather th
 
 Prefer the reusable upstream APIs exposed by the vendored `mikuproject`.
 Use these before falling back to direct file reads or UI-oriented flows.
+
+When this skill is installed from `skill-bundle`, prefer the bundled runtime first:
+
+- `skills/mikuproject/runtime/mikuproject`
+
+When working in the development repository, the source location is:
+
+- `vendor/mikuproject`
+
+Do not search broadly for alternate copies before checking these expected locations.
+In distributed environments, treat `skills/mikuproject/runtime/mikuproject` as the primary runtime location.
 
 - `globalThis.__mikuprojectAiJsonSpec`
 - `globalThis.__mikuprojectCoreApi`

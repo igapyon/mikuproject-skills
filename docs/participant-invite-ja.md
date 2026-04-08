@@ -22,9 +22,8 @@
 <skill-home>/
   skills/
     mikuproject/
-      _bundled/
-        vendor/
-          mikuproject/
+      runtime/
+        mikuproject/
 ```
 
 ## いま試せること
