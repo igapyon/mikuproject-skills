@@ -1,0 +1,21 @@
+{
+  "name": "mikuproject-skills",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent Skills for mikuproject",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "npm test && npm run build:bundle:zip",
+    "build:bundle": "node scripts/build-skill-bundle.mjs",
+    "build:bundle:zip": "npm run build:bundle && node scripts/build-skill-bundle-zip.mjs",
+    "build:full": "npm run build",
+    "test": "vitest run",
+    "test:upstream": "vitest run vendor/mikuproject/tests/**/*.test.js",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
+  }
+}

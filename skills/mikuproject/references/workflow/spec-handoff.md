@@ -1,0 +1,53 @@
+# Spec Handoff
+
+Use this reference when the user explicitly wants to see the `mikuproject-ai-json-spec`,
+or when the host runtime cannot keep the spec internal.
+
+## Retrieval Rule
+
+Prefer upstream API retrieval:
+
+- `globalThis.__mikuprojectAiJsonSpec.getAiJsonSpecText()`
+- `globalThis.__mikuprojectAiJsonSpec.getAiJsonSpec()`
+
+Use the markdown file directly only if the stable API is unavailable.
+
+## Preferred Behavior
+
+The preferred behavior is agent-internal use.
+
+- retrieve the spec
+- keep it in internal state
+- do not show the full text unless the user explicitly asks to see it
+
+## Fallback Return Shape
+
+Return three parts in this order:
+
+1. One short line:
+   `Below is the current mikuproject-ai-json-spec.`
+2. The full spec text
+3. One short handoff line for the next AI turn
+
+Keep the handoff line short.
+Do not add extra interpretation unless the user asks for it.
+
+## Minimal Prompt Examples
+
+### For new WBS drafting
+
+Use this after the spec text:
+
+`次に与える要件をもとに、project_draft_view 形式で具体的なWBSを出力してください。`
+
+### For workbook-based iterative editing
+
+Use this after handing off `mikuproject_workbook_json`:
+
+`次に与える mikuproject_workbook_json を受け取り、変更提案を Patch JSON 形式で返してください。`
+
+### For patch-only correction
+
+Use this after the user explains the desired change:
+
+`変更提案は Patch JSON 形式で示してください。`
