@@ -37,6 +37,21 @@ If the detected kind is:
 6. keep the workbook JSON in internal state when possible
 7. only return raw workbook JSON when the user explicitly wants the raw state, or when the host runtime requires fallback display
 
+## Dependency Encoding
+
+For a new `project_draft_view`, encode dependencies on each target task.
+Use either:
+
+- `predecessor_uids`: an array of predecessor task UIDs
+- `predecessors`: an array of objects with `task_uid`
+
+Do not rely on a top-level `dependencies` field.
+Upstream `project_draft_view` import does not import top-level `dependencies`.
+If a draft already contains only top-level dependencies, convert them into the target tasks' `predecessor_uids` before import, or add them after import with `Patch JSON` `link_tasks`.
+
+Draft import captures task-to-task predecessor links only.
+If a dependency needs `type`, `lag`, or `lag_hours`, use a later `Patch JSON` `link_tasks` operation.
+
 ## Minimum Validation Expectation
 
 Rely on upstream validation for structural checks.

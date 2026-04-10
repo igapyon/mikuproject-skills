@@ -18,13 +18,15 @@ Use this reference when the user asks for export, report, gantt, Markdown, SVG, 
 - `markdown化して` -> `wbs-markdown-export`
 - `Mermaid 化して` -> `mermaid-export`
 - `svg にして` -> choose `daily-svg-export`, `weekly-svg-export`, or `monthly-calendar-svg-export`
-- `xlsx にして` -> `wbs-xlsx-export` or `xlsx-export`
+- `xlsx にして` -> usually `wbs-xlsx-export`; use `xlsx-export` only for structural workbook requests
 - `Excel ガントが欲しい` -> prefer `wbs-xlsx-export`
 - `xlsx でガントが欲しい` -> prefer `wbs-xlsx-export`
 - `xml にして` -> `xml-export`
 
 When the user asks for an Excel gantt, Excel schedule, or xlsx gantt in normal conversation, treat that as a request for `WBS XLSX` unless the user explicitly asks for the structural workbook.
-Inside an active `mikuproject` workflow, short format requests like `markdown`, `xlsx`, `svg`, and `mermaid` should usually map to the corresponding `mikuproject` exports.
+Inside an active `mikuproject` workflow, short format requests like `markdown`, `xlsx`, `svg`, and `mermaid` should usually map to the corresponding `mikuproject` report exports.
+For bare `xlsx`, prefer `WBS XLSX` when the request is about a visible deliverable, gantt, schedule, report, or "current result".
+Use structural workbook `XLSX` only when the user says `workbook`, `structural`, editable/importable workbook, state handoff, or asks for the file workflow export.
 
 ## Gantt Resolution
 
@@ -49,5 +51,6 @@ If the user asks for `SVG` without a clear time scale, ask briefly or make the s
 - rebuild `ProjectModel` from `mikuproject_workbook_json` when needed
 - prefer `__mikuprojectCoreApi.report.*`
 - `WBS XLSX` is a report export and is not the same as structural workbook `XLSX`
+- name `WBS XLSX` artifacts with `wbs` in the filename; name structural workbook `XLSX` artifacts with `workbook`
 - `Mermaid` should be returned as gantt text unless the user asks for fenced Markdown
 - monthly calendar `SVG` may return multiple entries rather than a single file

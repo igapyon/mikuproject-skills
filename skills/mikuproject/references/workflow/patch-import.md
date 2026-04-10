@@ -51,6 +51,19 @@ If `baseModel` is missing, return a hard error.
 7. keep the updated workbook JSON in internal state when possible
 8. only return raw workbook JSON when the user explicitly wants the raw state, or when the host runtime requires fallback display
 
+## Dependency Operations
+
+Use `link_tasks` and `unlink_tasks` for dependency changes.
+Do not put `predecessors` in `update_task.fields`.
+
+For `link_tasks` / `unlink_tasks` lag, emit only one of:
+
+- `lag`
+- `lag_hours`
+
+Prefer `lag` when generating new Patch JSON to match upstream examples and avoid conversion ambiguity.
+If both `lag` and `lag_hours` are present, upstream applies `lag` and returns a warning that `lag_hours` was ignored.
+
 ## Minimum Validation Expectation
 
 Rely on upstream validation for structural checks and operation handling.
