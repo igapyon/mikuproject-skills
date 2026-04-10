@@ -2,7 +2,7 @@
 
 この文書は、`mikuproject AI JSON Prompt / Spec` の定義である。
 
-- Version: `v20260403`
+- Version: `v20260410`
 
 私たちは、これから取り組むプロジェクトの内容を理解し、WBS の観点から必要なマイルストーン / フェーズ / タスクを整理し、`mikuproject` に設定するための入力へ落とし込んでいきます。
 
@@ -335,6 +335,10 @@
   - `SF`
 - `predecessors` だけでなく `successors` も見てください
 - `lag` は負値を取りうることがあります
+- 新規 project 草案の `project_draft_view` では、依存関係は各 task の `predecessor_uids` または `predecessors[].task_uid` に書いてください
+- `project_draft_view` のトップレベル `dependencies` は import 対象ではありません
+- Patch JSON の `link_tasks` / `unlink_tasks` では、`lag` と `lag_hours` を併記しないでください
+- Patch JSON で `lag` と `lag_hours` が併記された場合、`lag` を優先し、`lag_hours` は warning 付きで無視されます
 
 ### rules
 
@@ -501,12 +505,12 @@
 - MVP では、未指定 field は変更なしとして扱います
 - MVP では、`predecessors` の更新は `update_task.fields` では受けず、将来の `link_tasks` / `unlink_tasks` に分離する方針とします
 - `link_tasks` の first draft は、少なくとも `from_uid` / `to_uid` を必須とし、`type` は省略時に `FS` を既定としてよいです
-- `link_tasks` の `lag` は first draft では任意とし、指定する場合は `lag` または `lag_hours` のどちらか、または両方を返してよいです
+- `link_tasks` の `lag` は first draft では任意とし、指定する場合は `lag` または `lag_hours` のどちらか一方だけを返してください。両方を返した場合は `lag` を優先し、`lag_hours` は warning 付きで無視されます
 - `move_task` の first draft は、少なくとも `uid` / `new_parent_uid` / `new_index` を必須とし、`new_index` は `0-based` とします
 - `move_task` の root への移動では `new_parent_uid = null` を許容します
 - `move_task.new_parent_uid` が non-null の場合は summary task を指す前提で返してください
 - `move_task` で結果が変わらない no-op 移動は warning として無視されます
-- `unlink_tasks` の first draft は、少なくとも `from_uid` / `to_uid` を必須とし、必要なら `type` や `lag` / `lag_hours` まで含めて解除対象を特定できる形を許容します
+- `unlink_tasks` の first draft は、少なくとも `from_uid` / `to_uid` を必須とし、必要なら `type` や `lag` または `lag_hours` まで含めて解除対象を特定できる形を許容します
 - `unlink_tasks` で同じ条件に複数の依存関係が一致した場合は、その条件に一致した link をすべて解除する前提で扱います
 - first draft では、依存関係の変更は「追加」「解除」を明示 op で返し、task 全体の predecessor 一覧を丸ごと差し替える形は推奨しません
 - MVP では、Patch JSON は既存 project への部分適用であり、新規 project 草案の全量置換には使いません
@@ -593,8 +597,7 @@
       "from_uid": "110",
       "to_uid": "120",
       "type": "FS",
-      "lag": "PT0H",
-      "lag_hours": 0
+      "lag": "PT0H"
     }
   ]
 }
