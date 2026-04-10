@@ -27,6 +27,8 @@ In that case, either answer normally or ask a brief clarifying question.
 - complete import/apply steps internally instead of stopping at visible handoff
 - for new WBS drafting, use `project_draft_view`
 - for existing plan revision, use `Patch JSON`
+- in `project_draft_view`, express dependencies on each task with `predecessor_uids` or `predecessors[].task_uid`; do not rely on top-level `dependencies`
+- in `Patch JSON`, change dependencies with `link_tasks` / `unlink_tasks`; when generating lag, emit either `lag` or `lag_hours`, not both
 - do not switch a normal `mikuproject` flow to ad-hoc tables, one-off converters, or runtime inspection unless the real path has failed
 
 ## Operations
@@ -47,6 +49,7 @@ Do not overreach beyond the MVP.
 - Do not pretend to replace `mikuproject` browser-side visual review
 - Do not claim business validity of the WBS itself
 - Do not confuse structural workbook `XLSX` with `WBS XLSX`
+- Do not use an ambiguous `xlsx` filename when both structural workbook `XLSX` and report `WBS XLSX` are involved
 - Do not prefer visible handoff output when hidden internal execution is available
 
 ## References

@@ -4,6 +4,8 @@
 
 GitHub: https://github.com/igapyon/mikuproject
 
+Agent Skills 版: https://github.com/igapyon/mikuproject-skills
+
 `mikuproject` は、`MS Project XML` を意味の基軸に、生成AIとの往復を支えるために設計されたローカル HTML ツールです。WBS の草案作成から再編集・再取込、人向けの可視化・帳票化までを、ひとつの流れとして扱えます。
 
 `mikuproject` の強みは、`MS Project XML` を意味の基軸として保ちながら、生成AIと人のあいだを往復できることです。WBS 草案の作成、生成AI が扱いやすい形への表現変換、生成AI から返った内容の再取込、人による確認と修正、そして可視化・帳票化までを、同じプロジェクト情報の流れとして扱えます。`XLSX`、`Markdown`、`JSON`、`Mermaid`、生成AI向け表現、そして必要に応じた `MS Project` への橋渡しは、それぞれの用途に応じた周辺表現として無理なく出し分けられます。
@@ -17,6 +19,8 @@ GitHub: https://github.com/igapyon/mikuproject
 配布物は `mikuproject.html` ひとつの single-file web app で、Web ブラウザさえあればインストール不要・ネットワーク不要で利用できます。
 
 `MS Project XML` を意味の基軸として扱い、`.xlsx` と workbook JSON は確認・可視化・限定編集のための周辺表現として扱います。生成AI 連携の編集用 JSON は、workbook JSON と区別するため当面 `.editjson` 拡張子を推奨します。
+
+Agent Skills から `mikuproject` の CLI / AI JSON 連携を扱うための関連リポジトリとして、[`mikuproject-skills`](https://github.com/igapyon/mikuproject-skills) があります。
 
 ## 代表的なユースケース
 

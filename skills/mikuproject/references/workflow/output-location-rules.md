@@ -15,6 +15,7 @@ Standard mapping:
 - `project_draft_view` -> `mikuproject/state/`
 - `Patch JSON` -> `mikuproject/state/`
 - `mikuproject_workbook_json` -> `mikuproject/state/`
+- structural workbook `XLSX` -> `mikuproject/state/`
 - `WBS Markdown`, `Mermaid`, `WBS XLSX`, `daily SVG`, `weekly SVG`, monthly calendar ZIP -> `mikuproject/report/`
 - ad-hoc scratch files -> `mikuproject/tmp/`
 
@@ -22,6 +23,8 @@ Standard mapping:
 
 - use `YYYYMMDDHHmm-<kind>.<ext>` by default
 - reuse the same timestamp prefix when one request produces multiple related artifacts
+- use `YYYYMMDDHHmm-workbook.xlsx` for structural workbook `XLSX`
+- use `YYYYMMDDHHmm-wbs.xlsx` for report `WBS XLSX`
 - create target directories first when needed
 
 ## Required Defaults
