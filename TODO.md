@@ -99,6 +99,11 @@
 - `tests/mikuproject-core-api-smoke.test.js` を追加した
 - `vendor/mikuproject/tests/**/*.test.js` も root から実行できるようにした
 - `npm test` で 24 files / 208 tests passed を確認した
+- 2026-04-14: bundle を repo 外の孤立ディレクトリへコピーして `mikuproject-cli.mjs --help` を実行すると `jsdom` 解決失敗で落ちる問題を確認した
+- 2026-04-14: `scripts/build-skill-bundle.mjs` を修正し、`skills/mikuproject/vendor/mikuproject/node_modules` に `jsdom` の runtime 依存一式を同梱するようにした
+- 2026-04-14: `tests/mikuproject-bundle-smoke.test.js` を追加し、bundle を一時ディレクトリへ展開した孤立環境でも CLI が起動することを回帰確認に入れた
+- 2026-04-14: `docs/skill-installation.md` に bundle の必須構成として `skills/mikuproject/vendor/mikuproject/node_modules` を追記した
+- 2026-04-14: `npm test` で 3 files / 3 tests passed を確認し、`npm run build:bundle:zip` で `bundle/mikuproject-skills-20260413.zip` を再生成した
 
 ## 10. 文書化
 
