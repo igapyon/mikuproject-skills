@@ -58,8 +58,8 @@ npm run build:bundle
 bundle/mikuproject-skills/
   skills/
     mikuproject/
-      runtime/
-        mikuproject-cli-bundle/
+      vendor/
+        mikuproject/
 ```
 
 その中身を skill home にコピーします。
@@ -274,8 +274,9 @@ Excelガントが欲しい
 
 ## `mikuproject` CLI でできること
 
-bundle 配布物では `skills/mikuproject/runtime/mikuproject-cli-bundle` 側の self-contained CLI bundle が使えます。
-開発元リポジトリでは `vendor/mikuproject` 側にあります。
+bundle 配布物では `skills/mikuproject` 配下に `vendor/mikuproject` が入ります。
+通常の参照元は bundle 内の `skills/mikuproject/vendor/mikuproject` です。
+開発元リポジトリでは repo 直下の `vendor/mikuproject` 側にあります。
 
 ```text
 mikuproject ai spec
