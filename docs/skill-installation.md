@@ -7,6 +7,7 @@
 前提:
 
 - この skill の実行には Node.js が必要です
+- 配布 bundle には `mikuproject` CLI 実行用の runtime 依存も同梱されます
 
 ## 対象
 
@@ -29,6 +30,7 @@ skills/
   mikuproject/
     vendor/
       mikuproject/
+        node_modules/
 ```
 
 ## 先に結論
@@ -48,6 +50,7 @@ skills/
     mikuproject/
       vendor/
         mikuproject/
+          node_modules/
 ```
 
 ## 手順
@@ -67,6 +70,7 @@ skills/
 
 - `skills/mikuproject`
 - `skills/mikuproject/vendor/mikuproject`
+- `skills/mikuproject/vendor/mikuproject/node_modules`
 
 最終的な構成は次です。
 
@@ -76,6 +80,7 @@ skills/
     mikuproject/
       vendor/
         mikuproject/
+          node_modules/
 ```
 
 この文書では、この `<skill-home>` をインストール先の配置ルートと呼びます。
@@ -88,6 +93,7 @@ skills/
 
 - 展開した `skills/mikuproject` を `<skill-home>/skills/mikuproject` に入れる
 - `skills/mikuproject/vendor/mikuproject` も一緒に入ることを保つ
+- `skills/mikuproject/vendor/mikuproject/node_modules` も一緒に入ることを保つ
 
 この bundle では、展開した `skills/` をそのまま `<skill-home>/` へコピーすれば足ります。
 
@@ -108,6 +114,7 @@ skill 一覧は起動時に読まれることがあります。
 
 - コピー先が skill home 直下になっているか
 - `skills/mikuproject/vendor/mikuproject` があるか
+- `skills/mikuproject/vendor/mikuproject/node_modules` があるか
 - 実行環境を再起動または再読込したか
 
 ## よくある間違い
@@ -126,6 +133,14 @@ skill 一覧は起動時に読まれることがあります。
 今回の bundle 配布では、参照用 upstream は `skills/mikuproject/vendor/mikuproject` に同梱されています。
 この vendor 部分を落とすと、参照先の一貫性が崩れ、bundle 内の `skills/mikuproject` 単体で自己完結しません。
 
+### `node_modules` を落としてしまう
+
+これは不足です。
+
+bundle 版では `skills/mikuproject/vendor/mikuproject/node_modules` まで含めて、
+CLI 実行に必要な runtime 依存を自己完結させます。
+この部分を落とすと、配布先によっては `jsdom` などの解決に失敗します。
+
 ### 展開場所の `skills/` 以外までまとめて入れてしまう
 
 必要なのは展開された `skills/` です。
@@ -138,6 +153,7 @@ skill 一覧は起動時に読まれることがあります。
     mikuproject/
       vendor/
         mikuproject/
+          node_modules/
 ```
 
 ## インストール後の最初の試し方
