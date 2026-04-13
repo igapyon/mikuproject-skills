@@ -27,8 +27,8 @@
 ```text
 skills/
   mikuproject/
-    runtime/
-      mikuproject-cli-bundle/
+    vendor/
+      mikuproject/
 ```
 
 ## 先に結論
@@ -46,8 +46,8 @@ skills/
 <skill-home>/
   skills/
     mikuproject/
-      runtime/
-        mikuproject-cli-bundle/
+      vendor/
+        mikuproject/
 ```
 
 ## 手順
@@ -60,12 +60,13 @@ skills/
 
 ### 2. skill home を確認する
 
-`mikuproject` skill は、bundle 版では `skills/mikuproject` の中に必要な runtime 実装を同梱しています。
+`mikuproject` skill は、bundle 版では `skills/mikuproject` の中に
+参照用の vendored upstream を同梱しています。
 
 必要なのは次です。
 
 - `skills/mikuproject`
-- `skills/mikuproject/runtime/mikuproject-cli-bundle`
+- `skills/mikuproject/vendor/mikuproject`
 
 最終的な構成は次です。
 
@@ -73,8 +74,8 @@ skills/
 <skill-home>/
   skills/
     mikuproject/
-      runtime/
-        mikuproject-cli-bundle/
+      vendor/
+        mikuproject/
 ```
 
 この文書では、この `<skill-home>` をインストール先の配置ルートと呼びます。
@@ -86,7 +87,7 @@ skills/
 重要なのは次です。
 
 - 展開した `skills/mikuproject` を `<skill-home>/skills/mikuproject` に入れる
-- `skills/mikuproject` 配下の `runtime/mikuproject-cli-bundle` も一緒に入ることを保つ
+- `skills/mikuproject/vendor/mikuproject` も一緒に入ることを保つ
 
 この bundle では、展開した `skills/` をそのまま `<skill-home>/` へコピーすれば足ります。
 
@@ -106,7 +107,7 @@ skill 一覧は起動時に読まれることがあります。
 ここで `mikuproject` が出ない場合は、まず次を確認します。
 
 - コピー先が skill home 直下になっているか
-- `skills/mikuproject/runtime/mikuproject-cli-bundle` があるか
+- `skills/mikuproject/vendor/mikuproject` があるか
 - 実行環境を再起動または再読込したか
 
 ## よくある間違い
@@ -115,15 +116,15 @@ skill 一覧は起動時に読まれることがあります。
 
 これは不足です。
 
-`mikuproject` skill は、bundle 版では `runtime/mikuproject-cli-bundle` を含めて成立します。
+`mikuproject` skill は、bundle 版では `vendor/mikuproject` を含めて成立します。
 `skills/mikuproject` の中身を欠いた状態では、`spec` や import/export 系で不足する可能性があります。
 
-### `runtime/mikuproject-cli-bundle` を落としてしまう
+### `vendor/mikuproject` を落としてしまう
 
 これは不足です。
 
-今回の bundle 配布では、CLI 実行資産は `skills/mikuproject/runtime/mikuproject-cli-bundle` に同梱されています。
-この runtime 部分を落とすと、実装本体や CLI 実行資産が見つからず fallback に落ちる可能性があります。
+今回の bundle 配布では、参照用 upstream は `skills/mikuproject/vendor/mikuproject` に同梱されています。
+この vendor 部分を落とすと、参照先の一貫性が崩れ、bundle 内の `skills/mikuproject` 単体で自己完結しません。
 
 ### 展開場所の `skills/` 以外までまとめて入れてしまう
 
@@ -135,8 +136,8 @@ skill 一覧は起動時に読まれることがあります。
 <skill-home>/
   skills/
     mikuproject/
-      runtime/
-        mikuproject-cli-bundle/
+      vendor/
+        mikuproject/
 ```
 
 ## インストール後の最初の試し方

@@ -36,7 +36,7 @@ Report workflow:
 
 When this skill is installed from `skill-bundle`, prefer:
 
-- `skills/mikuproject/runtime/mikuproject-cli-bundle`
+- `skills/mikuproject/vendor/mikuproject`
 
 When working in the development repository, use:
 
