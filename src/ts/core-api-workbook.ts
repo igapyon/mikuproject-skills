@@ -19,34 +19,6 @@
     label?: string;
   };
 
-  type XlsxCellLike = {
-    value?: string | number | boolean;
-    numberFormat?: "general" | "integer" | "decimal" | "date" | "datetime" | "percent";
-    horizontalAlign?: "left" | "center" | "right";
-    bold?: boolean;
-    fontSize?: number;
-    fillColor?: string;
-    border?: "thin";
-  };
-
-  type XlsxWorkbookLike = {
-    sheets: Array<{
-      name: string;
-      columns?: Array<{ width?: number }>;
-      mergedRanges?: string[];
-      dataValidations?: Array<{
-        type: "list";
-        sqref: string;
-        formula1: string;
-        allowBlank?: boolean;
-      }>;
-      rows: Array<{
-        height?: number;
-        cells: XlsxCellLike[];
-      }>;
-    }>;
-  };
-
   const mikuprojectProjectWorkbookJson = (globalThis as typeof globalThis & {
     __mikuprojectProjectWorkbookJson?: {
       exportProjectWorkbookJson: (model: ProjectModel) => unknown;
@@ -70,33 +42,12 @@
     throw new Error("mikuproject Project Workbook JSON module is not loaded");
   }
 
-  const mikuprojectProjectXlsx = (globalThis as typeof globalThis & {
-    __mikuprojectProjectXlsx?: {
-      exportProjectWorkbook: (model: ProjectModel) => XlsxWorkbookLike;
-      importProjectWorkbook: (workbook: XlsxWorkbookLike, baseModel: ProjectModel) => ProjectModel;
-      importProjectWorkbookAsProjectModel: (workbook: XlsxWorkbookLike) => ProjectModel;
-      importProjectWorkbookDetailed?: (workbook: XlsxWorkbookLike, baseModel: ProjectModel) => {
-        model: ProjectModel;
-        changes: ImportChange[];
-      };
-    };
-  }).__mikuprojectProjectXlsx;
+  const mikuprojectCoreApiWorkbookXlsx = (globalThis as typeof globalThis & {
+    __mikuprojectCoreApiWorkbookXlsx?: unknown;
+  }).__mikuprojectCoreApiWorkbookXlsx;
 
-  if (!mikuprojectProjectXlsx) {
-    throw new Error("mikuproject Project XLSX module is not loaded");
-  }
-
-  const mikuprojectExcelIo = (globalThis as typeof globalThis & {
-    __mikuprojectExcelIo?: {
-      XlsxWorkbookCodec: new () => {
-        exportWorkbook: (workbook: XlsxWorkbookLike) => Uint8Array;
-        importWorkbook: (bytes: Uint8Array) => XlsxWorkbookLike;
-      };
-    };
-  }).__mikuprojectExcelIo;
-
-  if (!mikuprojectExcelIo) {
-    throw new Error("mikuproject Excel IO module is not loaded");
+  if (!mikuprojectCoreApiWorkbookXlsx) {
+    throw new Error("mikuproject core api workbook xlsx module is not loaded");
   }
 
   const mikuprojectProjectPatchJson = (globalThis as typeof globalThis & {
@@ -117,29 +68,28 @@
     throw new Error("mikuproject Project Patch JSON module is not loaded");
   }
 
-  globalThis.__mikuprojectCoreApiWorkbook = {
+  (globalThis as typeof globalThis & {
+    __mikuprojectCoreApiWorkbook?: {
+      workbookJson: {
+        exportDocument: typeof mikuprojectProjectWorkbookJson.exportProjectWorkbookJson;
+        validateDocument: typeof mikuprojectProjectWorkbookJson.validateWorkbookJsonDocument;
+        importAsProjectModel: typeof mikuprojectProjectWorkbookJson.importProjectWorkbookJsonAsProjectModel;
+        importIntoProjectModel: typeof mikuprojectProjectWorkbookJson.importProjectWorkbookJson;
+      };
+      xlsx: typeof mikuprojectCoreApiWorkbookXlsx;
+      patchJson: {
+        validateDocument: typeof mikuprojectProjectPatchJson.validatePatchDocument;
+        applyToProjectModel: typeof mikuprojectProjectPatchJson.importProjectPatchJson;
+      };
+    };
+  }).__mikuprojectCoreApiWorkbook = {
     workbookJson: {
       exportDocument: mikuprojectProjectWorkbookJson.exportProjectWorkbookJson,
       validateDocument: mikuprojectProjectWorkbookJson.validateWorkbookJsonDocument,
       importAsProjectModel: mikuprojectProjectWorkbookJson.importProjectWorkbookJsonAsProjectModel,
       importIntoProjectModel: mikuprojectProjectWorkbookJson.importProjectWorkbookJson
     },
-    xlsx: {
-      decodeWorkbook: (bytes: Uint8Array) => new mikuprojectExcelIo.XlsxWorkbookCodec().importWorkbook(bytes),
-      encodeWorkbook: (workbook: XlsxWorkbookLike) => new mikuprojectExcelIo.XlsxWorkbookCodec().exportWorkbook(workbook),
-      exportWorkbook: mikuprojectProjectXlsx.exportProjectWorkbook,
-      importAsProjectModel: mikuprojectProjectXlsx.importProjectWorkbookAsProjectModel,
-      importIntoProjectModel: mikuprojectProjectXlsx.importProjectWorkbook,
-      importIntoProjectModelDetailed: (
-        workbook: XlsxWorkbookLike,
-        baseModel: ProjectModel
-      ): { model: ProjectModel; changes: ImportChange[] } | undefined => {
-        if (typeof mikuprojectProjectXlsx.importProjectWorkbookDetailed !== "function") {
-          return undefined;
-        }
-        return mikuprojectProjectXlsx.importProjectWorkbookDetailed(workbook, baseModel);
-      }
-    },
+    xlsx: mikuprojectCoreApiWorkbookXlsx,
     patchJson: {
       validateDocument: mikuprojectProjectPatchJson.validatePatchDocument,
       applyToProjectModel: mikuprojectProjectPatchJson.importProjectPatchJson

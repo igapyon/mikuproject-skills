@@ -44,14 +44,23 @@ export const CORE_API_MODULE_RELATIVE_PATHS = [
   "src/js/project-workbook-json-export.js",
   "src/js/project-workbook-json.js",
   "src/js/project-patch-json.js",
+  "src/js/core-api-msproject-ai.js",
   "src/js/core-api-msproject.js",
+  "src/js/core-api-workbook-xlsx.js",
   "src/js/core-api-workbook.js",
+  "src/js/core-api-ai-json-import.js",
+  "src/js/core-api-ai-json.js",
+  "src/js/core-api-external-binary.js",
+  "src/js/core-api-external-document.js",
+  "src/js/core-api-external-import.js",
   "src/js/core-api-import.js",
   "src/js/wbs-xlsx.js",
   "src/js/wbs-svg.js",
   "src/js/wbs-markdown.js",
   "src/js/core-api-report.js",
+  "src/js/core-api-report-adapters.js",
   "src/js/core-api-report-public.js",
+  "src/js/core-api-registry.js",
   "src/js/core-api-public.js",
   "src/js/core-api.js"
 ];
@@ -130,11 +139,20 @@ function clearMikuprojectGlobals() {
   delete globalThis.__mikuprojectProjectWorkbookJsonExport;
   delete globalThis.__mikuprojectProjectWorkbookJson;
   delete globalThis.__mikuprojectProjectPatchJson;
+  delete globalThis.__mikuprojectCoreApiMsprojectAi;
   delete globalThis.__mikuprojectCoreApiMsproject;
+  delete globalThis.__mikuprojectCoreApiWorkbookXlsx;
   delete globalThis.__mikuprojectCoreApiWorkbook;
+  delete globalThis.__mikuprojectCoreApiAiJsonImport;
+  delete globalThis.__mikuprojectCoreApiAiJson;
+  delete globalThis.__mikuprojectCoreApiExternalBinary;
+  delete globalThis.__mikuprojectCoreApiExternalDocument;
+  delete globalThis.__mikuprojectCoreApiExternalImport;
   delete globalThis.__mikuprojectCoreApiImport;
   delete globalThis.__mikuprojectCoreApiReport;
+  delete globalThis.__mikuprojectCoreApiReportAdapters;
   delete globalThis.__mikuprojectCoreApiReportPublic;
+  delete globalThis.__mikuprojectCoreApiRegistry;
   delete globalThis.__mikuprojectCoreApiPublic;
   delete globalThis.__mikuprojectWbsXlsx;
   delete globalThis.__mikuprojectNativeSvg;

@@ -3323,6 +3323,26 @@ md-outlined-select.md-outlined-field:focus-within::part(container) {
   
   
   
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -14287,22 +14307,7 @@ if (!customElements.get("lht-page-menu")) {
     if (!mikuprojectXml) {
         throw new Error("mikuproject XML module is not loaded");
     }
-    globalThis.__mikuprojectCoreApiMsproject = {
-        samples: {
-            getSampleXml: () => mikuprojectXml.SAMPLE_XML,
-            getSampleProjectDraftView: () => mikuprojectXml.SAMPLE_PROJECT_DRAFT_VIEW
-        },
-        projectModel: {
-            normalize: mikuprojectXml.normalizeProjectModel,
-            validate: mikuprojectXml.validateProjectModel
-        },
-        msProject: {
-            parseXmlDocument: mikuprojectXml.parseXmlDocument,
-            importFromXml: mikuprojectXml.importMsProjectXml,
-            exportToXml: mikuprojectXml.exportMsProjectXml,
-            importFromCsvParentId: mikuprojectXml.importCsvParentId,
-            exportToCsvParentId: mikuprojectXml.exportCsvParentId
-        },
+    globalThis.__mikuprojectCoreApiMsprojectAi = {
         aiViews: {
             buildProjectDraftRequest: mikuprojectXml.buildProjectDraftRequest,
             importProjectDraftView: mikuprojectXml.importProjectDraftView,
@@ -14323,10 +14328,42 @@ if (!customElements.get("lht-page-menu")) {
  * SPDX-License-Identifier: Apache-2.0
  */
 (() => {
-    const mikuprojectProjectWorkbookJson = globalThis.__mikuprojectProjectWorkbookJson;
-    if (!mikuprojectProjectWorkbookJson) {
-        throw new Error("mikuproject Project Workbook JSON module is not loaded");
+    const mikuprojectXml = globalThis.__mikuprojectXml;
+    if (!mikuprojectXml) {
+        throw new Error("mikuproject XML module is not loaded");
     }
+    const mikuprojectCoreApiMsprojectAi = globalThis.__mikuprojectCoreApiMsprojectAi;
+    if (!mikuprojectCoreApiMsprojectAi) {
+        throw new Error("mikuproject core api msproject ai module is not loaded");
+    }
+    globalThis.__mikuprojectCoreApiMsproject = {
+        samples: {
+            getSampleXml: () => mikuprojectXml.SAMPLE_XML,
+            getSampleProjectDraftView: () => mikuprojectXml.SAMPLE_PROJECT_DRAFT_VIEW
+        },
+        projectModel: {
+            normalize: mikuprojectXml.normalizeProjectModel,
+            validate: mikuprojectXml.validateProjectModel
+        },
+        msProject: {
+            parseXmlDocument: mikuprojectXml.parseXmlDocument,
+            importFromXml: mikuprojectXml.importMsProjectXml,
+            exportToXml: mikuprojectXml.exportMsProjectXml,
+            importFromCsvParentId: mikuprojectXml.importCsvParentId,
+            exportToCsvParentId: mikuprojectXml.exportCsvParentId
+        },
+        aiViews: mikuprojectCoreApiMsprojectAi.aiViews,
+        mermaid: mikuprojectCoreApiMsprojectAi.mermaid
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
     const mikuprojectProjectXlsx = globalThis.__mikuprojectProjectXlsx;
     if (!mikuprojectProjectXlsx) {
         throw new Error("mikuproject Project XLSX module is not loaded");
@@ -14334,6 +14371,36 @@ if (!customElements.get("lht-page-menu")) {
     const mikuprojectExcelIo = globalThis.__mikuprojectExcelIo;
     if (!mikuprojectExcelIo) {
         throw new Error("mikuproject Excel IO module is not loaded");
+    }
+    globalThis.__mikuprojectCoreApiWorkbookXlsx = {
+        decodeWorkbook: (bytes) => new mikuprojectExcelIo.XlsxWorkbookCodec().importWorkbook(bytes),
+        encodeWorkbook: (workbook) => new mikuprojectExcelIo.XlsxWorkbookCodec().exportWorkbook(workbook),
+        exportWorkbook: mikuprojectProjectXlsx.exportProjectWorkbook,
+        importAsProjectModel: mikuprojectProjectXlsx.importProjectWorkbookAsProjectModel,
+        importIntoProjectModel: mikuprojectProjectXlsx.importProjectWorkbook,
+        importIntoProjectModelDetailed: (workbook, baseModel) => {
+            if (typeof mikuprojectProjectXlsx.importProjectWorkbookDetailed !== "function") {
+                return undefined;
+            }
+            return mikuprojectProjectXlsx.importProjectWorkbookDetailed(workbook, baseModel);
+        }
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mikuprojectProjectWorkbookJson = globalThis.__mikuprojectProjectWorkbookJson;
+    if (!mikuprojectProjectWorkbookJson) {
+        throw new Error("mikuproject Project Workbook JSON module is not loaded");
+    }
+    const mikuprojectCoreApiWorkbookXlsx = globalThis.__mikuprojectCoreApiWorkbookXlsx;
+    if (!mikuprojectCoreApiWorkbookXlsx) {
+        throw new Error("mikuproject core api workbook xlsx module is not loaded");
     }
     const mikuprojectProjectPatchJson = globalThis.__mikuprojectProjectPatchJson;
     if (!mikuprojectProjectPatchJson) {
@@ -14346,19 +14413,7 @@ if (!customElements.get("lht-page-menu")) {
             importAsProjectModel: mikuprojectProjectWorkbookJson.importProjectWorkbookJsonAsProjectModel,
             importIntoProjectModel: mikuprojectProjectWorkbookJson.importProjectWorkbookJson
         },
-        xlsx: {
-            decodeWorkbook: (bytes) => new mikuprojectExcelIo.XlsxWorkbookCodec().importWorkbook(bytes),
-            encodeWorkbook: (workbook) => new mikuprojectExcelIo.XlsxWorkbookCodec().exportWorkbook(workbook),
-            exportWorkbook: mikuprojectProjectXlsx.exportProjectWorkbook,
-            importAsProjectModel: mikuprojectProjectXlsx.importProjectWorkbookAsProjectModel,
-            importIntoProjectModel: mikuprojectProjectXlsx.importProjectWorkbook,
-            importIntoProjectModelDetailed: (workbook, baseModel) => {
-                if (typeof mikuprojectProjectXlsx.importProjectWorkbookDetailed !== "function") {
-                    return undefined;
-                }
-                return mikuprojectProjectXlsx.importProjectWorkbookDetailed(workbook, baseModel);
-            }
-        },
+        xlsx: mikuprojectCoreApiWorkbookXlsx,
         patchJson: {
             validateDocument: mikuprojectProjectPatchJson.validatePatchDocument,
             applyToProjectModel: mikuprojectProjectPatchJson.importProjectPatchJson
@@ -14385,28 +14440,8 @@ if (!customElements.get("lht-page-menu")) {
     if (!mikuprojectAiJsonUtil) {
         throw new Error("mikuproject AI JSON util module is not loaded");
     }
-    const mikuprojectAiJsonSpec = globalThis.__mikuprojectAiJsonSpec;
-    if (!mikuprojectAiJsonSpec) {
-        throw new Error("mikuproject AI JSON spec module is not loaded");
-    }
-    function getAiJsonSpecText() {
-        return mikuprojectAiJsonSpec.getAiJsonSpecText();
-    }
-    function getAiJsonSpec() {
-        return mikuprojectAiJsonSpec.getAiJsonSpec();
-    }
     function detectAiJsonDocumentKind(documentLike) {
         return mikuprojectAiJsonUtil.detectJsonDocumentKind(documentLike);
-    }
-    function parseAiJsonText(sourceText) {
-        const jsonText = mikuprojectAiJsonUtil.extractLastJsonBlock(sourceText);
-        const document = JSON.parse(jsonText);
-        return {
-            sourceText,
-            jsonText,
-            document,
-            kind: detectAiJsonDocumentKind(document)
-        };
     }
     function importAiJsonDocument(documentLike, options = {}) {
         const kind = detectAiJsonDocumentKind(documentLike);
@@ -14444,91 +14479,229 @@ if (!customElements.get("lht-page-menu")) {
         }
         throw new Error("AI JSON の format / view_type を判別できません");
     }
+    globalThis.__mikuprojectCoreApiAiJsonImport = {
+        detectAiJsonDocumentKind,
+        importAiJsonDocument
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mikuprojectAiJsonUtil = globalThis.__mikuprojectAiJsonUtil;
+    if (!mikuprojectAiJsonUtil) {
+        throw new Error("mikuproject AI JSON util module is not loaded");
+    }
+    const mikuprojectAiJsonSpec = globalThis.__mikuprojectAiJsonSpec;
+    if (!mikuprojectAiJsonSpec) {
+        throw new Error("mikuproject AI JSON spec module is not loaded");
+    }
+    const mikuprojectCoreApiAiJsonImport = globalThis.__mikuprojectCoreApiAiJsonImport;
+    if (!mikuprojectCoreApiAiJsonImport) {
+        throw new Error("mikuproject core api ai json import module is not loaded");
+    }
+    function getAiJsonSpecText() {
+        return mikuprojectAiJsonSpec.getAiJsonSpecText();
+    }
+    function getAiJsonSpec() {
+        return mikuprojectAiJsonSpec.getAiJsonSpec();
+    }
+    function parseAiJsonText(sourceText) {
+        const jsonText = mikuprojectAiJsonUtil.extractLastJsonBlock(sourceText);
+        const document = JSON.parse(jsonText);
+        return {
+            sourceText,
+            jsonText,
+            document,
+            kind: mikuprojectCoreApiAiJsonImport.detectAiJsonDocumentKind(document)
+        };
+    }
     function importAiJsonText(sourceText, options = {}) {
         const parsed = parseAiJsonText(sourceText);
         return {
             ...parsed,
-            result: importAiJsonDocument(parsed.document, options)
+            result: mikuprojectCoreApiAiJsonImport.importAiJsonDocument(parsed.document, options)
         };
     }
-    function importExternal(input) {
-        const { source, mode, baseModel } = input;
-        if (source.format === "ms_project_xml") {
-            if (mode !== "replace") {
-                throw new Error("MS Project XML は replace import のみ対応です");
-            }
+    globalThis.__mikuprojectCoreApiAiJson = {
+        getAiJsonSpecText,
+        getAiJsonSpec,
+        detectAiJsonDocumentKind: mikuprojectCoreApiAiJsonImport.detectAiJsonDocumentKind,
+        parseAiJsonText,
+        importAiJsonDocument: mikuprojectCoreApiAiJsonImport.importAiJsonDocument,
+        importAiJsonText
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mikuprojectCoreApiMsproject = globalThis.__mikuprojectCoreApiMsproject;
+    if (!mikuprojectCoreApiMsproject) {
+        throw new Error("mikuproject core api msproject module is not loaded");
+    }
+    const mikuprojectCoreApiWorkbook = globalThis.__mikuprojectCoreApiWorkbook;
+    if (!mikuprojectCoreApiWorkbook) {
+        throw new Error("mikuproject core api workbook module is not loaded");
+    }
+    function importMsProjectXml(sourceText, mode) {
+        if (mode !== "replace") {
+            throw new Error("MS Project XML は replace import のみ対応です");
+        }
+        return {
+            kind: "ms_project_xml",
+            mode,
+            model: mikuprojectCoreApiMsproject.msProject.importFromXml(sourceText),
+            warnings: []
+        };
+    }
+    function importXlsx(sourceBytes, mode, baseModel) {
+        if (mode === "patch") {
+            throw new Error("XLSX は replace または merge import のみ対応です");
+        }
+        const workbook = mikuprojectCoreApiWorkbook.xlsx.decodeWorkbook(sourceBytes);
+        if (mode === "replace") {
             return {
-                kind: "ms_project_xml",
+                kind: "xlsx",
                 mode,
-                model: mikuprojectCoreApiMsproject.msProject.importFromXml(source.text),
+                model: mikuprojectCoreApiWorkbook.xlsx.importAsProjectModel(workbook),
                 warnings: []
             };
         }
-        if (source.format === "xlsx") {
-            if (mode === "patch") {
-                throw new Error("XLSX は replace または merge import のみ対応です");
-            }
-            const workbook = mikuprojectCoreApiWorkbook.xlsx.decodeWorkbook(source.bytes);
-            if (mode === "replace") {
-                return {
-                    kind: "xlsx",
-                    mode,
-                    model: mikuprojectCoreApiWorkbook.xlsx.importAsProjectModel(workbook),
-                    warnings: []
-                };
-            }
-            if (mode === "merge") {
-                if (!baseModel) {
-                    throw new Error("XLSX merge import には baseModel が必要です");
-                }
-                if (typeof mikuprojectCoreApiWorkbook.xlsx.importIntoProjectModelDetailed === "function") {
-                    return {
-                        kind: "xlsx",
-                        mode,
-                        ...mikuprojectCoreApiWorkbook.xlsx.importIntoProjectModelDetailed(workbook, baseModel),
-                        warnings: []
-                    };
-                }
-                return {
-                    kind: "xlsx",
-                    mode,
-                    model: mikuprojectCoreApiWorkbook.xlsx.importIntoProjectModel(workbook, baseModel),
-                    changes: [],
-                    warnings: []
-                };
-            }
+        if (!baseModel) {
+            throw new Error("XLSX merge import には baseModel が必要です");
         }
-        if (source.format === "workbook_json") {
+        if (typeof mikuprojectCoreApiWorkbook.xlsx.importIntoProjectModelDetailed === "function") {
+            return {
+                kind: "xlsx",
+                mode,
+                ...mikuprojectCoreApiWorkbook.xlsx.importIntoProjectModelDetailed(workbook, baseModel),
+                warnings: []
+            };
+        }
+        return {
+            kind: "xlsx",
+            mode,
+            model: mikuprojectCoreApiWorkbook.xlsx.importIntoProjectModel(workbook, baseModel),
+            changes: [],
+            warnings: []
+        };
+    }
+    globalThis.__mikuprojectCoreApiExternalBinary = {
+        importMsProjectXml,
+        importXlsx
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mikuprojectCoreApiAiJson = globalThis.__mikuprojectCoreApiAiJson;
+    if (!mikuprojectCoreApiAiJson) {
+        throw new Error("mikuproject core api ai json module is not loaded");
+    }
+    function importDocument(format, document, mode, baseModel) {
+        if (format === "workbook_json") {
             if (mode === "patch") {
                 throw new Error("workbook JSON は patch import に対応していません");
             }
             if (mode === "merge" && !baseModel) {
                 throw new Error("workbook JSON merge import には baseModel が必要です");
             }
-            return importAiJsonDocument(source.document, mode === "merge" ? { baseModel } : {});
+            return mikuprojectCoreApiAiJson.importAiJsonDocument(document, mode === "merge" ? { baseModel } : {});
         }
-        if (source.format === "project_draft_view") {
+        if (format === "project_draft_view") {
             if (mode !== "replace") {
                 throw new Error("project_draft_view は replace import のみ対応です");
             }
-            return importAiJsonDocument(source.document);
+            return mikuprojectCoreApiAiJson.importAiJsonDocument(document);
         }
-        if (source.format === "patch_json") {
+        if (format === "patch_json") {
             if (mode !== "patch") {
                 throw new Error("patch JSON は patch import のみ対応です");
             }
-            return importAiJsonDocument(source.document, { baseModel });
+            return mikuprojectCoreApiAiJson.importAiJsonDocument(document, { baseModel });
+        }
+        throw new Error(`未対応の import format です: ${format}`);
+    }
+    globalThis.__mikuprojectCoreApiExternalDocument = {
+        importDocument
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mikuprojectCoreApiExternalBinary = globalThis.__mikuprojectCoreApiExternalBinary;
+    if (!mikuprojectCoreApiExternalBinary) {
+        throw new Error("mikuproject core api external binary module is not loaded");
+    }
+    const mikuprojectCoreApiExternalDocument = globalThis.__mikuprojectCoreApiExternalDocument;
+    if (!mikuprojectCoreApiExternalDocument) {
+        throw new Error("mikuproject core api external document module is not loaded");
+    }
+    function importExternal(input) {
+        const { source, mode, baseModel } = input;
+        if (source.format === "ms_project_xml") {
+            return mikuprojectCoreApiExternalBinary.importMsProjectXml(source.text, mode);
+        }
+        if (source.format === "xlsx") {
+            if (mode === "patch") {
+                throw new Error("XLSX は replace または merge import のみ対応です");
+            }
+            return mikuprojectCoreApiExternalBinary.importXlsx(source.bytes, mode, baseModel);
+        }
+        if (source.format === "workbook_json" ||
+            source.format === "project_draft_view" ||
+            source.format === "patch_json") {
+            return mikuprojectCoreApiExternalDocument.importDocument(source.format, source.document, mode, baseModel);
         }
         throw new Error(`未対応の import format です: ${source.format || "unknown"}`);
     }
-    globalThis.__mikuprojectCoreApiImport = {
-        getAiJsonSpecText,
-        getAiJsonSpec,
-        detectAiJsonDocumentKind,
-        parseAiJsonText,
-        importAiJsonDocument,
-        importAiJsonText,
+    globalThis.__mikuprojectCoreApiExternalImport = {
         importExternal
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mikuprojectCoreApiAiJson = globalThis.__mikuprojectCoreApiAiJson;
+    if (!mikuprojectCoreApiAiJson) {
+        throw new Error("mikuproject core api ai json module is not loaded");
+    }
+    const mikuprojectCoreApiExternalImport = globalThis.__mikuprojectCoreApiExternalImport;
+    if (!mikuprojectCoreApiExternalImport) {
+        throw new Error("mikuproject core api external import module is not loaded");
+    }
+    globalThis.__mikuprojectCoreApiImport = {
+        getAiJsonSpecText: mikuprojectCoreApiAiJson.getAiJsonSpecText,
+        getAiJsonSpec: mikuprojectCoreApiAiJson.getAiJsonSpec,
+        detectAiJsonDocumentKind: mikuprojectCoreApiAiJson.detectAiJsonDocumentKind,
+        parseAiJsonText: mikuprojectCoreApiAiJson.parseAiJsonText,
+        importAiJsonDocument: mikuprojectCoreApiAiJson.importAiJsonDocument,
+        importAiJsonText: mikuprojectCoreApiAiJson.importAiJsonText,
+        importExternal: mikuprojectCoreApiExternalImport.importExternal
     };
 })();
   </script>
@@ -17351,7 +17524,7 @@ if (!customElements.get("lht-page-menu")) {
     if (!mikuprojectWbsMarkdown) {
         throw new Error("mikuproject WBS Markdown module is not loaded");
     }
-    globalThis.__mikuprojectCoreApiReportPublic = {
+    globalThis.__mikuprojectCoreApiReportAdapters = {
         report: {
             all: {
                 export: (model, options = {}) => {
@@ -17388,6 +17561,22 @@ if (!customElements.get("lht-page-menu")) {
  * SPDX-License-Identifier: Apache-2.0
  */
 (() => {
+    const mikuprojectCoreApiReportAdapters = globalThis.__mikuprojectCoreApiReportAdapters;
+    if (!mikuprojectCoreApiReportAdapters) {
+        throw new Error("mikuproject core api report adapters module is not loaded");
+    }
+    globalThis.__mikuprojectCoreApiReportPublic = {
+        report: mikuprojectCoreApiReportAdapters.report
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
     const mikuprojectCoreApiImport = globalThis.__mikuprojectCoreApiImport;
     if (!mikuprojectCoreApiImport) {
         throw new Error("mikuproject core api import module is not loaded");
@@ -17404,8 +17593,7 @@ if (!customElements.get("lht-page-menu")) {
     if (!mikuprojectCoreApiReportPublic) {
         throw new Error("mikuproject core api report public module is not loaded");
     }
-    globalThis.__mikuprojectCoreApiPublic = {
-        version: 1,
+    globalThis.__mikuprojectCoreApiRegistry = {
         getAiJsonSpecText: mikuprojectCoreApiImport.getAiJsonSpecText,
         getAiJsonSpec: mikuprojectCoreApiImport.getAiJsonSpec,
         detectAiJsonDocumentKind: mikuprojectCoreApiImport.detectAiJsonDocumentKind,
@@ -17421,6 +17609,23 @@ if (!customElements.get("lht-page-menu")) {
         xlsx: mikuprojectCoreApiWorkbook.xlsx,
         patchJson: mikuprojectCoreApiWorkbook.patchJson,
         report: mikuprojectCoreApiReportPublic.report
+    };
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mikuprojectCoreApiRegistry = globalThis.__mikuprojectCoreApiRegistry;
+    if (!mikuprojectCoreApiRegistry) {
+        throw new Error("mikuproject core api registry module is not loaded");
+    }
+    globalThis.__mikuprojectCoreApiPublic = {
+        version: 1,
+        ...mikuprojectCoreApiRegistry
     };
 })();
   </script>
@@ -17835,6 +18040,49 @@ if (!customElements.get("lht-page-menu")) {
  * SPDX-License-Identifier: Apache-2.0
  */
 (() => {
+    const mainInputEvents = {
+        bind(deps) {
+            deps.getImportFileInput().addEventListener("click", (event) => {
+                const input = event.target;
+                if (input) {
+                    input.value = "";
+                }
+            });
+            deps.getImportFileInput().addEventListener("change", async (event) => {
+                const input = event.target;
+                const file = (input === null || input === void 0 ? void 0 : input.files) && input.files[0];
+                if (file) {
+                    deps.setStatus(`${file.name} を読み込んでいます...`);
+                }
+                try {
+                    await deps.importFromFile(file);
+                }
+                catch (error) {
+                    console.error("[mikuproject] file import failed", error);
+                    deps.setStatus(error instanceof Error ? error.message : "ファイル読込に失敗しました");
+                }
+                finally {
+                    if (input) {
+                        input.value = "";
+                    }
+                }
+            });
+            deps.getXmlInput().addEventListener("input", () => {
+                deps.markXmlSourceDirty();
+                deps.refreshXmlSaveState();
+            });
+        }
+    };
+    globalThis.__mikuprojectMainInputEvents = mainInputEvents;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
     function getButton(doc, id) {
         const element = doc.getElementById(id);
         if (!(element instanceof HTMLButtonElement)) {
@@ -17842,7 +18090,7 @@ if (!customElements.get("lht-page-menu")) {
         }
         return element;
     }
-    const mainEvents = {
+    const mainButtonEvents = {
         bind(deps) {
             const bindClick = (id, action, fallbackMessage, errorLogLabel) => {
                 getButton(deps.document, id).addEventListener("click", () => {
@@ -17868,12 +18116,6 @@ if (!customElements.get("lht-page-menu")) {
                 });
             };
             getButton(deps.document, "loadSampleBtn").addEventListener("click", deps.loadSample);
-            deps.getImportFileInput().addEventListener("click", (event) => {
-                const input = event.target;
-                if (input) {
-                    input.value = "";
-                }
-            });
             getButton(deps.document, "importFileBtn").addEventListener("click", () => {
                 const input = deps.getImportFileInput();
                 input.value = "";
@@ -17902,28 +18144,61 @@ if (!customElements.get("lht-page-menu")) {
             bindClick("exportWbsMdBtn", deps.downloadCurrentWbsMarkdown, "WBS Markdown 保存に失敗しました");
             bindClick("downloadXmlBtn", deps.downloadCurrentXml, "XML 保存に失敗しました");
             bindClick("roundTripBtn", deps.runRoundTripCheck, "再読込テストに失敗しました");
-            deps.getImportFileInput().addEventListener("change", async (event) => {
-                const input = event.target;
-                const file = (input === null || input === void 0 ? void 0 : input.files) && input.files[0];
-                if (file) {
-                    deps.setStatus(`${file.name} を読み込んでいます...`);
-                }
-                try {
-                    await deps.importFromFile(file);
-                }
-                catch (error) {
-                    console.error("[mikuproject] file import failed", error);
-                    deps.setStatus(error instanceof Error ? error.message : "ファイル読込に失敗しました");
-                }
-                finally {
-                    if (input) {
-                        input.value = "";
-                    }
-                }
+        }
+    };
+    globalThis.__mikuprojectMainButtonEvents = mainButtonEvents;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mikuprojectMainButtonEvents = globalThis.__mikuprojectMainButtonEvents;
+    if (!mikuprojectMainButtonEvents) {
+        throw new Error("mikuproject main button events module is not loaded");
+    }
+    const mikuprojectMainInputEvents = globalThis.__mikuprojectMainInputEvents;
+    if (!mikuprojectMainInputEvents) {
+        throw new Error("mikuproject main input events module is not loaded");
+    }
+    const mainEvents = {
+        bind(deps) {
+            mikuprojectMainButtonEvents.bind({
+                document: deps.document,
+                setStatus: deps.setStatus,
+                getImportFileInput: deps.getImportFileInput,
+                loadSample: deps.loadSample,
+                downloadAllOutputs: deps.downloadAllOutputs,
+                setSvgPreviewMode: deps.setSvgPreviewMode,
+                downloadCurrentSvg: deps.downloadCurrentSvg,
+                downloadCurrentWeeklySvg: deps.downloadCurrentWeeklySvg,
+                downloadCurrentMonthlyWbsSvgZip: deps.downloadCurrentMonthlyWbsSvgZip,
+                downloadCurrentMermaidMmd: deps.downloadCurrentMermaidMmd,
+                exportCurrentCsv: deps.exportCurrentCsv,
+                exportCurrentProjectOverviewView: deps.exportCurrentProjectOverviewView,
+                exportCurrentTaskEditView: deps.exportCurrentTaskEditView,
+                exportCurrentAiProjectionBundle: deps.exportCurrentAiProjectionBundle,
+                loadProjectDraftSample: deps.loadProjectDraftSample,
+                copyAiPrompt: deps.copyAiPrompt,
+                importAiEditJsonFromText: deps.importAiEditJsonFromText,
+                exportCurrentPhaseDetailView: deps.exportCurrentPhaseDetailView,
+                exportCurrentXlsx: deps.exportCurrentXlsx,
+                exportCurrentWorkbookJson: deps.exportCurrentWorkbookJson,
+                exportCurrentWbsXlsx: deps.exportCurrentWbsXlsx,
+                downloadCurrentWbsMarkdown: deps.downloadCurrentWbsMarkdown,
+                downloadCurrentXml: deps.downloadCurrentXml,
+                runRoundTripCheck: deps.runRoundTripCheck
             });
-            deps.getXmlInput().addEventListener("input", () => {
-                deps.markXmlSourceDirty();
-                deps.refreshXmlSaveState();
+            mikuprojectMainInputEvents.bind({
+                setStatus: deps.setStatus,
+                refreshXmlSaveState: deps.refreshXmlSaveState,
+                markXmlSourceDirty: deps.markXmlSourceDirty,
+                getImportFileInput: deps.getImportFileInput,
+                getXmlInput: deps.getXmlInput,
+                importFromFile: deps.importFromFile
             });
         }
     };
@@ -18120,6 +18395,562 @@ if (!customElements.get("lht-page-menu")) {
         }
     };
     globalThis.__mikuprojectMainSupport = mainSupport;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainSamples = {
+        async copyAiPrompt(deps) {
+            const promptText = deps.getAiPromptText();
+            if (!promptText) {
+                throw new Error("生成AIプロンプトが見つかりません");
+            }
+            await deps.copyTextToClipboard(promptText);
+            deps.showToast("生成AIプロンプトをクリップボードにコピーしました");
+            deps.setStatus("生成AIプロンプトをクリップボードにコピーしました");
+        },
+        loadSampleXml(deps) {
+            const sampleXml = deps.readSampleXml();
+            deps.writeXmlText(sampleXml);
+            const model = deps.importSampleXml(sampleXml);
+            deps.markXmlDirty();
+            deps.applyModelState({
+                model,
+                issues: deps.validateProjectModel(model)
+            });
+            deps.updateSvgButton();
+            deps.setStatus("サンプル XML を読み込みました");
+            deps.setActiveTab("input");
+            return model;
+        },
+        loadProjectDraftSample(deps) {
+            const sampleDraftText = JSON.stringify(deps.readSampleProjectDraftView(), null, 2);
+            deps.writeProjectDraftText(sampleDraftText);
+            deps.setStatus("サンプル project_draft_view を読み込みました");
+            deps.setActiveTab("input");
+        }
+    };
+    globalThis.__mikuprojectMainSamples = mainSamples;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainDownloads = {
+        downloadXml(input) {
+            const exported = input.buildXmlExport({ xmlText: input.xmlText });
+            input.downloadBlob(new Blob([exported.text], { type: "application/xml;charset=utf-8" }), exported.fileName);
+            input.markXmlSavedCurrent();
+            input.completeOutput("XML ファイルをエクスポートしました", "XML を保存しました");
+        },
+        downloadDailySvg(input) {
+            const exported = input.buildDailySvgExport({ svg: input.svg });
+            input.downloadBlob(new Blob([exported.text], { type: "image/svg+xml;charset=utf-8" }), exported.fileName);
+            input.completeOutput("Daily SVG を保存しました", "Daily SVG を保存しました");
+        },
+        downloadWeeklySvg(input) {
+            const exported = input.buildWeeklySvgExport({ svg: input.svg });
+            input.downloadBlob(new Blob([exported.text], { type: "image/svg+xml;charset=utf-8" }), exported.fileName);
+            input.completeOutput("Weekly SVG を保存しました", "Weekly SVG を保存しました");
+        },
+        downloadMonthlySvgZip(input) {
+            const exported = input.buildMonthlySvgZipExport({ zipBytes: input.zipBytes });
+            input.downloadBlob(new Blob([exported.bytes], { type: "application/zip" }), exported.fileName);
+            input.completeOutput("月別 WBS カレンダー SVG ZIP を保存しました", "月別 WBS カレンダー SVG ZIP を保存しました");
+        },
+        downloadMermaid(input) {
+            const exported = input.buildMermaidExport({ mermaidText: input.mermaidText });
+            input.downloadBlob(new Blob([exported.text], { type: "text/plain;charset=utf-8" }), exported.fileName);
+            input.completeOutput("Mermaid を保存しました", "Mermaid を保存しました");
+        },
+        downloadWbsMarkdown(input) {
+            const exported = input.buildWbsMarkdownExport({ markdownText: input.markdownText });
+            input.downloadBlob(new Blob([exported.text], { type: "text/markdown;charset=utf-8" }), exported.fileName);
+            input.completeOutput("WBS Markdown を保存しました", "WBS Markdown を保存しました");
+        }
+    };
+    globalThis.__mikuprojectMainDownloads = mainDownloads;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainOutputActions = {
+        exportCsv(input) {
+            input.syncXmlTextFromModel(input.model);
+            const exported = input.buildCsvExport({
+                model: input.model,
+                exportCsvParentId: input.exportCsvParentId
+            });
+            input.downloadBlob(new Blob([exported.text], { type: "text/csv;charset=utf-8" }), exported.fileName);
+            input.completeOutput("内部モデルから CSV + ParentID を生成して保存しました", "CSV を保存しました");
+        },
+        exportProjectOverview(input) {
+            input.syncXmlTextFromModel(input.model);
+            const exported = input.buildProjectOverviewExport({
+                model: input.model,
+                exportProjectOverviewView: input.exportProjectOverviewView
+            });
+            input.setOutputText(exported.text.trimEnd());
+            input.downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
+            input.completeOutput("project_overview_view を生成して保存しました", "project_overview_view を保存しました");
+        },
+        exportTaskEdit(input) {
+            input.syncXmlTextFromModel(input.model);
+            const exported = input.buildTaskEditExport({
+                model: input.model,
+                requestedTaskUid: input.requestedTaskUid,
+                exportTaskEditView: input.exportTaskEditView
+            });
+            if (exported.resolvedTaskUid) {
+                input.setResolvedTaskUid(exported.resolvedTaskUid);
+            }
+            input.setOutputText(exported.text.trimEnd());
+            input.downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
+            input.completeOutput("task_edit_view を生成して保存しました", "task_edit_view を保存しました");
+        },
+        exportAiProjectionBundle(input) {
+            input.syncXmlTextFromModel(input.model);
+            const exported = input.buildAiProjectionBundleExport({
+                model: input.model,
+                exportProjectOverviewView: input.exportProjectOverviewView,
+                exportPhaseDetailView: input.exportPhaseDetailView,
+                exportTaskEditView: input.exportTaskEditView
+            });
+            input.setOutputText(exported.text.trimEnd());
+            input.downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
+            input.completeOutput(`AI 連携用まとめ JSON を生成して保存しました (phase_detail_view full ${exported.phaseCount} 件 / task_edit_view ${exported.taskCount} 件)`, "AI 連携用まとめ JSON を保存しました");
+        },
+        exportPhaseDetail(input) {
+            input.syncXmlTextFromModel(input.model);
+            const exported = input.buildPhaseDetailExport({
+                model: input.model,
+                mode: input.mode,
+                requestedPhaseUid: input.requestedPhaseUid,
+                requestedRootUid: input.requestedRootUid,
+                requestedMaxDepth: input.requestedMaxDepth,
+                exportPhaseDetailView: input.exportPhaseDetailView
+            });
+            if (exported.resolvedPhaseUid) {
+                input.setResolvedPhaseUid(exported.resolvedPhaseUid);
+            }
+            input.setResolvedRootUid(exported.resolvedRootUid || "");
+            input.setResolvedMaxDepth(exported.resolvedMaxDepth);
+            input.setOutputText(exported.text.trimEnd());
+            input.downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
+            input.completeOutput(`phase_detail_view (${exported.resolvedMode}) を生成して保存しました`, `phase_detail_view (${exported.resolvedMode}) を保存しました`);
+        },
+        exportXlsx(input) {
+            input.syncXmlTextFromModel(input.model);
+            const exported = input.buildXlsxExport({
+                model: input.model,
+                createWorkbookCodec: input.createWorkbookCodec,
+                exportProjectWorkbook: input.exportProjectWorkbook
+            });
+            input.downloadBlob(new Blob([exported.bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), exported.fileName);
+            input.completeOutput("XLSX ファイルをエクスポートしました", "XLSX を保存しました");
+        },
+        exportWorkbookJson(input) {
+            input.syncXmlTextFromModel(input.model);
+            const exported = input.buildWorkbookJsonExport({
+                model: input.model,
+                exportProjectWorkbookJson: input.exportProjectWorkbookJson
+            });
+            input.setOutputText(exported.text);
+            input.downloadBlob(new Blob([`${exported.text}\n`], { type: "application/json;charset=utf-8" }), exported.fileName);
+            input.completeOutput("XLSX 相当の workbook JSON を生成して保存しました", "JSON を保存しました");
+        },
+        exportWbsXlsx(input) {
+            input.syncXmlTextFromModel(input.model);
+            const exported = input.buildWbsXlsxExport({
+                model: input.model,
+                options: input.options,
+                createWorkbookCodec: input.createWorkbookCodec,
+                exportWbsWorkbook: input.exportWbsWorkbook
+            });
+            input.downloadBlob(new Blob([exported.bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), exported.fileName);
+            const displayRangeText = input.options.displayDaysBeforeBaseDate !== undefined || input.options.displayDaysAfterBaseDate !== undefined
+                ? ` / 表示期間 営業日 基準日前 ${input.options.displayDaysBeforeBaseDate || 0} 日, 基準日後 ${input.options.displayDaysAfterBaseDate || 0} 日`
+                : "";
+            const progressBandText = " / 進捗帯 営業日";
+            input.completeOutput(`WBS XLSX ファイルをエクスポートしました${input.options.holidayDates.length > 0 ? ` (祝日 ${input.options.holidayDates.length} 件)` : ""}${displayRangeText}${progressBandText}`, "WBS XLSX を保存しました");
+        }
+    };
+    globalThis.__mikuprojectMainOutputActions = mainOutputActions;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainImportActions = {
+        async importProjectDraftText(input) {
+            const result = input.importProjectDraftText({
+                sourceText: input.sourceText,
+                extractLastJsonBlock: input.extractLastJsonBlock,
+                importProjectDraftView: input.importProjectDraftView,
+                validateProjectModel: input.validateProjectModel
+            });
+            input.setCurrentModel(result.model);
+            input.syncXmlTextFromModel(result.model);
+            input.applyModelState({ model: result.model, issues: result.issues });
+            await input.exportCurrentMermaid({ silent: true });
+            input.completeTransform(result.issues.length > 0
+                ? `project_draft_view を取り込みました。検証で ${result.issues.length} 件の問題があります`
+                : "project_draft_view を取り込みました", "project_draft_view を取り込みました");
+        },
+        async importPatchJsonText(input) {
+            const result = input.importPatchJsonText({
+                sourceText: input.sourceText,
+                ensureCurrentModel: input.ensureCurrentModel,
+                extractLastJsonBlock: input.extractLastJsonBlock,
+                importProjectPatchJson: input.importProjectPatchJson,
+                exportMsProjectXml: input.exportMsProjectXml,
+                validateProjectModel: input.validateProjectModel
+            });
+            input.setCurrentModel(result.model);
+            input.applyModelState({
+                model: result.model,
+                issues: result.issues,
+                warnings: result.warnings,
+                changes: result.changes
+            });
+            if (result.regeneratedXmlText) {
+                input.writeXmlText(result.regeneratedXmlText);
+                input.markXmlDirty();
+            }
+            input.setXmlSourceDirty(false);
+            const summaryText = result.changes.length > 0
+                ? `Patch JSON を読み込んで ${result.changes.length} 件の変更を反映しました。XML は再生成済みで、必要なら XML Export で保存できます`
+                : "Patch JSON に反映対象の変更はありませんでした。XML は未変更です";
+            const warningText = result.warnings.length > 0 ? `。Patch JSON 取込で ${result.warnings.length} 件の warning を無視しました` : "";
+            input.completeTransform(result.issues.length > 0 ? `${summaryText}${warningText}。検証で ${result.issues.length} 件の問題があります` : `${summaryText}${warningText}`, "Patch JSON を反映しました");
+            await input.exportCurrentMermaid({ silent: true });
+        },
+        async importWorkbookJsonText(input) {
+            const result = input.importWorkbookJsonText({
+                sourceText: input.sourceText,
+                previousModel: input.previousModel,
+                extractLastJsonBlock: input.extractLastJsonBlock,
+                importProjectWorkbookJsonAsProjectModel: input.importProjectWorkbookJsonAsProjectModel,
+                importProjectWorkbookJson: input.importProjectWorkbookJson,
+                validateProjectModel: input.validateProjectModel
+            });
+            input.setCurrentModel(result.model);
+            input.syncXmlTextFromModel(result.model);
+            input.applyModelState({
+                model: result.model,
+                issues: result.issues,
+                warnings: result.warnings,
+                changes: result.changes
+            });
+            const summaryText = "JSON を読み込んで project 全体を置き換えました。XML は再生成済みで、必要なら XML Export で保存できます";
+            const warningText = result.warnings.length > 0 ? `。JSON 取込で ${result.warnings.length} 件の warning を無視しました` : "";
+            input.completeTransform(result.issues.length > 0 ? `${summaryText}${warningText}。検証で ${result.issues.length} 件の問題があります` : `${summaryText}${warningText}`, "JSON を読み込みました");
+            await input.exportCurrentMermaid({ silent: true });
+        },
+        async importXlsxFile(input) {
+            const result = await input.importXlsxBytes({
+                bytes: new Uint8Array(await input.file.arrayBuffer()),
+                previousModel: input.previousModel,
+                createWorkbookCodec: input.createWorkbookCodec,
+                importProjectWorkbookAsProjectModel: input.importProjectWorkbookAsProjectModel,
+                importProjectWorkbookDetailed: input.importProjectWorkbookDetailed,
+                validateProjectModel: input.validateProjectModel
+            });
+            input.setCurrentModel(result.model);
+            input.syncXmlTextFromModel(result.model);
+            input.updateSummary(result.model);
+            input.renderValidationIssues(result.issues);
+            input.renderImportWarnings([]);
+            input.renderXlsxImportSummary(result.changes, { sourceLabel: "XLSX Replace" });
+            const summaryText = "XLSX を読み込んで project 全体を置き換えました。XML は再生成済みで、必要なら XML Export で保存できます";
+            input.setStatus(result.issues.length > 0 ? `${summaryText}。検証で ${result.issues.length} 件の問題があります` : summaryText);
+            input.showToast("XLSX を読み込みました");
+            input.setActiveTab();
+            await input.exportCurrentMermaid({ silent: true });
+        },
+        async importCsvFile(input) {
+            const result = input.importCsvText({
+                csvText: await input.file.text(),
+                importCsvParentId: input.importCsvParentId,
+                validateProjectModel: input.validateProjectModel
+            });
+            input.setCurrentModel(result.model);
+            input.setXmlSourceDirty(false);
+            input.updateSummary(result.model);
+            input.renderValidationIssues(result.issues);
+            input.renderImportWarnings([]);
+            input.renderXlsxImportSummary([]);
+            input.setStatus(result.issues.length > 0
+                ? `CSV ファイルを読み込んで解析しました。検証で ${result.issues.length} 件の問題があります`
+                : "CSV + ParentID を内部モデルへ変換しました");
+            input.showToast("CSV を読み込みました");
+            input.setActiveTab();
+            await input.exportCurrentMermaid({ silent: true });
+        }
+    };
+    globalThis.__mikuprojectMainImportActions = mainImportActions;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainXmlActions = {
+        async exportCurrentMermaid(input) {
+            if (!input.currentModel) {
+                input.setStatus("内部モデルがありません");
+                return;
+            }
+            const mermaidText = input.exportMermaidGantt(input.currentModel);
+            input.setMermaidText(mermaidText);
+            await input.renderSvgPreview();
+            if (!input.silent) {
+                input.setStatus("内部モデルから Mermaid gantt を生成し、native SVG preview を更新しました");
+                input.showToast("Mermaid を生成しました");
+            }
+            input.setActiveTab();
+        },
+        loadSampleXml(input) {
+            const model = input.loadSampleXml({
+                document: input.document,
+                readSampleXml: input.readSampleXml,
+                readSampleProjectDraftView: input.readSampleProjectDraftView,
+                writeXmlText: input.writeXmlText,
+                writeProjectDraftText: input.writeProjectDraftText,
+                importSampleXml: input.importSampleXml,
+                validateProjectModel: input.validateProjectModel,
+                markXmlDirty: input.markXmlDirty,
+                applyModelState: input.applyModelState,
+                updateSvgButton: input.updateSvgButton,
+                setStatus: input.setStatus,
+                setActiveTab: input.setActiveTab
+            });
+            input.setCurrentModel(model);
+            input.setXmlSourceDirty(true);
+        },
+        async importXmlFromFile(input) {
+            const xmlText = await input.file.text();
+            input.writeXmlText(xmlText);
+            input.markXmlDirty();
+            const model = input.importMsProjectXml(xmlText);
+            input.setCurrentModel(model);
+            input.setXmlSourceDirty(false);
+            const issues = input.validateProjectModel(model);
+            input.applyModelState({ model, issues });
+            input.completeTransform(issues.length > 0 ? `XML ファイルを読み込んで解析しました。検証で ${issues.length} 件の問題があります` : "XML ファイルを読み込んで解析しました", "XML を読み込んで解析しました");
+            await input.exportCurrentMermaid({ silent: true });
+        },
+        runRoundTripCheck(input) {
+            let model = input.currentModel;
+            if (!model) {
+                input.parseCurrentXml();
+                model = input.getCurrentModel();
+                if (!model) {
+                    return;
+                }
+            }
+            const validationIssues = input.assertRoundTripStable({
+                currentModel: model,
+                exportMsProjectXml: input.exportMsProjectXml,
+                importMsProjectXml: input.importMsProjectXml,
+                validateProjectModel: input.validateProjectModel,
+                normalizeProjectModel: input.normalizeProjectModel
+            });
+            input.renderValidationIssues(validationIssues);
+            input.setStatus("再読込テストに成功しました");
+            input.showToast("再読込テスト成功");
+            input.setActiveTab();
+        }
+    };
+    globalThis.__mikuprojectMainXmlActions = mainXmlActions;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainArchiveActions = {
+        buildOutputArchive(input) {
+            const entries = input.buildOutputArchiveEntries();
+            const stamp = input.formatTimestampCompact(new Date());
+            return {
+                fileName: `mikuproject-all-${stamp}.zip`,
+                zipBytes: input.packZipEntries(entries),
+                entryCount: entries.length
+            };
+        },
+        downloadAllOutputs(input) {
+            const archive = input.buildOutputArchive();
+            input.downloadBlob(new Blob([archive.zipBytes], { type: "application/zip" }), archive.fileName);
+            input.setStatus(`All 出力を保存しました (${archive.entryCount} 件, ZIP)`);
+            input.showToast("All を保存しました");
+            input.setActiveTab();
+        }
+    };
+    globalThis.__mikuprojectMainArchiveActions = mainArchiveActions;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainSaveState = {
+        updateXmlSaveState(input) {
+            input.updateXmlSaveStateView(input.document, {
+                isDirty: input.isDirty,
+                lastSavedXmlStamp: input.lastSavedXmlStamp
+            });
+        },
+        markXmlDirty(input) {
+            this.updateXmlSaveState({
+                document: input.document,
+                isDirty: true,
+                lastSavedXmlStamp: input.lastSavedXmlStamp,
+                updateXmlSaveStateView: input.updateXmlSaveStateView
+            });
+        },
+        markXmlSavedCurrent(input) {
+            const lastSavedXmlText = input.readXmlText();
+            const lastSavedXmlStamp = input.formatSaveStamp(new Date());
+            input.writeSavedState({ lastSavedXmlText, lastSavedXmlStamp });
+            input.updateXmlSaveStateView(input.document, {
+                isDirty: false,
+                lastSavedXmlStamp
+            });
+        },
+        refreshXmlSaveState(input) {
+            input.updateXmlSaveStateView(input.document, {
+                isDirty: input.readXmlText() !== input.lastSavedXmlText,
+                lastSavedXmlStamp: input.lastSavedXmlStamp
+            });
+        }
+    };
+    globalThis.__mikuprojectMainSaveState = mainSaveState;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainTabActions = {
+        setActiveTab(input) {
+            input.setCurrentTabId(input.tabId);
+            input.setActiveTabView(input.document, input.tabId);
+            if (input.tabId === "transform" && !input.skipTransformRefresh && !input.isRefreshingTransformTab) {
+                void input.refreshTransformTab().catch((error) => {
+                    input.setStatus(error instanceof Error ? error.message : "Transform の更新に失敗しました");
+                });
+            }
+        },
+        async refreshTransformTab(input) {
+            if (input.isRefreshingTransformTab) {
+                return;
+            }
+            input.setRefreshingTransformTab(true);
+            try {
+                await input.refreshTransformTabImpl({
+                    currentModel: input.currentModel,
+                    isXmlSourceDirty: input.isXmlSourceDirty,
+                    readXmlText: input.readXmlText,
+                    parseCurrentXml: input.parseCurrentXml,
+                    exportCurrentMermaid: input.exportCurrentMermaid,
+                    setStatus: input.setStatus
+                });
+            }
+            finally {
+                input.setRefreshingTransformTab(false);
+            }
+        },
+        moveTabFocus(input) {
+            const nextButton = input.moveTabFocusView(input.document, input.currentButton, input.direction);
+            if (!nextButton) {
+                return;
+            }
+            nextButton.focus();
+            const nextTab = nextButton.dataset.tab;
+            if (nextTab === "input" || nextTab === "transform" || nextTab === "output") {
+                input.setActiveTab(nextTab);
+            }
+        },
+        bindTabs(input) {
+            input.bindTabsView({
+                doc: input.document,
+                currentTabId: input.currentTabId,
+                getTabButtons: input.getTabButtons,
+                setActiveTab: input.setActiveTab,
+                moveTabFocus: input.moveTabFocus
+            });
+        }
+    };
+    globalThis.__mikuprojectMainTabActions = mainTabActions;
+})();
+  </script>
+
+  <script>
+/*
+ * Copyright 2026 Toshiki Iga
+ * SPDX-License-Identifier: Apache-2.0
+ */
+(() => {
+    const mainPreviewActions = {
+        updateSvgPreviewModeButtons(input) {
+            input.applyPreviewModeButtonClasses(input.document, input.mode);
+        },
+        renderCurrentSvgPreviewMarkup(input) {
+            input.setSvgPreviewMarkup(input.renderPreviewMarkup(input.state));
+        },
+        updateSvgButton(input) {
+            input.updateDownloadButtons(input.document, input.hasModel);
+        },
+        async renderSvgPreview(input) {
+            input.setState(input.buildRenderedState({
+                model: input.currentModel,
+                previousState: input.currentState,
+                buildWbsOptions: input.buildWbsOptions,
+                exportNativeSvg: input.exportNativeSvg,
+                exportWeeklyNativeSvg: input.exportWeeklyNativeSvg,
+                exportMonthlyWbsCalendarSvgArchive: input.exportMonthlyWbsCalendarSvgArchive
+            }));
+            input.renderCurrentSvgPreviewMarkup();
+            input.updateSvgButton();
+        },
+        setSvgPreviewMode(input) {
+            input.setState(input.setMode(input.currentState, input.mode));
+            input.updateSvgPreviewModeButtons();
+            input.renderCurrentSvgPreviewMarkup();
+        }
+    };
+    globalThis.__mikuprojectMainPreviewActions = mainPreviewActions;
 })();
   </script>
 
@@ -18836,6 +19667,38 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
     if (!mikuprojectMainSupport) {
         throw new Error("mikuproject main support module is not loaded");
     }
+    const mikuprojectMainDownloads = globalThis.__mikuprojectMainDownloads;
+    if (!mikuprojectMainDownloads) {
+        throw new Error("mikuproject main downloads module is not loaded");
+    }
+    const mikuprojectMainOutputActions = globalThis.__mikuprojectMainOutputActions;
+    if (!mikuprojectMainOutputActions) {
+        throw new Error("mikuproject main output actions module is not loaded");
+    }
+    const mikuprojectMainImportActions = globalThis.__mikuprojectMainImportActions;
+    if (!mikuprojectMainImportActions) {
+        throw new Error("mikuproject main import actions module is not loaded");
+    }
+    const mikuprojectMainXmlActions = globalThis.__mikuprojectMainXmlActions;
+    if (!mikuprojectMainXmlActions) {
+        throw new Error("mikuproject main XML actions module is not loaded");
+    }
+    const mikuprojectMainArchiveActions = globalThis.__mikuprojectMainArchiveActions;
+    if (!mikuprojectMainArchiveActions) {
+        throw new Error("mikuproject main archive actions module is not loaded");
+    }
+    const mikuprojectMainSaveState = globalThis.__mikuprojectMainSaveState;
+    if (!mikuprojectMainSaveState) {
+        throw new Error("mikuproject main save state module is not loaded");
+    }
+    const mikuprojectMainTabActions = globalThis.__mikuprojectMainTabActions;
+    if (!mikuprojectMainTabActions) {
+        throw new Error("mikuproject main tab actions module is not loaded");
+    }
+    const mikuprojectMainPreviewActions = globalThis.__mikuprojectMainPreviewActions;
+    if (!mikuprojectMainPreviewActions) {
+        throw new Error("mikuproject main preview actions module is not loaded");
+    }
     const mikuprojectMainTransform = globalThis.__mikuprojectMainTransform;
     if (!mikuprojectMainTransform) {
         throw new Error("mikuproject main transform module is not loaded");
@@ -18905,50 +19768,50 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         return mikuprojectMainUi.getTabPanels(document);
     }
     function setActiveTab(tabId, options = {}) {
-        currentTabId = tabId;
-        mikuprojectMainUi.setActiveTab(document, tabId);
-        if (tabId === "transform" && !options.skipTransformRefresh && !isRefreshingTransformTab) {
-            void refreshTransformTab().catch((error) => {
-                setStatus(error instanceof Error ? error.message : "Transform の更新に失敗しました");
-            });
-        }
+        mikuprojectMainTabActions.setActiveTab({
+            document,
+            tabId,
+            skipTransformRefresh: options.skipTransformRefresh,
+            isRefreshingTransformTab,
+            setCurrentTabId: (nextTabId) => {
+                currentTabId = nextTabId;
+            },
+            setActiveTabView: mikuprojectMainUi.setActiveTab,
+            refreshTransformTab,
+            setStatus
+        });
     }
     async function refreshTransformTab() {
-        if (isRefreshingTransformTab) {
-            return;
-        }
-        isRefreshingTransformTab = true;
-        try {
-            await mikuprojectMainTransform.refreshTransformTab({
-                currentModel,
-                isXmlSourceDirty,
-                readXmlText: () => getTextArea("xmlInput").value,
-                parseCurrentXml,
-                exportCurrentMermaid,
-                setStatus
-            });
-        }
-        finally {
-            isRefreshingTransformTab = false;
-        }
+        await mikuprojectMainTabActions.refreshTransformTab({
+            isRefreshingTransformTab,
+            setRefreshingTransformTab: (value) => {
+                isRefreshingTransformTab = value;
+            },
+            refreshTransformTabImpl: mikuprojectMainTransform.refreshTransformTab,
+            currentModel,
+            isXmlSourceDirty,
+            readXmlText: () => getTextArea("xmlInput").value,
+            parseCurrentXml,
+            exportCurrentMermaid,
+            setStatus
+        });
     }
     function moveTabFocus(currentButton, direction) {
-        const nextButton = mikuprojectMainUi.moveTabFocus(document, currentButton, direction);
-        if (!nextButton) {
-            return;
-        }
-        nextButton.focus();
-        const nextTab = nextButton.dataset.tab;
-        if (nextTab === "input" || nextTab === "transform" || nextTab === "output") {
-            setActiveTab(nextTab);
-        }
+        mikuprojectMainTabActions.moveTabFocus({
+            document,
+            currentButton,
+            direction,
+            moveTabFocusView: mikuprojectMainUi.moveTabFocus,
+            setActiveTab
+        });
     }
     function bindTabs() {
-        mikuprojectMainTransform.bindTabs({
-            doc: document,
+        mikuprojectMainTabActions.bindTabs({
+            document,
             currentTabId,
             getTabButtons,
-            setActiveTab: (tabId) => setActiveTab(tabId),
+            bindTabsView: mikuprojectMainTransform.bindTabs,
+            setActiveTab,
             moveTabFocus
         });
     }
@@ -18966,26 +19829,42 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
     async function copyTextToClipboard(text) {
         await mikuprojectMainSupport.copyTextToClipboard(document, text);
     }
+    const mikuprojectMainSamples = globalThis.__mikuprojectMainSamples;
+    if (!mikuprojectMainSamples) {
+        throw new Error("mikuproject main samples module is not loaded");
+    }
     async function copyAiPrompt() {
-        const promptText = getAiPromptText();
-        if (!promptText) {
-            throw new Error("生成AIプロンプトが見つかりません");
-        }
-        await copyTextToClipboard(promptText);
-        showToast("生成AIプロンプトをクリップボードにコピーしました");
-        setStatus("生成AIプロンプトをクリップボードにコピーしました");
+        await mikuprojectMainSamples.copyAiPrompt({
+            document,
+            getAiPromptText,
+            copyTextToClipboard,
+            showToast,
+            setStatus
+        });
     }
     function setSvgPreviewMarkup(markup) {
         getElement("nativeSvgPreview").innerHTML = markup;
     }
     function updateSvgPreviewModeButtons() {
-        mikuprojectMainPreview.applyPreviewModeButtonClasses(document, currentSvgPreviewState.state.currentSvgPreviewMode);
+        mikuprojectMainPreviewActions.updateSvgPreviewModeButtons({
+            document,
+            mode: currentSvgPreviewState.state.currentSvgPreviewMode,
+            applyPreviewModeButtonClasses: mikuprojectMainPreview.applyPreviewModeButtonClasses
+        });
     }
     function renderCurrentSvgPreviewMarkup() {
-        setSvgPreviewMarkup(mikuprojectMainPreview.renderPreviewMarkup(currentSvgPreviewState.state));
+        mikuprojectMainPreviewActions.renderCurrentSvgPreviewMarkup({
+            state: currentSvgPreviewState.state,
+            renderPreviewMarkup: mikuprojectMainPreview.renderPreviewMarkup,
+            setSvgPreviewMarkup
+        });
     }
     function updateSvgButton() {
-        mikuprojectMainPreview.updateDownloadButtons(document, Boolean(currentModel));
+        mikuprojectMainPreviewActions.updateSvgButton({
+            document,
+            hasModel: Boolean(currentModel),
+            updateDownloadButtons: mikuprojectMainPreview.updateDownloadButtons
+        });
     }
     function buildCurrentWbsOptions(model) {
         return mikuprojectMainTransform.buildWbsOptions({
@@ -19002,21 +19881,32 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         return mikuprojectMainUtil.formatTimestampCompact(date);
     }
     async function renderSvgPreview() {
-        currentSvgPreviewState.state = mikuprojectMainPreview.buildRenderedState({
-            model: currentModel,
-            previousState: currentSvgPreviewState.state,
+        await mikuprojectMainPreviewActions.renderSvgPreview({
+            currentModel,
+            currentState: currentSvgPreviewState.state,
+            setState: (state) => {
+                currentSvgPreviewState.state = state;
+            },
+            buildRenderedState: mikuprojectMainPreview.buildRenderedState,
             buildWbsOptions: buildCurrentWbsOptions,
             exportNativeSvg: mikuprojectNativeSvg.exportNativeSvg,
             exportWeeklyNativeSvg: mikuprojectNativeSvg.exportWeeklyNativeSvg,
-            exportMonthlyWbsCalendarSvgArchive: mikuprojectNativeSvg.exportMonthlyWbsCalendarSvgArchive
+            exportMonthlyWbsCalendarSvgArchive: mikuprojectNativeSvg.exportMonthlyWbsCalendarSvgArchive,
+            renderCurrentSvgPreviewMarkup,
+            updateSvgButton
         });
-        renderCurrentSvgPreviewMarkup();
-        updateSvgButton();
     }
     function setSvgPreviewMode(mode) {
-        currentSvgPreviewState.state = mikuprojectMainPreview.setMode(currentSvgPreviewState.state, mode);
-        updateSvgPreviewModeButtons();
-        renderCurrentSvgPreviewMarkup();
+        mikuprojectMainPreviewActions.setSvgPreviewMode({
+            currentState: currentSvgPreviewState.state,
+            mode,
+            setMode: mikuprojectMainPreview.setMode,
+            setState: (state) => {
+                currentSvgPreviewState.state = state;
+            },
+            updateSvgPreviewModeButtons,
+            renderCurrentSvgPreviewMarkup
+        });
     }
     function buildCurrentOutputArchiveEntries() {
         return mikuprojectMainIo.buildOutputArchiveEntries({
@@ -19041,20 +19931,22 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         });
     }
     function buildCurrentOutputArchive() {
-        const entries = buildCurrentOutputArchiveEntries();
-        const stamp = formatTimestampCompact(new Date());
-        return {
-            fileName: `mikuproject-all-${stamp}.zip`,
-            zipBytes: mikuprojectMainUtil.packZipEntries(entries),
-            entryCount: entries.length
-        };
+        return mikuprojectMainArchiveActions.buildOutputArchive({
+            buildOutputArchiveEntries: buildCurrentOutputArchiveEntries,
+            formatTimestampCompact,
+            packZipEntries: mikuprojectMainUtil.packZipEntries
+        });
     }
     function downloadAllOutputs() {
-        const archive = buildCurrentOutputArchive();
-        downloadBlob(new Blob([archive.zipBytes], { type: "application/zip" }), archive.fileName);
-        setStatus(`All 出力を保存しました (${archive.entryCount} 件, ZIP)`);
-        showToast("All を保存しました");
-        setActiveTab("output");
+        mikuprojectMainArchiveActions.downloadAllOutputs({
+            buildOutputArchive: buildCurrentOutputArchive,
+            downloadBlob,
+            setStatus,
+            showToast,
+            setActiveTab: () => {
+                setActiveTab("output");
+            }
+        });
     }
     function setStatus(message) {
         mikuprojectMainUi.setStatus(document, message);
@@ -19063,21 +19955,40 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         return mikuprojectMainUtil.formatSaveStamp(date);
     }
     function updateXmlSaveState(isDirty) {
-        mikuprojectMainUi.updateXmlSaveState(document, {
+        mikuprojectMainSaveState.updateXmlSaveState({
+            document,
             isDirty,
-            lastSavedXmlStamp
+            lastSavedXmlStamp,
+            updateXmlSaveStateView: mikuprojectMainUi.updateXmlSaveState
         });
     }
     function markXmlDirty() {
-        updateXmlSaveState(true);
+        mikuprojectMainSaveState.markXmlDirty({
+            document,
+            lastSavedXmlStamp,
+            updateXmlSaveStateView: mikuprojectMainUi.updateXmlSaveState
+        });
     }
     function markXmlSavedCurrent() {
-        lastSavedXmlText = getTextArea("xmlInput").value;
-        lastSavedXmlStamp = formatSaveStamp(new Date());
-        updateXmlSaveState(false);
+        mikuprojectMainSaveState.markXmlSavedCurrent({
+            readXmlText: () => getTextArea("xmlInput").value,
+            formatSaveStamp,
+            writeSavedState: ({ lastSavedXmlText: nextSavedXmlText, lastSavedXmlStamp: nextSavedXmlStamp }) => {
+                lastSavedXmlText = nextSavedXmlText;
+                lastSavedXmlStamp = nextSavedXmlStamp;
+            },
+            document,
+            updateXmlSaveStateView: mikuprojectMainUi.updateXmlSaveState
+        });
     }
     function refreshXmlSaveState() {
-        updateXmlSaveState(getTextArea("xmlInput").value !== lastSavedXmlText);
+        mikuprojectMainSaveState.refreshXmlSaveState({
+            readXmlText: () => getTextArea("xmlInput").value,
+            lastSavedXmlText,
+            lastSavedXmlStamp,
+            document,
+            updateXmlSaveStateView: mikuprojectMainUi.updateXmlSaveState
+        });
     }
     function syncXmlTextFromModel(model) {
         return mikuprojectMainModel.syncXmlTextFromModel({
@@ -19105,49 +20016,74 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         mikuprojectMainRender.updateSummary(document, model, updateSvgButton);
     }
     function loadSample() {
-        const sampleXml = mikuprojectXml.SAMPLE_XML;
-        getTextArea("xmlInput").value = sampleXml;
-        currentModel = mikuprojectXml.importMsProjectXml(sampleXml);
-        isXmlSourceDirty = true;
-        markXmlDirty();
-        mikuprojectMainFlow.applyModelState({
-            model: currentModel,
-            issues: mikuprojectXml.validateProjectModel(currentModel),
-            updateSummary,
-            renderValidationIssues,
-            renderImportWarnings,
-            renderXlsxImportSummary
+        mikuprojectMainXmlActions.loadSampleXml({
+            loadSampleXml: mikuprojectMainSamples.loadSampleXml,
+            document,
+            readSampleXml: () => mikuprojectXml.SAMPLE_XML,
+            readSampleProjectDraftView: () => mikuprojectXml.SAMPLE_PROJECT_DRAFT_VIEW,
+            writeXmlText: (xmlText) => {
+                getTextArea("xmlInput").value = xmlText;
+            },
+            writeProjectDraftText: (text) => {
+                getTextArea("projectDraftImportInput").value = text;
+            },
+            importSampleXml: mikuprojectXml.importMsProjectXml,
+            validateProjectModel: mikuprojectXml.validateProjectModel,
+            markXmlDirty,
+            applyModelState: ({ model, issues }) => {
+                mikuprojectMainFlow.applyModelState({
+                    model,
+                    issues,
+                    updateSummary,
+                    renderValidationIssues,
+                    renderImportWarnings,
+                    renderXlsxImportSummary
+                });
+            },
+            updateSvgButton,
+            setStatus,
+            setActiveTab,
+            setCurrentModel: (model) => {
+                currentModel = model;
+            },
+            setXmlSourceDirty: (dirty) => {
+                isXmlSourceDirty = dirty;
+            }
         });
-        updateSvgButton();
-        setStatus("サンプル XML を読み込みました");
-        setActiveTab("input");
     }
     async function importXmlFromFile(file) {
         if (!file) {
             return;
         }
-        const xmlText = await file.text();
-        getTextArea("xmlInput").value = xmlText;
-        markXmlDirty();
-        currentModel = mikuprojectXml.importMsProjectXml(xmlText);
-        isXmlSourceDirty = false;
-        const issues = mikuprojectXml.validateProjectModel(currentModel);
-        mikuprojectMainFlow.applyModelState({
-            model: currentModel,
-            issues,
-            updateSummary,
-            renderValidationIssues,
-            renderImportWarnings,
-            renderXlsxImportSummary
+        await mikuprojectMainXmlActions.importXmlFromFile({
+            file,
+            writeXmlText: (xmlText) => {
+                getTextArea("xmlInput").value = xmlText;
+            },
+            markXmlDirty,
+            importMsProjectXml: mikuprojectXml.importMsProjectXml,
+            validateProjectModel: mikuprojectXml.validateProjectModel,
+            setCurrentModel: (model) => {
+                currentModel = model;
+            },
+            setXmlSourceDirty: (dirty) => {
+                isXmlSourceDirty = dirty;
+            },
+            applyModelState: ({ model, issues }) => {
+                mikuprojectMainFlow.applyModelState({
+                    model,
+                    issues,
+                    updateSummary,
+                    renderValidationIssues,
+                    renderImportWarnings,
+                    renderXlsxImportSummary
+                });
+            },
+            completeTransform: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeTransform({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            },
+            exportCurrentMermaid
         });
-        mikuprojectMainFlow.completeTransform({
-            setStatus,
-            showToast,
-            setActiveTab,
-            statusMessage: issues.length > 0 ? `XML ファイルを読み込んで解析しました。検証で ${issues.length} 件の問題があります` : "XML ファイルを読み込んで解析しました",
-            toastMessage: "XML を読み込んで解析しました"
-        });
-        await exportCurrentMermaid({ silent: true });
     }
     function ensureCurrentModel() {
         currentModel = mikuprojectMainModel.ensureCurrentModel({
@@ -19195,157 +20131,153 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         setActiveTab("transform", { skipTransformRefresh: true });
     }
     async function exportCurrentMermaid(options = {}) {
-        if (!currentModel) {
-            setStatus("内部モデルがありません");
-            return;
-        }
-        const mermaidText = mikuprojectXml.exportMermaidGantt(currentModel);
-        getTextArea("mermaidOutput").value = mermaidText;
-        await renderSvgPreview();
-        if (!options.silent) {
-            setStatus("内部モデルから Mermaid gantt を生成し、native SVG preview を更新しました");
-            showToast("Mermaid を生成しました");
-        }
-        setActiveTab("transform", { skipTransformRefresh: true });
+        await mikuprojectMainXmlActions.exportCurrentMermaid({
+            currentModel,
+            exportMermaidGantt: mikuprojectXml.exportMermaidGantt,
+            setMermaidText: (text) => {
+                getTextArea("mermaidOutput").value = text;
+            },
+            renderSvgPreview,
+            setStatus,
+            showToast,
+            setActiveTab: () => {
+                setActiveTab("transform", { skipTransformRefresh: true });
+            },
+            silent: options.silent
+        });
     }
     function exportCurrentCsv() {
         const model = ensureCurrentModel();
-        syncXmlTextFromModel(model);
-        const exported = mikuprojectMainExport.buildCsvExport({
+        mikuprojectMainOutputActions.exportCsv({
             model,
-            exportCsvParentId: mikuprojectXml.exportCsvParentId
-        });
-        downloadBlob(new Blob([exported.text], { type: "text/csv;charset=utf-8" }), exported.fileName);
-        mikuprojectMainFlow.completeOutput({
-            setStatus,
-            showToast,
-            setActiveTab,
-            statusMessage: "内部モデルから CSV + ParentID を生成して保存しました",
-            toastMessage: "CSV を保存しました"
+            syncXmlTextFromModel,
+            buildCsvExport: mikuprojectMainExport.buildCsvExport,
+            exportCsvParentId: mikuprojectXml.exportCsvParentId,
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
     }
     function exportCurrentProjectOverviewView() {
         const model = ensureCurrentModel();
-        syncXmlTextFromModel(model);
-        const exported = mikuprojectMainExport.buildProjectOverviewExport({
+        mikuprojectMainOutputActions.exportProjectOverview({
             model,
-            exportProjectOverviewView: mikuprojectXml.exportProjectOverviewView
-        });
-        getTextArea("projectOverviewOutput").value = exported.text.trimEnd();
-        downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
-        mikuprojectMainFlow.completeOutput({
-            setStatus,
-            showToast,
-            setActiveTab,
-            statusMessage: "project_overview_view を生成して保存しました",
-            toastMessage: "project_overview_view を保存しました"
+            syncXmlTextFromModel,
+            buildProjectOverviewExport: mikuprojectMainExport.buildProjectOverviewExport,
+            exportProjectOverviewView: mikuprojectXml.exportProjectOverviewView,
+            setOutputText: (text) => {
+                getTextArea("projectOverviewOutput").value = text;
+            },
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
     }
     function exportCurrentTaskEditView() {
         const model = ensureCurrentModel();
-        syncXmlTextFromModel(model);
-        const exported = mikuprojectMainExport.buildTaskEditExport({
+        mikuprojectMainOutputActions.exportTaskEdit({
             model,
+            syncXmlTextFromModel,
             requestedTaskUid: getInput("taskEditUidInput").value.trim() || undefined,
-            exportTaskEditView: mikuprojectXml.exportTaskEditView
-        });
-        if (exported.resolvedTaskUid) {
-            getInput("taskEditUidInput").value = exported.resolvedTaskUid;
-        }
-        getTextArea("taskEditOutput").value = exported.text.trimEnd();
-        downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
-        mikuprojectMainFlow.completeOutput({
-            setStatus,
-            showToast,
-            setActiveTab,
-            statusMessage: "task_edit_view を生成して保存しました",
-            toastMessage: "task_edit_view を保存しました"
+            buildTaskEditExport: mikuprojectMainExport.buildTaskEditExport,
+            exportTaskEditView: mikuprojectXml.exportTaskEditView,
+            setResolvedTaskUid: (taskUid) => {
+                getInput("taskEditUidInput").value = taskUid;
+            },
+            setOutputText: (text) => {
+                getTextArea("taskEditOutput").value = text;
+            },
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
     }
     function exportCurrentAiProjectionBundle() {
         const model = ensureCurrentModel();
-        syncXmlTextFromModel(model);
-        const exported = mikuprojectMainExport.buildAiProjectionBundleExport({
+        mikuprojectMainOutputActions.exportAiProjectionBundle({
             model,
+            syncXmlTextFromModel,
+            buildAiProjectionBundleExport: mikuprojectMainExport.buildAiProjectionBundleExport,
             exportProjectOverviewView: mikuprojectXml.exportProjectOverviewView,
             exportPhaseDetailView: mikuprojectXml.exportPhaseDetailView,
-            exportTaskEditView: mikuprojectXml.exportTaskEditView
-        });
-        getTextArea("aiBundleOutput").value = exported.text.trimEnd();
-        downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
-        mikuprojectMainFlow.completeOutput({
-            setStatus,
-            showToast,
-            setActiveTab,
-            statusMessage: `AI 連携用まとめ JSON を生成して保存しました (phase_detail_view full ${exported.phaseCount} 件 / task_edit_view ${exported.taskCount} 件)`,
-            toastMessage: "AI 連携用まとめ JSON を保存しました"
+            exportTaskEditView: mikuprojectXml.exportTaskEditView,
+            setOutputText: (text) => {
+                getTextArea("aiBundleOutput").value = text;
+            },
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
     }
     async function importProjectDraftFromText() {
-        const result = mikuprojectMainImport.importProjectDraftText({
+        await mikuprojectMainImportActions.importProjectDraftText({
             sourceText: getTextArea("projectDraftImportInput").value,
+            importProjectDraftText: mikuprojectMainImport.importProjectDraftText,
             extractLastJsonBlock: mikuprojectAiJsonUtil.extractLastJsonBlock,
             importProjectDraftView: mikuprojectXml.importProjectDraftView,
-            validateProjectModel: mikuprojectXml.validateProjectModel
-        });
-        currentModel = result.model;
-        syncXmlTextFromModel(currentModel);
-        mikuprojectMainFlow.applyModelState({
-            model: currentModel,
-            issues: result.issues,
-            updateSummary,
-            renderValidationIssues,
-            renderImportWarnings,
-            renderXlsxImportSummary
-        });
-        await exportCurrentMermaid({ silent: true });
-        mikuprojectMainFlow.completeTransform({
-            setStatus,
-            showToast,
-            setActiveTab,
-            statusMessage: result.issues.length > 0 ? `project_draft_view を取り込みました。検証で ${result.issues.length} 件の問題があります` : "project_draft_view を取り込みました",
-            toastMessage: "project_draft_view を取り込みました"
+            validateProjectModel: mikuprojectXml.validateProjectModel,
+            setCurrentModel: (model) => {
+                currentModel = model;
+            },
+            syncXmlTextFromModel,
+            applyModelState: ({ model, issues }) => {
+                mikuprojectMainFlow.applyModelState({
+                    model,
+                    issues,
+                    updateSummary,
+                    renderValidationIssues,
+                    renderImportWarnings,
+                    renderXlsxImportSummary
+                });
+            },
+            exportCurrentMermaid,
+            completeTransform: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeTransform({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
     }
     async function importPatchJsonFromSourceText(sourceText) {
-        const result = mikuprojectMainImport.importPatchJsonText({
+        await mikuprojectMainImportActions.importPatchJsonText({
             sourceText,
+            importPatchJsonText: mikuprojectMainImport.importPatchJsonText,
             ensureCurrentModel,
             extractLastJsonBlock: mikuprojectAiJsonUtil.extractLastJsonBlock,
             importProjectPatchJson: mikuprojectProjectPatchJson.importProjectPatchJson,
             exportMsProjectXml: mikuprojectXml.exportMsProjectXml,
-            validateProjectModel: mikuprojectXml.validateProjectModel
+            validateProjectModel: mikuprojectXml.validateProjectModel,
+            setCurrentModel: (model) => {
+                currentModel = model;
+            },
+            applyModelState: ({ model, issues, warnings, changes }) => {
+                mikuprojectMainFlow.applyModelState({
+                    model,
+                    issues,
+                    updateSummary,
+                    renderValidationIssues,
+                    renderImportWarnings,
+                    renderXlsxImportSummary,
+                    warnings,
+                    warningSourceLabel: "Patch JSON",
+                    changes,
+                    changeSourceLabel: "Patch JSON"
+                });
+            },
+            writeXmlText: (xmlText) => {
+                getTextArea("xmlInput").value = xmlText;
+            },
+            markXmlDirty,
+            setXmlSourceDirty: (dirty) => {
+                isXmlSourceDirty = dirty;
+            },
+            exportCurrentMermaid,
+            completeTransform: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeTransform({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
-        currentModel = result.model;
-        mikuprojectMainFlow.applyModelState({
-            model: currentModel,
-            issues: result.issues,
-            updateSummary,
-            renderValidationIssues,
-            renderImportWarnings,
-            renderXlsxImportSummary,
-            warnings: result.warnings,
-            warningSourceLabel: "Patch JSON",
-            changes: result.changes,
-            changeSourceLabel: "Patch JSON"
-        });
-        if (result.regeneratedXmlText) {
-            getTextArea("xmlInput").value = result.regeneratedXmlText;
-            markXmlDirty();
-        }
-        isXmlSourceDirty = false;
-        const summaryText = result.changes.length > 0
-            ? `Patch JSON を読み込んで ${result.changes.length} 件の変更を反映しました。XML は再生成済みで、必要なら XML Export で保存できます`
-            : "Patch JSON に反映対象の変更はありませんでした。XML は未変更です";
-        const warningText = result.warnings.length > 0 ? `。Patch JSON 取込で ${result.warnings.length} 件の warning を無視しました` : "";
-        mikuprojectMainFlow.completeTransform({
-            setStatus,
-            showToast,
-            setActiveTab,
-            statusMessage: result.issues.length > 0 ? `${summaryText}${warningText}。検証で ${result.issues.length} 件の問題があります` : `${summaryText}${warningText}`,
-            toastMessage: "Patch JSON を反映しました"
-        });
-        await exportCurrentMermaid({ silent: true });
     }
     async function importAiEditJsonFromText() {
         const sourceText = getTextArea("projectDraftImportInput").value;
@@ -19361,10 +20293,33 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         await importPatchJsonFromSourceText(sourceText);
     }
     function loadProjectDraftSample() {
-        const sampleDraftText = JSON.stringify(mikuprojectXml.SAMPLE_PROJECT_DRAFT_VIEW, null, 2);
-        getTextArea("projectDraftImportInput").value = sampleDraftText;
-        setStatus("サンプル project_draft_view を読み込みました");
-        setActiveTab("input");
+        mikuprojectMainSamples.loadProjectDraftSample({
+            document,
+            readSampleXml: () => mikuprojectXml.SAMPLE_XML,
+            readSampleProjectDraftView: () => mikuprojectXml.SAMPLE_PROJECT_DRAFT_VIEW,
+            writeXmlText: (xmlText) => {
+                getTextArea("xmlInput").value = xmlText;
+            },
+            writeProjectDraftText: (text) => {
+                getTextArea("projectDraftImportInput").value = text;
+            },
+            importSampleXml: mikuprojectXml.importMsProjectXml,
+            validateProjectModel: mikuprojectXml.validateProjectModel,
+            markXmlDirty,
+            applyModelState: ({ model, issues }) => {
+                mikuprojectMainFlow.applyModelState({
+                    model,
+                    issues,
+                    updateSummary,
+                    renderValidationIssues,
+                    renderImportWarnings,
+                    renderXlsxImportSummary
+                });
+            },
+            updateSvgButton,
+            setStatus,
+            setActiveTab
+        });
     }
     async function importProjectDraftFromFile(file) {
         if (!file) {
@@ -19375,38 +20330,37 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         await importProjectDraftFromText();
     }
     async function importWorkbookJsonFromSourceText(sourceText) {
-        const result = mikuprojectMainImport.importWorkbookJsonText({
+        await mikuprojectMainImportActions.importWorkbookJsonText({
             sourceText,
+            importWorkbookJsonText: mikuprojectMainImport.importWorkbookJsonText,
             previousModel: currentModel,
             extractLastJsonBlock: mikuprojectAiJsonUtil.extractLastJsonBlock,
             importProjectWorkbookJsonAsProjectModel: mikuprojectProjectWorkbookJson.importProjectWorkbookJsonAsProjectModel,
             importProjectWorkbookJson: mikuprojectProjectWorkbookJson.importProjectWorkbookJson,
-            validateProjectModel: mikuprojectXml.validateProjectModel
+            validateProjectModel: mikuprojectXml.validateProjectModel,
+            setCurrentModel: (model) => {
+                currentModel = model;
+            },
+            syncXmlTextFromModel,
+            applyModelState: ({ model, issues, warnings, changes }) => {
+                mikuprojectMainFlow.applyModelState({
+                    model,
+                    issues,
+                    updateSummary,
+                    renderValidationIssues,
+                    renderImportWarnings,
+                    renderXlsxImportSummary,
+                    warnings,
+                    warningSourceLabel: "JSON Replace",
+                    changes,
+                    changeSourceLabel: "JSON Replace"
+                });
+            },
+            exportCurrentMermaid,
+            completeTransform: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeTransform({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
-        currentModel = result.model;
-        syncXmlTextFromModel(currentModel);
-        mikuprojectMainFlow.applyModelState({
-            model: currentModel,
-            issues: result.issues,
-            updateSummary,
-            renderValidationIssues,
-            renderImportWarnings,
-            renderXlsxImportSummary,
-            warnings: result.warnings,
-            warningSourceLabel: "JSON Replace",
-            changes: result.changes,
-            changeSourceLabel: "JSON Replace"
-        });
-        const summaryText = "JSON を読み込んで project 全体を置き換えました。XML は再生成済みで、必要なら XML Export で保存できます";
-        const warningText = result.warnings.length > 0 ? `。JSON 取込で ${result.warnings.length} 件の warning を無視しました` : "";
-        mikuprojectMainFlow.completeTransform({
-            setStatus,
-            showToast,
-            setActiveTab,
-            statusMessage: result.issues.length > 0 ? `${summaryText}${warningText}。検証で ${result.issues.length} 件の問題があります` : `${summaryText}${warningText}`,
-            toastMessage: "JSON を読み込みました"
-        });
-        await exportCurrentMermaid({ silent: true });
     }
     async function importWorkbookJsonFromFile(file) {
         if (!file) {
@@ -19459,7 +20413,6 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
     }
     function exportCurrentPhaseDetailView(mode = "scoped") {
         const model = ensureCurrentModel();
-        syncXmlTextFromModel(model);
         const requestedPhaseUid = getInput("phaseDetailUidInput").value.trim() || undefined;
         const requestedRootUid = mode === "scoped" ? getInput("phaseDetailRootUidInput").value.trim() || undefined : undefined;
         const maxDepthText = getInput("phaseDetailMaxDepthInput").value.trim();
@@ -19467,132 +20420,153 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         if (typeof requestedMaxDepth === "number" && (!Number.isFinite(requestedMaxDepth) || requestedMaxDepth < 0)) {
             throw new Error("max depth は 0 以上の整数で指定してください");
         }
-        const exported = mikuprojectMainExport.buildPhaseDetailExport({
+        mikuprojectMainOutputActions.exportPhaseDetail({
             model,
+            syncXmlTextFromModel,
             mode,
             requestedPhaseUid,
             requestedRootUid,
             requestedMaxDepth,
-            exportPhaseDetailView: mikuprojectXml.exportPhaseDetailView
+            buildPhaseDetailExport: mikuprojectMainExport.buildPhaseDetailExport,
+            exportPhaseDetailView: mikuprojectXml.exportPhaseDetailView,
+            setResolvedPhaseUid: (uid) => {
+                getInput("phaseDetailUidInput").value = uid;
+            },
+            setResolvedRootUid: (uid) => {
+                getInput("phaseDetailRootUidInput").value = uid;
+            },
+            setResolvedMaxDepth: (maxDepth) => {
+                getInput("phaseDetailMaxDepthInput").value = typeof maxDepth === "number" ? String(maxDepth) : "";
+            },
+            setOutputText: (text) => {
+                getTextArea("phaseDetailOutput").value = text;
+            },
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
-        if (exported.resolvedPhaseUid) {
-            getInput("phaseDetailUidInput").value = exported.resolvedPhaseUid;
-        }
-        getInput("phaseDetailRootUidInput").value = exported.resolvedRootUid || "";
-        getInput("phaseDetailMaxDepthInput").value = typeof exported.resolvedMaxDepth === "number" ? String(exported.resolvedMaxDepth) : "";
-        getTextArea("phaseDetailOutput").value = exported.text.trimEnd();
-        downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
-        setStatus(`phase_detail_view (${exported.resolvedMode}) を生成して保存しました`);
-        showToast(`phase_detail_view (${exported.resolvedMode}) を保存しました`);
-        setActiveTab("output");
     }
     function exportCurrentXlsx() {
         const model = ensureCurrentModel();
-        syncXmlTextFromModel(model);
-        const exported = mikuprojectMainExport.buildXlsxExport({
+        mikuprojectMainOutputActions.exportXlsx({
             model,
+            syncXmlTextFromModel,
+            buildXlsxExport: mikuprojectMainExport.buildXlsxExport,
             createWorkbookCodec: () => new mikuprojectExcelIo.XlsxWorkbookCodec(),
-            exportProjectWorkbook: mikuprojectProjectXlsx.exportProjectWorkbook
+            exportProjectWorkbook: mikuprojectProjectXlsx.exportProjectWorkbook,
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
-        downloadBlob(new Blob([exported.bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), exported.fileName);
-        setStatus("XLSX ファイルをエクスポートしました");
-        showToast("XLSX を保存しました");
-        setActiveTab("output");
     }
     function exportCurrentWorkbookJson() {
         const model = ensureCurrentModel();
-        syncXmlTextFromModel(model);
-        const exported = mikuprojectMainExport.buildWorkbookJsonExport({
+        mikuprojectMainOutputActions.exportWorkbookJson({
             model,
-            exportProjectWorkbookJson: mikuprojectProjectWorkbookJson.exportProjectWorkbookJson
+            syncXmlTextFromModel,
+            buildWorkbookJsonExport: mikuprojectMainExport.buildWorkbookJsonExport,
+            exportProjectWorkbookJson: mikuprojectProjectWorkbookJson.exportProjectWorkbookJson,
+            setOutputText: (text) => {
+                getTextArea("workbookJsonOutput").value = text;
+            },
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
-        getTextArea("workbookJsonOutput").value = exported.text;
-        downloadBlob(new Blob([`${exported.text}\n`], { type: "application/json;charset=utf-8" }), exported.fileName);
-        setStatus("XLSX 相当の workbook JSON を生成して保存しました");
-        showToast("JSON を保存しました");
-        setActiveTab("output");
     }
     function exportCurrentWbsXlsx() {
         const model = ensureCurrentModel();
-        syncXmlTextFromModel(model);
         const options = buildCurrentWbsOptions(model);
-        const exported = mikuprojectMainExport.buildWbsXlsxExport({
+        mikuprojectMainOutputActions.exportWbsXlsx({
             model,
+            syncXmlTextFromModel,
             options,
+            buildWbsXlsxExport: mikuprojectMainExport.buildWbsXlsxExport,
             createWorkbookCodec: () => new mikuprojectExcelIo.XlsxWorkbookCodec(),
-            exportWbsWorkbook: mikuprojectWbsXlsx.exportWbsWorkbook
+            exportWbsWorkbook: mikuprojectWbsXlsx.exportWbsWorkbook,
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({ setStatus, showToast, setActiveTab, statusMessage, toastMessage });
+            }
         });
-        downloadBlob(new Blob([exported.bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), exported.fileName);
-        const displayRangeText = options.displayDaysBeforeBaseDate !== undefined || options.displayDaysAfterBaseDate !== undefined
-            ? ` / 表示期間 営業日 基準日前 ${options.displayDaysBeforeBaseDate || 0} 日, 基準日後 ${options.displayDaysAfterBaseDate || 0} 日`
-            : "";
-        const progressBandText = " / 進捗帯 営業日";
-        setStatus(`WBS XLSX ファイルをエクスポートしました${options.holidayDates.length > 0 ? ` (祝日 ${options.holidayDates.length} 件)` : ""}${displayRangeText}${progressBandText}`);
-        showToast("WBS XLSX を保存しました");
-        setActiveTab("output");
     }
     async function importXlsxFromFile(file) {
         if (!file) {
             return;
         }
-        const result = await mikuprojectMainImport.importXlsxBytes({
-            bytes: new Uint8Array(await file.arrayBuffer()),
+        await mikuprojectMainImportActions.importXlsxFile({
+            file,
+            importXlsxBytes: mikuprojectMainImport.importXlsxBytes,
             previousModel: currentModel,
             createWorkbookCodec: () => new mikuprojectExcelIo.XlsxWorkbookCodec(),
             importProjectWorkbookAsProjectModel: mikuprojectProjectXlsx.importProjectWorkbookAsProjectModel,
             importProjectWorkbookDetailed: mikuprojectProjectXlsx.importProjectWorkbookDetailed,
-            validateProjectModel: mikuprojectXml.validateProjectModel
+            validateProjectModel: mikuprojectXml.validateProjectModel,
+            setCurrentModel: (model) => {
+                currentModel = model;
+            },
+            syncXmlTextFromModel,
+            updateSummary,
+            renderValidationIssues,
+            renderImportWarnings,
+            renderXlsxImportSummary,
+            setStatus,
+            showToast,
+            setActiveTab: () => {
+                setActiveTab("transform", { skipTransformRefresh: true });
+            },
+            exportCurrentMermaid
         });
-        currentModel = result.model;
-        syncXmlTextFromModel(currentModel);
-        updateSummary(currentModel);
-        renderValidationIssues(result.issues);
-        renderImportWarnings([]);
-        renderXlsxImportSummary(result.changes, { sourceLabel: "XLSX Replace" });
-        const summaryText = "XLSX を読み込んで project 全体を置き換えました。XML は再生成済みで、必要なら XML Export で保存できます";
-        setStatus(result.issues.length > 0 ? `${summaryText}。検証で ${result.issues.length} 件の問題があります` : summaryText);
-        showToast("XLSX を読み込みました");
-        setActiveTab("transform", { skipTransformRefresh: true });
-        await exportCurrentMermaid({ silent: true });
     }
     async function importCsvFromFile(file) {
         if (!file) {
             return;
         }
-        const result = mikuprojectMainImport.importCsvText({
-            csvText: await file.text(),
+        await mikuprojectMainImportActions.importCsvFile({
+            file,
+            importCsvText: mikuprojectMainImport.importCsvText,
             importCsvParentId: mikuprojectXml.importCsvParentId,
-            validateProjectModel: mikuprojectXml.validateProjectModel
+            validateProjectModel: mikuprojectXml.validateProjectModel,
+            setCurrentModel: (model) => {
+                currentModel = model;
+            },
+            setXmlSourceDirty: (dirty) => {
+                isXmlSourceDirty = dirty;
+            },
+            updateSummary,
+            renderValidationIssues,
+            renderImportWarnings,
+            renderXlsxImportSummary: () => {
+                renderXlsxImportSummary([]);
+            },
+            setStatus,
+            showToast,
+            setActiveTab: () => {
+                setActiveTab("transform", { skipTransformRefresh: true });
+            },
+            exportCurrentMermaid
         });
-        currentModel = result.model;
-        isXmlSourceDirty = false;
-        updateSummary(currentModel);
-        renderValidationIssues(result.issues);
-        renderImportWarnings([]);
-        renderXlsxImportSummary([]);
-        setStatus(result.issues.length > 0 ? `CSV ファイルを読み込んで解析しました。検証で ${result.issues.length} 件の問題があります` : "CSV + ParentID を内部モデルへ変換しました");
-        showToast("CSV を読み込みました");
-        setActiveTab("transform", { skipTransformRefresh: true });
-        await exportCurrentMermaid({ silent: true });
     }
     function downloadCurrentXml() {
         const model = ensureCurrentModel();
-        const exported = mikuprojectMainExport.buildXmlExport({
-            xmlText: syncXmlTextFromModel(model)
+        mikuprojectMainDownloads.downloadXml({
+            xmlText: syncXmlTextFromModel(model),
+            buildXmlExport: mikuprojectMainExport.buildXmlExport,
+            downloadBlob,
+            markXmlSavedCurrent,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({
+                    setStatus,
+                    showToast,
+                    setActiveTab,
+                    statusMessage,
+                    toastMessage
+                });
+            }
         });
-        const blob = new Blob([exported.text], { type: "application/xml;charset=utf-8" });
-        const objectUrl = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = objectUrl;
-        link.download = exported.fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
-        markXmlSavedCurrent();
-        setStatus("XML ファイルをエクスポートしました");
-        showToast("XML を保存しました");
-        setActiveTab("output");
     }
     async function downloadCurrentSvg() {
         const model = ensureCurrentModel();
@@ -19604,11 +20578,20 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
             setStatus("出力する SVG がありません");
             return;
         }
-        const exported = mikuprojectMainExport.buildDailySvgExport({ svg: currentSvgPreviewState.state.currentNativeSvg });
-        downloadBlob(new Blob([exported.text], { type: "image/svg+xml;charset=utf-8" }), exported.fileName);
-        setStatus("Daily SVG を保存しました");
-        showToast("Daily SVG を保存しました");
-        setActiveTab("output");
+        mikuprojectMainDownloads.downloadDailySvg({
+            svg: currentSvgPreviewState.state.currentNativeSvg,
+            buildDailySvgExport: mikuprojectMainExport.buildDailySvgExport,
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({
+                    setStatus,
+                    showToast,
+                    setActiveTab,
+                    statusMessage,
+                    toastMessage
+                });
+            }
+        });
     }
     function downloadCurrentWeeklySvg() {
         const model = ensureCurrentModel();
@@ -19618,11 +20601,20 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
             setStatus("出力する Weekly SVG がありません");
             return;
         }
-        const exported = mikuprojectMainExport.buildWeeklySvgExport({ svg: weeklySvg });
-        downloadBlob(new Blob([exported.text], { type: "image/svg+xml;charset=utf-8" }), exported.fileName);
-        setStatus("Weekly SVG を保存しました");
-        showToast("Weekly SVG を保存しました");
-        setActiveTab("output");
+        mikuprojectMainDownloads.downloadWeeklySvg({
+            svg: weeklySvg,
+            buildWeeklySvgExport: mikuprojectMainExport.buildWeeklySvgExport,
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({
+                    setStatus,
+                    showToast,
+                    setActiveTab,
+                    statusMessage,
+                    toastMessage
+                });
+            }
+        });
     }
     function downloadCurrentMonthlyWbsSvgZip() {
         const model = ensureCurrentModel();
@@ -19631,52 +20623,79 @@ WorkWeek1=${formatCalendarWorkWeekSummary(calendar)}</div>
         if (!archive.entries.length || archive.zipBytes.byteLength === 0) {
             throw new Error("出力する月別 WBS カレンダー SVG がありません");
         }
-        const exported = mikuprojectMainExport.buildMonthlySvgZipExport({ zipBytes: archive.zipBytes });
-        downloadBlob(new Blob([exported.bytes], { type: "application/zip" }), exported.fileName);
-        setStatus(`Monthly Calendar SVG を保存しました (${archive.entries.length} か月分, ZIP)`);
-        showToast("Monthly Calendar SVG を保存しました");
-        setActiveTab("output");
+        mikuprojectMainDownloads.downloadMonthlySvgZip({
+            zipBytes: archive.zipBytes,
+            buildMonthlySvgZipExport: mikuprojectMainExport.buildMonthlySvgZipExport,
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                const suffix = ` (${archive.entries.length} か月分, ZIP)`;
+                mikuprojectMainFlow.completeOutput({
+                    setStatus,
+                    showToast,
+                    setActiveTab,
+                    statusMessage: `${statusMessage}${suffix}`,
+                    toastMessage
+                });
+            }
+        });
     }
     function downloadCurrentMermaidMmd() {
         const model = ensureCurrentModel();
         syncXmlTextFromModel(model);
         const mermaidText = mikuprojectXml.exportMermaidGantt(model);
         getTextArea("mermaidOutput").value = mermaidText;
-        const exported = mikuprojectMainExport.buildMermaidExport({ mermaidText });
-        downloadBlob(new Blob([exported.text], { type: "text/plain;charset=utf-8" }), exported.fileName);
-        setStatus("Mermaid を保存しました");
-        showToast("Mermaid を保存しました");
-        setActiveTab("output");
+        mikuprojectMainDownloads.downloadMermaid({
+            mermaidText,
+            buildMermaidExport: mikuprojectMainExport.buildMermaidExport,
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({
+                    setStatus,
+                    showToast,
+                    setActiveTab,
+                    statusMessage,
+                    toastMessage
+                });
+            }
+        });
     }
     function downloadCurrentWbsMarkdown() {
         const model = ensureCurrentModel();
         syncXmlTextFromModel(model);
         const options = buildCurrentWbsOptions(model);
         const markdownText = mikuprojectWbsMarkdown.exportWbsMarkdown(model, options);
-        const exported = mikuprojectMainExport.buildWbsMarkdownExport({ markdownText });
-        downloadBlob(new Blob([exported.text], { type: "text/markdown;charset=utf-8" }), exported.fileName);
-        setStatus("WBS Markdown を保存しました");
-        showToast("WBS Markdown を保存しました");
-        setActiveTab("output");
+        mikuprojectMainDownloads.downloadWbsMarkdown({
+            markdownText,
+            buildWbsMarkdownExport: mikuprojectMainExport.buildWbsMarkdownExport,
+            downloadBlob,
+            completeOutput: (statusMessage, toastMessage) => {
+                mikuprojectMainFlow.completeOutput({
+                    setStatus,
+                    showToast,
+                    setActiveTab,
+                    statusMessage,
+                    toastMessage
+                });
+            }
+        });
     }
     function runRoundTripCheck() {
-        if (!currentModel) {
-            parseCurrentXml();
-            if (!currentModel) {
-                return;
-            }
-        }
-        const validationIssues = mikuprojectMainIo.assertRoundTripStable({
+        mikuprojectMainXmlActions.runRoundTripCheck({
             currentModel,
+            parseCurrentXml,
+            getCurrentModel: () => currentModel,
+            assertRoundTripStable: mikuprojectMainIo.assertRoundTripStable,
             exportMsProjectXml: mikuprojectXml.exportMsProjectXml,
             importMsProjectXml: mikuprojectXml.importMsProjectXml,
             validateProjectModel: mikuprojectXml.validateProjectModel,
-            normalizeProjectModel: mikuprojectXml.normalizeProjectModel
+            normalizeProjectModel: mikuprojectXml.normalizeProjectModel,
+            renderValidationIssues,
+            setStatus,
+            showToast,
+            setActiveTab: () => {
+                setActiveTab("transform");
+            }
         });
-        renderValidationIssues(validationIssues);
-        setStatus("再読込テストに成功しました");
-        showToast("再読込テスト成功");
-        setActiveTab("transform");
     }
     function bindEvents() {
         mikuprojectMainEvents.bind({

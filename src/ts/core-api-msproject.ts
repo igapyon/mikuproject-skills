@@ -12,27 +12,6 @@
       importCsvParentId: (csvText: string) => ProjectModel;
       exportMsProjectXml: (model: ProjectModel) => string;
       exportCsvParentId: (model: ProjectModel) => string;
-      buildProjectDraftRequest: (input: {
-        name: string;
-        plannedStart?: string;
-        goal?: string;
-        teamCount?: number;
-        mustHavePhases?: string[];
-        mustHaveMilestones?: string[];
-      }) => unknown;
-      importProjectDraftView: (draft: unknown) => ProjectModel;
-      exportProjectOverviewView: (model: ProjectModel) => unknown;
-      exportTaskEditView: (model: ProjectModel, taskUid?: string) => unknown;
-      exportMermaidGantt: (model: ProjectModel) => string;
-      exportPhaseDetailView: (
-        model: ProjectModel,
-        phaseUid?: string,
-        options?: {
-          mode?: "full" | "scoped";
-          rootUid?: string;
-          maxDepth?: number;
-        }
-      ) => unknown;
       normalizeProjectModel: (model: ProjectModel) => ProjectModel;
       validateProjectModel: (model: ProjectModel) => ValidationIssue[];
     };
@@ -40,6 +19,17 @@
 
   if (!mikuprojectXml) {
     throw new Error("mikuproject XML module is not loaded");
+  }
+
+  const mikuprojectCoreApiMsprojectAi = (globalThis as typeof globalThis & {
+    __mikuprojectCoreApiMsprojectAi?: {
+      aiViews: unknown;
+      mermaid: unknown;
+    };
+  }).__mikuprojectCoreApiMsprojectAi;
+
+  if (!mikuprojectCoreApiMsprojectAi) {
+    throw new Error("mikuproject core api msproject ai module is not loaded");
   }
 
   globalThis.__mikuprojectCoreApiMsproject = {
@@ -58,15 +48,7 @@
       importFromCsvParentId: mikuprojectXml.importCsvParentId,
       exportToCsvParentId: mikuprojectXml.exportCsvParentId
     },
-    aiViews: {
-      buildProjectDraftRequest: mikuprojectXml.buildProjectDraftRequest,
-      importProjectDraftView: mikuprojectXml.importProjectDraftView,
-      exportProjectOverviewView: mikuprojectXml.exportProjectOverviewView,
-      exportTaskEditView: mikuprojectXml.exportTaskEditView,
-      exportPhaseDetailView: mikuprojectXml.exportPhaseDetailView
-    },
-    mermaid: {
-      exportGantt: mikuprojectXml.exportMermaidGantt
-    }
+    aiViews: mikuprojectCoreApiMsprojectAi.aiViews,
+    mermaid: mikuprojectCoreApiMsprojectAi.mermaid
   };
 })();

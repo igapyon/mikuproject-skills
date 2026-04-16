@@ -7,6 +7,10 @@
     if (!mikuprojectXml) {
         throw new Error("mikuproject XML module is not loaded");
     }
+    const mikuprojectCoreApiMsprojectAi = globalThis.__mikuprojectCoreApiMsprojectAi;
+    if (!mikuprojectCoreApiMsprojectAi) {
+        throw new Error("mikuproject core api msproject ai module is not loaded");
+    }
     globalThis.__mikuprojectCoreApiMsproject = {
         samples: {
             getSampleXml: () => mikuprojectXml.SAMPLE_XML,
@@ -23,15 +27,7 @@
             importFromCsvParentId: mikuprojectXml.importCsvParentId,
             exportToCsvParentId: mikuprojectXml.exportCsvParentId
         },
-        aiViews: {
-            buildProjectDraftRequest: mikuprojectXml.buildProjectDraftRequest,
-            importProjectDraftView: mikuprojectXml.importProjectDraftView,
-            exportProjectOverviewView: mikuprojectXml.exportProjectOverviewView,
-            exportTaskEditView: mikuprojectXml.exportTaskEditView,
-            exportPhaseDetailView: mikuprojectXml.exportPhaseDetailView
-        },
-        mermaid: {
-            exportGantt: mikuprojectXml.exportMermaidGantt
-        }
+        aiViews: mikuprojectCoreApiMsprojectAi.aiViews,
+        mermaid: mikuprojectCoreApiMsprojectAi.mermaid
     };
 })();
