@@ -137,6 +137,30 @@ const projectWorkbookJsonCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-workbook-json.js"),
   "utf8"
 );
+const projectPatchJsonUtilCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-patch-json-util.js"),
+  "utf8"
+);
+const projectPatchJsonLinksCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-patch-json-links.js"),
+  "utf8"
+);
+const projectPatchJsonTasksCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-patch-json-tasks.js"),
+  "utf8"
+);
+const projectPatchJsonEntitiesCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-patch-json-entities.js"),
+  "utf8"
+);
+const projectPatchJsonUpdatesCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-patch-json-updates.js"),
+  "utf8"
+);
+const projectPatchJsonCoreCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-patch-json-core.js"),
+  "utf8"
+);
 const projectPatchJsonCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-patch-json.js"),
   "utf8"
@@ -256,6 +280,12 @@ function bootModules() {
     projectWorkbookJsonImportCode,
     projectWorkbookJsonExportCode,
     projectWorkbookJsonCode,
+    projectPatchJsonUtilCode,
+    projectPatchJsonLinksCode,
+    projectPatchJsonTasksCode,
+    projectPatchJsonEntitiesCode,
+    projectPatchJsonUpdatesCode,
+    projectPatchJsonCoreCode,
     projectPatchJsonCode,
     coreApiMsprojectAiCode,
     coreApiMsprojectCode,
