@@ -3,95 +3,49 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 (() => {
-    function getButton(doc, id) {
-        const element = doc.getElementById(id);
-        if (!(element instanceof HTMLButtonElement)) {
-            throw new Error(`button #${id} が見つかりません`);
-        }
-        return element;
+    const mikuprojectMainButtonEvents = globalThis.__mikuprojectMainButtonEvents;
+    if (!mikuprojectMainButtonEvents) {
+        throw new Error("mikuproject main button events module is not loaded");
+    }
+    const mikuprojectMainInputEvents = globalThis.__mikuprojectMainInputEvents;
+    if (!mikuprojectMainInputEvents) {
+        throw new Error("mikuproject main input events module is not loaded");
     }
     const mainEvents = {
         bind(deps) {
-            const bindClick = (id, action, fallbackMessage, errorLogLabel) => {
-                getButton(deps.document, id).addEventListener("click", () => {
-                    try {
-                        action();
-                    }
-                    catch (error) {
-                        if (errorLogLabel) {
-                            console.error(errorLogLabel, error);
-                        }
-                        deps.setStatus(error instanceof Error ? error.message : fallbackMessage);
-                    }
-                });
-            };
-            const bindAsyncClick = (id, action, fallbackMessage, errorLogLabel) => {
-                getButton(deps.document, id).addEventListener("click", () => {
-                    void action().catch((error) => {
-                        if (errorLogLabel) {
-                            console.error(errorLogLabel, error);
-                        }
-                        deps.setStatus(error instanceof Error ? error.message : fallbackMessage);
-                    });
-                });
-            };
-            getButton(deps.document, "loadSampleBtn").addEventListener("click", deps.loadSample);
-            deps.getImportFileInput().addEventListener("click", (event) => {
-                const input = event.target;
-                if (input) {
-                    input.value = "";
-                }
+            mikuprojectMainButtonEvents.bind({
+                document: deps.document,
+                setStatus: deps.setStatus,
+                getImportFileInput: deps.getImportFileInput,
+                loadSample: deps.loadSample,
+                downloadAllOutputs: deps.downloadAllOutputs,
+                setSvgPreviewMode: deps.setSvgPreviewMode,
+                downloadCurrentSvg: deps.downloadCurrentSvg,
+                downloadCurrentWeeklySvg: deps.downloadCurrentWeeklySvg,
+                downloadCurrentMonthlyWbsSvgZip: deps.downloadCurrentMonthlyWbsSvgZip,
+                downloadCurrentMermaidMmd: deps.downloadCurrentMermaidMmd,
+                exportCurrentCsv: deps.exportCurrentCsv,
+                exportCurrentProjectOverviewView: deps.exportCurrentProjectOverviewView,
+                exportCurrentTaskEditView: deps.exportCurrentTaskEditView,
+                exportCurrentAiProjectionBundle: deps.exportCurrentAiProjectionBundle,
+                loadProjectDraftSample: deps.loadProjectDraftSample,
+                copyAiPrompt: deps.copyAiPrompt,
+                importAiEditJsonFromText: deps.importAiEditJsonFromText,
+                exportCurrentPhaseDetailView: deps.exportCurrentPhaseDetailView,
+                exportCurrentXlsx: deps.exportCurrentXlsx,
+                exportCurrentWorkbookJson: deps.exportCurrentWorkbookJson,
+                exportCurrentWbsXlsx: deps.exportCurrentWbsXlsx,
+                downloadCurrentWbsMarkdown: deps.downloadCurrentWbsMarkdown,
+                downloadCurrentXml: deps.downloadCurrentXml,
+                runRoundTripCheck: deps.runRoundTripCheck
             });
-            getButton(deps.document, "importFileBtn").addEventListener("click", () => {
-                const input = deps.getImportFileInput();
-                input.value = "";
-                input.click();
-            });
-            bindClick("downloadAllOutputsBtn", deps.downloadAllOutputs, "All 出力保存に失敗しました", "[mikuproject] all outputs download failed");
-            bindClick("previewDailySvgBtn", () => deps.setSvgPreviewMode("daily"), "SVG preview 切替に失敗しました");
-            bindClick("previewWeeklySvgBtn", () => deps.setSvgPreviewMode("weekly"), "SVG preview 切替に失敗しました");
-            bindClick("previewMonthlySvgBtn", () => deps.setSvgPreviewMode("monthly"), "SVG preview 切替に失敗しました");
-            bindAsyncClick("downloadSvgBtn", deps.downloadCurrentSvg, "SVG 保存に失敗しました", "[mikuproject] native SVG download failed");
-            bindClick("downloadWeeklySvgBtn", deps.downloadCurrentWeeklySvg, "Weekly SVG 保存に失敗しました", "[mikuproject] weekly SVG download failed");
-            bindClick("downloadMonthlyCalendarSvgBtn", deps.downloadCurrentMonthlyWbsSvgZip, "月別 WBS カレンダー SVG 保存に失敗しました", "[mikuproject] monthly WBS SVG download failed");
-            bindClick("exportMermaidMdBtn", deps.downloadCurrentMermaidMmd, "Mermaid 保存に失敗しました");
-            bindClick("exportCsvBtn", deps.exportCurrentCsv, "CSV 生成に失敗しました");
-            bindClick("exportProjectOverviewBtn", deps.exportCurrentProjectOverviewView, "project_overview_view 生成に失敗しました");
-            bindClick("exportTaskEditBtn", deps.exportCurrentTaskEditView, "task_edit_view 生成に失敗しました");
-            bindClick("exportAiBundleBtn", deps.exportCurrentAiProjectionBundle, "AI 連携用まとめ JSON 生成に失敗しました");
-            getButton(deps.document, "loadProjectDraftSampleBtn").addEventListener("click", deps.loadProjectDraftSample);
-            bindAsyncClick("copyAiPromptBtn", deps.copyAiPrompt, "生成AIプロンプトのコピーに失敗しました");
-            bindAsyncClick("importProjectDraftBtn", deps.importAiEditJsonFromText, "編集用 JSON 取り込みに失敗しました");
-            bindClick("exportPhaseDetailBtn", () => deps.exportCurrentPhaseDetailView("scoped"), "phase_detail_view 生成に失敗しました");
-            bindClick("exportPhaseDetailFullBtn", () => deps.exportCurrentPhaseDetailView("full"), "phase_detail_view 生成に失敗しました");
-            bindClick("exportXlsxBtn", deps.exportCurrentXlsx, "XLSX エクスポートに失敗しました");
-            bindClick("exportWorkbookJsonBtn", deps.exportCurrentWorkbookJson, "JSON エクスポートに失敗しました");
-            bindClick("exportWbsXlsxBtn", deps.exportCurrentWbsXlsx, "WBS XLSX エクスポートに失敗しました");
-            bindClick("exportWbsMdBtn", deps.downloadCurrentWbsMarkdown, "WBS Markdown 保存に失敗しました");
-            bindClick("downloadXmlBtn", deps.downloadCurrentXml, "XML 保存に失敗しました");
-            bindClick("roundTripBtn", deps.runRoundTripCheck, "再読込テストに失敗しました");
-            deps.getImportFileInput().addEventListener("change", async (event) => {
-                const input = event.target;
-                const file = (input === null || input === void 0 ? void 0 : input.files) && input.files[0];
-                if (file) {
-                    deps.setStatus(`${file.name} を読み込んでいます...`);
-                }
-                try {
-                    await deps.importFromFile(file);
-                }
-                catch (error) {
-                    console.error("[mikuproject] file import failed", error);
-                    deps.setStatus(error instanceof Error ? error.message : "ファイル読込に失敗しました");
-                }
-                finally {
-                    if (input) {
-                        input.value = "";
-                    }
-                }
-            });
-            deps.getXmlInput().addEventListener("input", () => {
-                deps.markXmlSourceDirty();
-                deps.refreshXmlSaveState();
+            mikuprojectMainInputEvents.bind({
+                setStatus: deps.setStatus,
+                refreshXmlSaveState: deps.refreshXmlSaveState,
+                markXmlSourceDirty: deps.markXmlSourceDirty,
+                getImportFileInput: deps.getImportFileInput,
+                getXmlInput: deps.getXmlInput,
+                importFromFile: deps.importFromFile
             });
         }
     };

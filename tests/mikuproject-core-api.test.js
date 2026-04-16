@@ -141,12 +141,40 @@ const projectPatchJsonCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-patch-json.js"),
   "utf8"
 );
+const coreApiMsprojectAiCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-msproject-ai.js"),
+  "utf8"
+);
 const coreApiMsprojectCode = readFileSync(
   path.resolve(__dirname, "../src/js/core-api-msproject.js"),
   "utf8"
 );
+const coreApiWorkbookXlsxCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-workbook-xlsx.js"),
+  "utf8"
+);
 const coreApiWorkbookCode = readFileSync(
   path.resolve(__dirname, "../src/js/core-api-workbook.js"),
+  "utf8"
+);
+const coreApiAiJsonImportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-ai-json-import.js"),
+  "utf8"
+);
+const coreApiAiJsonCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-ai-json.js"),
+  "utf8"
+);
+const coreApiExternalBinaryCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-external-binary.js"),
+  "utf8"
+);
+const coreApiExternalDocumentCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-external-document.js"),
+  "utf8"
+);
+const coreApiExternalImportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-external-import.js"),
   "utf8"
 );
 const coreApiImportCode = readFileSync(
@@ -157,8 +185,16 @@ const coreApiReportCode = readFileSync(
   path.resolve(__dirname, "../src/js/core-api-report.js"),
   "utf8"
 );
+const coreApiReportAdaptersCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-report-adapters.js"),
+  "utf8"
+);
 const coreApiReportPublicCode = readFileSync(
   path.resolve(__dirname, "../src/js/core-api-report-public.js"),
+  "utf8"
+);
+const coreApiRegistryCode = readFileSync(
+  path.resolve(__dirname, "../src/js/core-api-registry.js"),
   "utf8"
 );
 const coreApiPublicCode = readFileSync(
@@ -221,14 +257,23 @@ function bootModules() {
     projectWorkbookJsonExportCode,
     projectWorkbookJsonCode,
     projectPatchJsonCode,
+    coreApiMsprojectAiCode,
     coreApiMsprojectCode,
+    coreApiWorkbookXlsxCode,
     coreApiWorkbookCode,
+    coreApiAiJsonImportCode,
+    coreApiAiJsonCode,
+    coreApiExternalBinaryCode,
+    coreApiExternalDocumentCode,
+    coreApiExternalImportCode,
     coreApiImportCode,
     wbsXlsxCode,
     wbsSvgCode,
     wbsMarkdownCode,
     coreApiReportCode,
+    coreApiReportAdaptersCode,
     coreApiReportPublicCode,
+    coreApiRegistryCode,
     coreApiPublicCode,
     coreApiCode
   ].join("\n"))();
@@ -260,11 +305,20 @@ describe("mikuproject core api", () => {
     delete globalThis.__mikuprojectProjectWorkbookJsonExport;
     delete globalThis.__mikuprojectProjectWorkbookJson;
     delete globalThis.__mikuprojectProjectPatchJson;
+    delete globalThis.__mikuprojectCoreApiMsprojectAi;
     delete globalThis.__mikuprojectCoreApiMsproject;
+    delete globalThis.__mikuprojectCoreApiWorkbookXlsx;
     delete globalThis.__mikuprojectCoreApiWorkbook;
+    delete globalThis.__mikuprojectCoreApiAiJsonImport;
+    delete globalThis.__mikuprojectCoreApiAiJson;
+    delete globalThis.__mikuprojectCoreApiExternalBinary;
+    delete globalThis.__mikuprojectCoreApiExternalDocument;
+    delete globalThis.__mikuprojectCoreApiExternalImport;
     delete globalThis.__mikuprojectCoreApiImport;
     delete globalThis.__mikuprojectCoreApiReport;
+    delete globalThis.__mikuprojectCoreApiReportAdapters;
     delete globalThis.__mikuprojectCoreApiReportPublic;
+    delete globalThis.__mikuprojectCoreApiRegistry;
     delete globalThis.__mikuprojectCoreApiPublic;
     delete globalThis.__mikuprojectWbsXlsx;
     delete globalThis.__mikuprojectNativeSvg;
