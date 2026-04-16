@@ -60,6 +60,23 @@
   - `mikuproject report weekly-svg`
   - `mikuproject report monthly-calendar-svg`
 - `importExternal(...)` の次段として、format / mode 不一致時の error 文言と利用例をさらに整える
+- リファクタリング前提のテスト追加計画を進める
+  - 第一段は `main.ts` の分割前に、pure function として切り出しやすい境界の挙動を固定する
+  - `importFromFile` 相当の format 判別と dispatch 方針を、DOM 依存を薄くした形で個別テスト化する
+  - `buildCurrentOutputArchive` 相当の出力一覧・命名規則・同梱内容を固定するテストを追加する
+  - `runRoundTripCheck` 相当の normalize 比較と validation error 判定を、UI 外で確認できるテストに切り出す
+  - 第二段は `project-xlsx.ts` の sheet import を列定義単位で固定し、sheet ごとの実装整理に備える
+  - `Project / Tasks / Resources / Assignments / Calendars / NonWorkingDays` について、editable 列だけが反映されることを列単位で確認するテストを追加する
+  - `project-workbook-json` は `project-xlsx` と同じ限定列ポリシーを維持していることを、対応表ベースで確認するテストを追加する
+  - 第三段は `msproject-xml.ts` 分割前に、`AI views / CSV / holiday / calendar helper` の公開挙動を固定する
+  - `project_overview_view / phase_detail_view / task_edit_view` の最小代表ケースを追加し、分離後も JSON shape を維持する
+  - `CSV + ParentID` import/export の代表ケースを追加し、task 階層と predecessor の戻りを固定する
+  - 祝日例外と default calendar 生成について、年境界と project date range の代表ケースを増やす
+  - 実行方針として、追加した小粒テストは `test:fast` または `test:ui` に寄せ、重い回帰確認だけを `test:extended` に残す
+  - `src/js` 生成物読込の統合テストだけに寄せすぎず、将来的には `src/ts` 正本ベースで検証できる導線も整理する
+  - テスト追加の区切りごとに `npm run build:full` を実行し、build / test が通ることを確認する
+  - `build:full` 実行時は error の有無だけでなく、妙に時間が伸びた test がないかも確認する
+  - 重くなった test が見つかった場合は、fixture・非同期待ち・不要な統合依存を見直し、`fast / ui / extended` の配置も再点検する
 - 作成するテキストファイルについて、BOM 付き / なしを切り替えるスイッチを追加する
 - `local-data/` 配下のファイルを、参照用・検証用・生成物で整理する
 - `local-data/` に置くべきでない生成物や一時ファイルがないか見直す

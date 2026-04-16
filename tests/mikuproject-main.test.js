@@ -29,6 +29,42 @@ const excelIoCode = readFileSync(
   path.resolve(__dirname, "../src/js/excel-io.js"),
   "utf8"
 );
+const msProjectAiViewsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-ai-views.js"),
+  "utf8"
+);
+const msProjectCalendarCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-calendar.js"),
+  "utf8"
+);
+const msProjectSamplesCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-samples.js"),
+  "utf8"
+);
+const msProjectCsvCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-csv.js"),
+  "utf8"
+);
+const msProjectValidateHelpersCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-validate-helpers.js"),
+  "utf8"
+);
+const msProjectValidateCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-validate.js"),
+  "utf8"
+);
+const msProjectXmlDomCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-xml-dom.js"),
+  "utf8"
+);
+const msProjectCodecCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-codec.js"),
+  "utf8"
+);
+const msProjectMermaidCode = readFileSync(
+  path.resolve(__dirname, "../src/js/msproject-mermaid.js"),
+  "utf8"
+);
 const msProjectXmlCode = readFileSync(
   path.resolve(__dirname, "../src/js/msproject-xml.js"),
   "utf8"
@@ -37,8 +73,60 @@ const projectWorkbookSchemaCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-workbook-schema.js"),
   "utf8"
 );
+const projectXlsxImportUtilCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-import-util.js"),
+  "utf8"
+);
+const projectXlsxImportProjectCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-import-project.js"),
+  "utf8"
+);
+const projectXlsxImportCalendarsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-import-calendars.js"),
+  "utf8"
+);
+const projectXlsxImportEntitiesCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-import-entities.js"),
+  "utf8"
+);
+const projectXlsxImportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-import.js"),
+  "utf8"
+);
+const projectXlsxExportUtilCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-export-util.js"),
+  "utf8"
+);
+const projectXlsxExportProjectCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-export-project.js"),
+  "utf8"
+);
+const projectXlsxExportEntitiesCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-export-entities.js"),
+  "utf8"
+);
+const projectXlsxExportCalendarsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-export-calendars.js"),
+  "utf8"
+);
+const projectXlsxExportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-xlsx-export.js"),
+  "utf8"
+);
 const projectXlsxCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-xlsx.js"),
+  "utf8"
+);
+const projectWorkbookJsonValidateCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-workbook-json-validate.js"),
+  "utf8"
+);
+const projectWorkbookJsonImportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-workbook-json-import.js"),
+  "utf8"
+);
+const projectWorkbookJsonExportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/project-workbook-json-export.js"),
   "utf8"
 );
 const projectWorkbookJsonCode = readFileSync(
@@ -61,6 +149,46 @@ const nativeSvgCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-svg.js"),
   "utf8"
 );
+const mainIoCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-io.js"),
+  "utf8"
+);
+const mainImportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-import.js"),
+  "utf8"
+);
+const mainExportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-export.js"),
+  "utf8"
+);
+const mainEventsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-events.js"),
+  "utf8"
+);
+const mainPreviewCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-preview.js"),
+  "utf8"
+);
+const mainUiCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-ui.js"),
+  "utf8"
+);
+const mainSupportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-support.js"),
+  "utf8"
+);
+const mainTransformCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-transform.js"),
+  "utf8"
+);
+const mainFlowCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-flow.js"),
+  "utf8"
+);
+const mainModelCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-model.js"),
+  "utf8"
+);
 const mainRenderCode = readFileSync(
   path.resolve(__dirname, "../src/js/main-render.js"),
   "utf8"
@@ -69,7 +197,7 @@ const mainCode = readFileSync(
   path.resolve(__dirname, "../src/js/main.js"),
   "utf8"
 );
-const bootPageCode = `${typesCode}\n${markdownEscapeCode}\n${aiJsonUtilCode}\n${mainUtilCode}\n${excelIoCode}\n${msProjectXmlCode}\n${projectWorkbookSchemaCode}\n${projectXlsxCode}\n${projectWorkbookJsonCode}\n${projectPatchJsonCode}\n${wbsXlsxCode}\n${wbsMarkdownCode}\n${nativeSvgCode}\n${mainRenderCode}\n${mainCode}`;
+const bootPageCode = `${typesCode}\n${markdownEscapeCode}\n${aiJsonUtilCode}\n${mainUtilCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectWorkbookSchemaCode}\n${projectXlsxImportUtilCode}\n${projectXlsxImportProjectCode}\n${projectXlsxImportCalendarsCode}\n${projectXlsxImportEntitiesCode}\n${projectXlsxImportCode}\n${projectXlsxExportUtilCode}\n${projectXlsxExportProjectCode}\n${projectXlsxExportEntitiesCode}\n${projectXlsxExportCalendarsCode}\n${projectXlsxExportCode}\n${projectXlsxCode}\n${projectWorkbookJsonValidateCode}\n${projectWorkbookJsonImportCode}\n${projectWorkbookJsonExportCode}\n${projectWorkbookJsonCode}\n${projectPatchJsonCode}\n${wbsXlsxCode}\n${wbsMarkdownCode}\n${nativeSvgCode}\n${mainIoCode}\n${mainImportCode}\n${mainExportCode}\n${mainEventsCode}\n${mainPreviewCode}\n${mainUiCode}\n${mainSupportCode}\n${mainTransformCode}\n${mainFlowCode}\n${mainModelCode}\n${mainRenderCode}\n${mainCode}`;
 const bootPageRunner = new Function(bootPageCode);
 function mountFullDom() {
   document.body.innerHTML = `

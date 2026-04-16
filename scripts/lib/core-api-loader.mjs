@@ -15,16 +15,44 @@ export const CORE_API_MODULE_RELATIVE_PATHS = [
   "src/js/ai-json-util.js",
   "src/js/ai-json-spec.js",
   "src/js/main-util.js",
+  "src/js/msproject-ai-views.js",
+  "src/js/msproject-calendar.js",
+  "src/js/msproject-samples.js",
+  "src/js/msproject-csv.js",
+  "src/js/msproject-validate-helpers.js",
+  "src/js/msproject-validate.js",
+  "src/js/msproject-xml-dom.js",
+  "src/js/msproject-codec.js",
+  "src/js/msproject-mermaid.js",
   "src/js/msproject-xml.js",
   "src/js/markdown-escape.js",
   "src/js/project-workbook-schema.js",
   "src/js/excel-io.js",
+  "src/js/project-xlsx-import-util.js",
+  "src/js/project-xlsx-import-project.js",
+  "src/js/project-xlsx-import-calendars.js",
+  "src/js/project-xlsx-import-entities.js",
+  "src/js/project-xlsx-import.js",
+  "src/js/project-xlsx-export-util.js",
+  "src/js/project-xlsx-export-project.js",
+  "src/js/project-xlsx-export-entities.js",
+  "src/js/project-xlsx-export-calendars.js",
+  "src/js/project-xlsx-export.js",
   "src/js/project-xlsx.js",
+  "src/js/project-workbook-json-validate.js",
+  "src/js/project-workbook-json-import.js",
+  "src/js/project-workbook-json-export.js",
   "src/js/project-workbook-json.js",
   "src/js/project-patch-json.js",
+  "src/js/core-api-msproject.js",
+  "src/js/core-api-workbook.js",
+  "src/js/core-api-import.js",
   "src/js/wbs-xlsx.js",
   "src/js/wbs-svg.js",
   "src/js/wbs-markdown.js",
+  "src/js/core-api-report.js",
+  "src/js/core-api-report-public.js",
+  "src/js/core-api-public.js",
   "src/js/core-api.js"
 ];
 
@@ -72,14 +100,42 @@ function clearMikuprojectGlobals() {
   delete globalThis.__mikuprojectAiJsonUtil;
   delete globalThis.__mikuprojectAiJsonSpec;
   delete globalThis.__mikuprojectMainUtil;
+  delete globalThis.__mikuprojectMsprojectAiViews;
+  delete globalThis.__mikuprojectMsprojectCalendar;
+  delete globalThis.__mikuprojectMsprojectSamples;
+  delete globalThis.__mikuprojectMsprojectCsv;
+  delete globalThis.__mikuprojectMsprojectValidateHelpers;
+  delete globalThis.__mikuprojectMsprojectValidate;
+  delete globalThis.__mikuprojectMsprojectXmlDom;
+  delete globalThis.__mikuprojectMsprojectCodec;
+  delete globalThis.__mikuprojectMsprojectMermaid;
   delete globalThis.__mikuprojectXmlDom;
   delete globalThis.__mikuprojectXml;
   delete globalThis.__mikuprojectMarkdownEscape;
   delete globalThis.__mikuprojectProjectWorkbookSchema;
   delete globalThis.__mikuprojectExcelIo;
+  delete globalThis.__mikuprojectProjectXlsxImportUtil;
+  delete globalThis.__mikuprojectProjectXlsxImportProject;
+  delete globalThis.__mikuprojectProjectXlsxImportCalendars;
+  delete globalThis.__mikuprojectProjectXlsxImportEntities;
+  delete globalThis.__mikuprojectProjectXlsxImport;
+  delete globalThis.__mikuprojectProjectXlsxExportUtil;
+  delete globalThis.__mikuprojectProjectXlsxExportProject;
+  delete globalThis.__mikuprojectProjectXlsxExportEntities;
+  delete globalThis.__mikuprojectProjectXlsxExportCalendars;
+  delete globalThis.__mikuprojectProjectXlsxExport;
   delete globalThis.__mikuprojectProjectXlsx;
+  delete globalThis.__mikuprojectProjectWorkbookJsonValidate;
+  delete globalThis.__mikuprojectProjectWorkbookJsonImport;
+  delete globalThis.__mikuprojectProjectWorkbookJsonExport;
   delete globalThis.__mikuprojectProjectWorkbookJson;
   delete globalThis.__mikuprojectProjectPatchJson;
+  delete globalThis.__mikuprojectCoreApiMsproject;
+  delete globalThis.__mikuprojectCoreApiWorkbook;
+  delete globalThis.__mikuprojectCoreApiImport;
+  delete globalThis.__mikuprojectCoreApiReport;
+  delete globalThis.__mikuprojectCoreApiReportPublic;
+  delete globalThis.__mikuprojectCoreApiPublic;
   delete globalThis.__mikuprojectWbsXlsx;
   delete globalThis.__mikuprojectNativeSvg;
   delete globalThis.__mikuprojectWbsMarkdown;
