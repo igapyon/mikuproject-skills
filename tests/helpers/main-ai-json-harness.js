@@ -67,6 +67,30 @@ const projectPatchJsonCode = readFileSync(
   path.resolve(__dirname, "../../src/js/project-patch-json.js"),
   "utf8"
 );
+const projectPatchJsonUtilCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/project-patch-json-util.js"),
+  "utf8"
+);
+const projectPatchJsonLinksCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/project-patch-json-links.js"),
+  "utf8"
+);
+const projectPatchJsonTasksCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/project-patch-json-tasks.js"),
+  "utf8"
+);
+const projectPatchJsonEntitiesCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/project-patch-json-entities.js"),
+  "utf8"
+);
+const projectPatchJsonUpdatesCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/project-patch-json-updates.js"),
+  "utf8"
+);
+const projectPatchJsonCoreCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/project-patch-json-core.js"),
+  "utf8"
+);
 const mainIoCode = readFileSync(
   path.resolve(__dirname, "../../src/js/main-io.js"),
   "utf8"
@@ -219,7 +243,7 @@ globalThis.__mikuprojectNativeSvg = {
 };
 `;
 
-const bootPageCode = `${typesCode}\n${markdownEscapeCode}\n${aiJsonUtilCode}\n${mainUtilCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectPatchJsonCode}\n${excelIoStubCode}\n${projectXlsxStubCode}\n${projectWorkbookJsonStubCode}\n${wbsXlsxStubCode}\n${wbsMarkdownStubCode}\n${nativeSvgStubCode}\n${mainIoCode}\n${mainImportCode}\n${mainExportCode}\n${mainInputEventsCode}\n${mainButtonEventsCode}\n${mainEventsCode}\n${mainPreviewCode}\n${mainUiCode}\n${mainSupportCode}\n${mainSamplesCode}\n${mainDownloadsCode}\n${mainOutputActionsCode}\n${mainImportActionsCode}\n${mainXmlActionsCode}\n${mainArchiveActionsCode}\n${mainSaveStateCode}\n${mainTabActionsCode}\n${mainPreviewActionsCode}\n${mainTransformCode}\n${mainFlowCode}\n${mainModelCode}\n${mainRenderCode}\n${mainCode}`;
+const bootPageCode = `${typesCode}\n${markdownEscapeCode}\n${aiJsonUtilCode}\n${mainUtilCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectPatchJsonUtilCode}\n${projectPatchJsonLinksCode}\n${projectPatchJsonTasksCode}\n${projectPatchJsonEntitiesCode}\n${projectPatchJsonUpdatesCode}\n${projectPatchJsonCoreCode}\n${projectPatchJsonCode}\n${excelIoStubCode}\n${projectXlsxStubCode}\n${projectWorkbookJsonStubCode}\n${wbsXlsxStubCode}\n${wbsMarkdownStubCode}\n${nativeSvgStubCode}\n${mainIoCode}\n${mainImportCode}\n${mainExportCode}\n${mainInputEventsCode}\n${mainButtonEventsCode}\n${mainEventsCode}\n${mainPreviewCode}\n${mainUiCode}\n${mainSupportCode}\n${mainSamplesCode}\n${mainDownloadsCode}\n${mainOutputActionsCode}\n${mainImportActionsCode}\n${mainXmlActionsCode}\n${mainArchiveActionsCode}\n${mainSaveStateCode}\n${mainTabActionsCode}\n${mainPreviewActionsCode}\n${mainTransformCode}\n${mainFlowCode}\n${mainModelCode}\n${mainRenderCode}\n${mainCode}`;
 const bootPageRunner = new Function(bootPageCode);
 
 function mountDom() {
