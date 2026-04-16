@@ -25,6 +25,46 @@ const mainUtilCode = readFileSync(
   path.resolve(__dirname, "../src/js/main-util.js"),
   "utf8"
 );
+const mainIoCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-io.js"),
+  "utf8"
+);
+const mainImportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-import.js"),
+  "utf8"
+);
+const mainExportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-export.js"),
+  "utf8"
+);
+const mainEventsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-events.js"),
+  "utf8"
+);
+const mainPreviewCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-preview.js"),
+  "utf8"
+);
+const mainUiCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-ui.js"),
+  "utf8"
+);
+const mainSupportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-support.js"),
+  "utf8"
+);
+const mainTransformCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-transform.js"),
+  "utf8"
+);
+const mainFlowCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-flow.js"),
+  "utf8"
+);
+const mainModelCode = readFileSync(
+  path.resolve(__dirname, "../src/js/main-model.js"),
+  "utf8"
+);
 const mainRenderCode = readFileSync(
   path.resolve(__dirname, "../src/js/main-render.js"),
   "utf8"
@@ -123,7 +163,7 @@ globalThis.__mikuprojectNativeSvg = {
 };
 `;
 
-const bootPageCode = `${typesCode}\n${markdownEscapeCode}\n${aiJsonUtilCode}\n${mainUtilCode}\n${msProjectXmlStubCode}\n${excelIoStubCode}\n${projectXlsxStubCode}\n${projectWorkbookJsonStubCode}\n${projectPatchJsonStubCode}\n${wbsXlsxStubCode}\n${wbsMarkdownStubCode}\n${nativeSvgStubCode}\n${mainRenderCode}\n${mainCode}`;
+const bootPageCode = `${typesCode}\n${markdownEscapeCode}\n${aiJsonUtilCode}\n${mainUtilCode}\n${msProjectXmlStubCode}\n${excelIoStubCode}\n${projectXlsxStubCode}\n${projectWorkbookJsonStubCode}\n${projectPatchJsonStubCode}\n${wbsXlsxStubCode}\n${wbsMarkdownStubCode}\n${nativeSvgStubCode}\n${mainIoCode}\n${mainImportCode}\n${mainExportCode}\n${mainEventsCode}\n${mainPreviewCode}\n${mainUiCode}\n${mainSupportCode}\n${mainTransformCode}\n${mainFlowCode}\n${mainModelCode}\n${mainRenderCode}\n${mainCode}`;
 const bootPageRunner = new Function(bootPageCode);
 
 function mountDom() {

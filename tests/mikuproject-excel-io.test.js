@@ -528,6 +528,71 @@ describe("mikuproject excel io", () => {
     })).toThrow(/sheet name/i);
   });
 
+  it("rejects invalid workbook layout and data validation definitions", () => {
+    const excelIo = bootExcelIoModule();
+    const codec = new excelIo.XlsxWorkbookCodec();
+
+    expect(() => codec.exportWorkbook({ sheets: [] })).toThrow(/at least one sheet/i);
+    expect(() => codec.exportWorkbook({
+      sheets: [
+        {
+          name: "Sheet1",
+          freezePane: { rowSplit: -1 },
+          rows: []
+        }
+      ]
+    })).toThrow(/Freeze pane rowSplit/i);
+    expect(() => codec.exportWorkbook({
+      sheets: [
+        {
+          name: "Sheet1",
+          dataValidations: [{ type: "list", sqref: "A1", formula1: "" }],
+          rows: []
+        }
+      ]
+    })).toThrow(/formula1/i);
+    expect(() => codec.exportWorkbook({
+      sheets: [
+        {
+          name: "Sheet1",
+          dataValidations: [{ type: "whole", sqref: "A1", formula1: "1" }],
+          rows: []
+        }
+      ]
+    })).toThrow(/Unsupported data validation type/i);
+  });
+
+  it("matches async workbook helpers to their sync counterparts", async () => {
+    const excelIo = bootExcelIoModule();
+    const codec = new excelIo.XlsxWorkbookCodec();
+    const workbook = {
+      sheets: [
+        {
+          name: "Async",
+          rows: [
+            {
+              cells: [
+                { value: "hello" },
+                { value: 1 }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    const bytes = codec.exportWorkbook(workbook);
+    const syncWorkbook = codec.importWorkbook(bytes);
+    const syncEntries = codec.listEntries(bytes);
+    const asyncEntries = await codec.listEntriesAsync(bytes);
+    const asyncWorkbook = await codec.importWorkbookAsync(bytes);
+    const unpackedAsync = await codec.unpackEntriesAsync(bytes);
+
+    expect(asyncEntries).toEqual(syncEntries);
+    expect(asyncWorkbook).toEqual(syncWorkbook);
+    expect(Object.keys(unpackedAsync).sort()).toEqual(syncEntries);
+  });
+
   it("exposes workbook xml for inspection after unzip", () => {
     const excelIo = bootExcelIoModule();
     const codec = new excelIo.XlsxWorkbookCodec();
