@@ -77,6 +77,34 @@
     | { format: "project_draft_view"; document: unknown }
     | { format: "patch_json"; document: unknown };
 
+  function formatAllowedModes(modes: ExternalImportMode[]): string {
+    return modes.map((mode) => `mode=${mode}`).join(" / ");
+  }
+
+  function assertImportMode(
+    sourceFormat: ExternalImportSource["format"],
+    mode: ExternalImportMode,
+    allowedModes: ExternalImportMode[]
+  ): void {
+    if (allowedModes.includes(mode)) {
+      return;
+    }
+    throw new Error(
+      `importExternal: format=${sourceFormat} は ${formatAllowedModes(allowedModes)} のみ対応です (received: mode=${mode})`
+    );
+  }
+
+  function assertBaseModelRequired(
+    sourceFormat: ExternalImportSource["format"],
+    mode: ExternalImportMode,
+    baseModel?: ProjectModel
+  ): void {
+    if (baseModel) {
+      return;
+    }
+    throw new Error(`importExternal: format=${sourceFormat} mode=${mode} には baseModel が必要です`);
+  }
+
   function importExternal(input: {
     source: ExternalImportSource;
     mode: ExternalImportMode;
@@ -130,12 +158,14 @@
     const { source, mode, baseModel } = input;
 
     if (source.format === "ms_project_xml") {
+      assertImportMode(source.format, mode, ["replace"]);
       return mikuprojectCoreApiExternalBinary.importMsProjectXml(source.text, mode);
     }
 
     if (source.format === "xlsx") {
-      if (mode === "patch") {
-        throw new Error("XLSX は replace または merge import のみ対応です");
+      assertImportMode(source.format, mode, ["replace", "merge"]);
+      if (mode === "merge") {
+        assertBaseModelRequired(source.format, mode, baseModel);
       }
       return mikuprojectCoreApiExternalBinary.importXlsx(source.bytes, mode, baseModel);
     }
@@ -145,6 +175,19 @@
       source.format === "project_draft_view" ||
       source.format === "patch_json"
     ) {
+      if (source.format === "workbook_json") {
+        assertImportMode(source.format, mode, ["replace", "merge"]);
+        if (mode === "merge") {
+          assertBaseModelRequired(source.format, mode, baseModel);
+        }
+      }
+      if (source.format === "project_draft_view") {
+        assertImportMode(source.format, mode, ["replace"]);
+      }
+      if (source.format === "patch_json") {
+        assertImportMode(source.format, mode, ["patch"]);
+        assertBaseModelRequired(source.format, mode, baseModel);
+      }
       return mikuprojectCoreApiExternalDocument.importDocument(source.format, source.document, mode, baseModel) as
         | {
           kind: "project_draft_view";

@@ -12,6 +12,11 @@
 - 実装済み: Patch JSON の `update_project` / `update_task` / `update_resource` / `update_assignment` / `update_calendar` / `link_tasks` / `unlink_tasks` first cut import
 - 実装済み: `task_edit_view` の export
 - 実装済み: Patch JSON の `add_task` / `add_resource` / `add_assignment` / `add_calendar` / `move_task` / `delete_task` / `delete_resource` / `delete_assignment` / `delete_calendar` first cut import
+- 実装済み: CLI から `project_overview_view` export
+- 実装済み: CLI から `task_edit_view` export
+- 実装済み: CLI から `phase_detail_view` export
+- 実装済み: CLI から `ai_projection_bundle` export
+- 実装済み: CLI から `validate-patch` / `detect-kind` / `state summarize` / `state diff`
 
 この設計では、生成AIとの会話は `JSON` ベースで行う方針とする。
 
@@ -31,7 +36,7 @@
 - AIの編集結果を、安全かつ検証可能な形で受け取る
 - `MS Project XML` との互換性を維持する
 
-なお、現時点の UI で扱える生成AI連携は、既存 project に対する `project_overview_view` / `phase_detail_view` / `task_edit_view` / `full bundle` の保存、Patch JSON の `add_task` / `add_resource` / `add_assignment` / `add_calendar` / `update_project` / `update_task` / `update_resource` / `update_assignment` / `update_calendar` / `move_task` / `delete_task` / `delete_resource` / `delete_assignment` / `delete_calendar` / `link_tasks` / `unlink_tasks` first cut 取込、新規草案として返ってきた `project_draft_view` の取込までである。
+なお、現時点の UI / CLI で扱える生成AI連携は、既存 project に対する `project_overview_view` / `phase_detail_view` / `task_edit_view` / `full bundle` の保存または出力、Patch JSON の `add_task` / `add_resource` / `add_assignment` / `add_calendar` / `update_project` / `update_task` / `update_resource` / `update_assignment` / `update_calendar` / `move_task` / `delete_task` / `delete_resource` / `delete_assignment` / `delete_calendar` / `link_tasks` / `unlink_tasks` first cut 取込、新規草案として返ってきた `project_draft_view` の取込までである。
 
 ## 最重要方針
 
@@ -268,6 +273,17 @@ AI 入力は 1 種類の簡約 JSON で統一するより、用途別 projection
 - `phase_detail_view scoped`
 
 を `.editjson` として保存できる構成とし、`scoped` の場合は `phase UID`、`root UID`、`max depth` 相当の入力を伴う。
+
+CLI では、既存 project の局所 projection を次で扱える。
+
+- `mikuproject ai export project-overview --in workbook.json`
+- `mikuproject ai export task-edit --in workbook.json --task-uid 123`
+- `mikuproject ai export phase-detail --in workbook.json --phase-uid 100 --mode scoped --root-task-uid 123 --max-depth 2`
+- `mikuproject ai export bundle --in workbook.json`
+
+`export task-edit` は `--task-uid` 省略時に UI と同様の既定選択で `task_edit_view` を返す。
+
+`export phase-detail` は `--mode scoped|full` を受け、`--phase-uid`、`--root-task-uid`、`--max-depth` で対象範囲を絞れる。
 
 一方で、既存 project の安全編集とは別に、全く新規の project 草案を AI に生成させるための `project_draft_request` / `project_draft_view` 系を分離して持つことも有効である。
 

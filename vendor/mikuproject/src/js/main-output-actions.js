@@ -21,7 +21,7 @@
             });
             input.setOutputText(exported.text.trimEnd());
             input.downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
-            input.completeOutput("project_overview_view を生成して保存しました", "project_overview_view を保存しました");
+            input.completeOutput("project overview (`project_overview_view`) を生成して保存しました", "project overview を保存しました");
         },
         exportTaskEdit(input) {
             input.syncXmlTextFromModel(input.model);
@@ -35,7 +35,7 @@
             }
             input.setOutputText(exported.text.trimEnd());
             input.downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
-            input.completeOutput("task_edit_view を生成して保存しました", "task_edit_view を保存しました");
+            input.completeOutput("task edit (`task_edit_view`) を生成して保存しました", "task edit を保存しました");
         },
         exportAiProjectionBundle(input) {
             input.syncXmlTextFromModel(input.model);
@@ -47,7 +47,7 @@
             });
             input.setOutputText(exported.text.trimEnd());
             input.downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
-            input.completeOutput(`AI 連携用まとめ JSON を生成して保存しました (phase_detail_view full ${exported.phaseCount} 件 / task_edit_view ${exported.taskCount} 件)`, "AI 連携用まとめ JSON を保存しました");
+            input.completeOutput(`AI 連携用 bundle (\`ai_projection_bundle\`) を生成して保存しました (phase detail full ${exported.phaseCount} 件 / task edit ${exported.taskCount} 件)`, "AI 連携用 bundle を保存しました");
         },
         exportPhaseDetail(input) {
             input.syncXmlTextFromModel(input.model);
@@ -66,7 +66,7 @@
             input.setResolvedMaxDepth(exported.resolvedMaxDepth);
             input.setOutputText(exported.text.trimEnd());
             input.downloadBlob(new Blob([exported.text], { type: "application/json;charset=utf-8" }), exported.fileName);
-            input.completeOutput(`phase_detail_view (${exported.resolvedMode}) を生成して保存しました`, `phase_detail_view (${exported.resolvedMode}) を保存しました`);
+            input.completeOutput(`phase detail (${exported.resolvedMode}) / \`phase_detail_view\` を生成して保存しました`, `phase detail (${exported.resolvedMode}) を保存しました`);
         },
         exportXlsx(input) {
             input.syncXmlTextFromModel(input.model);
@@ -86,7 +86,7 @@
             });
             input.setOutputText(exported.text);
             input.downloadBlob(new Blob([`${exported.text}\n`], { type: "application/json;charset=utf-8" }), exported.fileName);
-            input.completeOutput("XLSX 相当の workbook JSON を生成して保存しました", "JSON を保存しました");
+            input.completeOutput("workbook JSON (`mikuproject_workbook_json`) を生成して保存しました", "workbook JSON を保存しました");
         },
         exportWbsXlsx(input) {
             input.syncXmlTextFromModel(input.model);
