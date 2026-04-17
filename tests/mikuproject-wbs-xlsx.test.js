@@ -97,8 +97,16 @@ const msProjectXmlCode = readFileSync(
   path.resolve(__dirname, "../src/js/msproject-xml.js"),
   "utf8"
 );
+const wbsDatebandCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-dateband.js"),
+  "utf8"
+);
 const wbsXlsxLayoutCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx-layout.js"),
+  "utf8"
+);
+const wbsXlsxSectionsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-sections.js"),
   "utf8"
 );
 const wbsXlsxCode = readFileSync(
@@ -107,7 +115,7 @@ const wbsXlsxCode = readFileSync(
 );
 
 function bootModules() {
-  new Function(`${typesCode}\n${excelIoUtilCode}\n${excelIoZipCode}\n${excelIoNormalizeCode}\n${excelIoPackageXmlCode}\n${excelIoWorksheetBuildCode}\n${excelIoWorksheetParseCode}\n${excelIoWorkbookParseCode}\n${excelIoWorkbookBuildCode}\n${excelIoStylesBuildCode}\n${excelIoStylesParseCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${wbsXlsxLayoutCode}\n${wbsXlsxCode}`)();
+  new Function(`${typesCode}\n${excelIoUtilCode}\n${excelIoZipCode}\n${excelIoNormalizeCode}\n${excelIoPackageXmlCode}\n${excelIoWorksheetBuildCode}\n${excelIoWorksheetParseCode}\n${excelIoWorkbookParseCode}\n${excelIoWorkbookBuildCode}\n${excelIoStylesBuildCode}\n${excelIoStylesParseCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${wbsDatebandCode}\n${wbsXlsxLayoutCode}\n${wbsXlsxSectionsCode}\n${wbsXlsxCode}`)();
   return {
     excelIo: globalThis.__mikuprojectExcelIo,
     xml: globalThis.__mikuprojectXml,

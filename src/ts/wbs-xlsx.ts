@@ -51,6 +51,74 @@
     logCell(reference: string, label?: string, logger?: (...args: unknown[]) => void): string;
   };
 
+  type WbsDatebandHelper = {
+    parseDateOnly(value: string | undefined): Date | null;
+    formatDateOnly(value: Date | null): string;
+    buildDateBand(startDate: string | undefined, finishDate: string | undefined): string[];
+    collectWbsHolidayDates(model: ProjectModel): string[];
+    collectProjectNonWorkingDayTypes(model: ProjectModel): Set<number>;
+    buildDisplayDateBand(
+      startDate: string | undefined,
+      finishDate: string | undefined,
+      baseDate: string | undefined,
+      displayDaysBeforeBaseDate: number | undefined,
+      displayDaysAfterBaseDate: number | undefined,
+      holidaySet: Set<string>,
+      nonWorkingDayTypes: Set<number>,
+      useBusinessDaysForDisplayRange: boolean | undefined
+    ): string[];
+    isWeeklyNonWorkingDay(day: string, nonWorkingDayTypes: Set<number>): boolean;
+  };
+
+  type WbsXlsxSectionsHelper = {
+    firstResourceName(resourceNames: string[] | undefined): string;
+    formatCalendarLabel(calendarUID: string | undefined, calendarNameByUid: Map<string, string>): string;
+    truncateWbsReference(value: string | undefined, maxLength: number): string;
+    referenceCell(
+      task: TaskModel,
+      value: string | undefined,
+      horizontalAlign?: "left" | "center" | "right"
+    ): WbsXlsxCellLike;
+    projectInfoRows(
+      project: ProjectModel["project"],
+      calendarNameByUid: Map<string, string>,
+      holidayCount: number,
+      columnCount: number,
+      startColumnIndex: number,
+      startRowNumber: number
+    ): {
+      mergedRanges: string[];
+      rows: Array<{ height?: number; cells: WbsXlsxCellLike[] }>;
+    };
+    legendRows(
+      columnCount: number,
+      startRowNumber: number
+    ): {
+      mergedRanges: string[];
+      rows: Array<{ height?: number; cells: WbsXlsxCellLike[] }>;
+    };
+    displaySummaryRows(
+      displayDays: number,
+      businessDays: number,
+      baseDate: string | undefined,
+      taskCount: number,
+      resourceCount: number,
+      assignmentCount: number,
+      calendarCount: number,
+      columnCount: number,
+      startColumnIndex?: number,
+      startRowNumber?: number,
+      displayDaysBeforeBaseDate?: number,
+      displayDaysAfterBaseDate?: number,
+      useBusinessDaysForDisplayRange?: boolean,
+      useBusinessDaysForProgressBand?: boolean
+    ): {
+      mergedRanges: string[];
+      rows: Array<{ height?: number; cells: WbsXlsxCellLike[] }>;
+    };
+    formatWbsDate(value: string | undefined): string;
+  };
+
   const HEADER_FILL = "#D9EAF7";
   const HEADER_ID_FILL = "#E1EDF8";
   const HEADER_STRUCTURE_FILL = "#E6F0DF";
@@ -88,78 +156,129 @@
       createWbsSheetLayoutHelper: () => WbsSheetLayoutHelper;
     };
   }).__mikuprojectWbsXlsxLayout;
+  const wbsDateband = (globalThis as typeof globalThis & {
+    __mikuprojectWbsDateband?: {
+      createWbsDatebandHelper: () => WbsDatebandHelper;
+    };
+  }).__mikuprojectWbsDateband;
+  const wbsXlsxSections = (globalThis as typeof globalThis & {
+    __mikuprojectWbsXlsxSections?: {
+      createWbsXlsxSectionsHelper: (config: {
+        layout: WbsSheetLayoutHelper;
+        fills: Record<string, string>;
+      }) => WbsXlsxSectionsHelper;
+    };
+  }).__mikuprojectWbsXlsxSections;
 
   if (!wbsXlsxLayout) {
     throw new Error("mikuproject WBS xlsx layout module is not loaded");
   }
+  if (!wbsDateband) {
+    throw new Error("mikuproject WBS dateband module is not loaded");
+  }
+  if (!wbsXlsxSections) {
+    throw new Error("mikuproject WBS xlsx sections module is not loaded");
+  }
 
   const WBS_LAYOUT = wbsXlsxLayout.createWbsSheetLayoutHelper();
+  const WBS_DATEBAND = wbsDateband.createWbsDatebandHelper();
+  const WBS_SECTIONS = wbsXlsxSections.createWbsXlsxSectionsHelper({
+    layout: WBS_LAYOUT,
+    fills: {
+      headerId: HEADER_ID_FILL,
+      headerFill: HEADER_FILL,
+      headerStructure: HEADER_STRUCTURE_FILL,
+      headerSchedule: HEADER_SCHEDULE_FILL,
+      headerStatus: HEADER_STATUS_FILL,
+      headerAssignment: HEADER_ASSIGNMENT_FILL,
+      summarySchedule: SUMMARY_SCHEDULE_FILL,
+      summaryAssignment: SUMMARY_ASSIGNMENT_FILL,
+      phase: PHASE_FILL,
+      milestone: MILESTONE_FILL,
+      placeholder: PLACEHOLDER_FILL,
+      divider: DIVIDER_FILL,
+      referenceColumn: REFERENCE_COLUMN_FILL
+    }
+  });
   const pxWidth = (pixels: number) => Math.round((pixels / 7) * 100) / 100;
-
-  function collectWbsHolidayDates(model: ProjectModel): string[] {
-    const holidaySet = new Set<string>();
-    for (const calendar of model.calendars) {
-      for (const exception of calendar.exceptions || []) {
-        if (exception.dayWorking !== false && (exception.workingTimes || []).length > 0) {
-          continue;
-        }
-        for (const day of expandExceptionDays(exception)) {
-          holidaySet.add(day);
-        }
-      }
-    }
-    return Array.from(holidaySet).sort();
-  }
-
-  function resolveProjectCalendar(model: ProjectModel): CalendarModel | undefined {
-    if (model.project.calendarUID) {
-      const projectCalendar = model.calendars.find((calendar) => calendar.uid === model.project.calendarUID);
-      if (projectCalendar) {
-        return projectCalendar;
-      }
-    }
-    return model.calendars.find((calendar) => calendar.isBaseCalendar) || model.calendars[0];
-  }
-
-  function resolveCalendarDayWorking(
-    calendarByUid: Map<string, CalendarModel>,
-    calendar: CalendarModel | undefined,
-    dayType: number,
-    visiting = new Set<string>()
-  ): boolean | undefined {
-    if (!calendar) {
-      return undefined;
-    }
-    if (visiting.has(calendar.uid)) {
-      return undefined;
-    }
-    visiting.add(calendar.uid);
-    const weekDay = calendar.weekDays.find((item) => item.dayType === dayType);
-    if (weekDay) {
-      return weekDay.dayWorking;
-    }
-    if (calendar.baseCalendarUID) {
-      return resolveCalendarDayWorking(calendarByUid, calendarByUid.get(calendar.baseCalendarUID), dayType, visiting);
-    }
-    return undefined;
-  }
-
-  function collectProjectNonWorkingDayTypes(model: ProjectModel): Set<number> {
-    const calendarByUid = new Map(model.calendars.map((calendar) => [calendar.uid, calendar]));
-    const projectCalendar = resolveProjectCalendar(model);
-    const nonWorkingDayTypes = new Set<number>();
-    for (let dayType = 1; dayType <= 7; dayType += 1) {
-      const dayWorking = resolveCalendarDayWorking(calendarByUid, projectCalendar, dayType);
-      if (dayWorking === false) {
-        nonWorkingDayTypes.add(dayType);
-        continue;
-      }
-      if (dayWorking === undefined && (dayType === 1 || dayType === 7)) {
-        nonWorkingDayTypes.add(dayType);
-      }
-    }
-    return nonWorkingDayTypes;
-  }
+  const collectWbsHolidayDates = (model: ProjectModel): string[] => WBS_DATEBAND.collectWbsHolidayDates(model);
+  const collectProjectNonWorkingDayTypes = (model: ProjectModel): Set<number> => WBS_DATEBAND.collectProjectNonWorkingDayTypes(model);
+  const buildDateBand = (startDate: string | undefined, finishDate: string | undefined): string[] =>
+    WBS_DATEBAND.buildDateBand(startDate, finishDate);
+  const buildDisplayDateBand = (
+    startDate: string | undefined,
+    finishDate: string | undefined,
+    baseDate: string | undefined,
+    displayDaysBeforeBaseDate: number | undefined,
+    displayDaysAfterBaseDate: number | undefined,
+    holidaySet: Set<string>,
+    nonWorkingDayTypes: Set<number>,
+    useBusinessDaysForDisplayRange: boolean | undefined
+  ): string[] => WBS_DATEBAND.buildDisplayDateBand(
+    startDate,
+    finishDate,
+    baseDate,
+    displayDaysBeforeBaseDate,
+    displayDaysAfterBaseDate,
+    holidaySet,
+    nonWorkingDayTypes,
+    useBusinessDaysForDisplayRange
+  );
+  const isWeeklyNonWorkingDay = (day: string, nonWorkingDayTypes: Set<number>): boolean =>
+    WBS_DATEBAND.isWeeklyNonWorkingDay(day, nonWorkingDayTypes);
+  const parseDateOnly = (value: string | undefined): Date | null => WBS_DATEBAND.parseDateOnly(value);
+  const formatDateOnly = (value: Date | null): string => WBS_DATEBAND.formatDateOnly(value);
+  const firstResourceName = (resourceNames: string[] | undefined): string => WBS_SECTIONS.firstResourceName(resourceNames);
+  const formatCalendarLabel = (calendarUID: string | undefined, calendarNameByUid: Map<string, string>): string =>
+    WBS_SECTIONS.formatCalendarLabel(calendarUID, calendarNameByUid);
+  const truncateWbsReference = (value: string | undefined, maxLength: number): string =>
+    WBS_SECTIONS.truncateWbsReference(value, maxLength);
+  const referenceCell = (
+    task: TaskModel,
+    value: string | undefined,
+    horizontalAlign: "left" | "center" | "right" = "center"
+  ): WbsXlsxCellLike => WBS_SECTIONS.referenceCell(task, value, horizontalAlign);
+  const projectInfoRows = (
+    project: ProjectModel["project"],
+    calendarNameByUid: Map<string, string>,
+    holidayCount: number,
+    columnCount: number,
+    startColumnIndex: number,
+    startRowNumber: number
+  ) => WBS_SECTIONS.projectInfoRows(project, calendarNameByUid, holidayCount, columnCount, startColumnIndex, startRowNumber);
+  const legendRows = (columnCount: number, startRowNumber: number) => WBS_SECTIONS.legendRows(columnCount, startRowNumber);
+  const displaySummaryRows = (
+    displayDays: number,
+    businessDays: number,
+    baseDate: string | undefined,
+    taskCount: number,
+    resourceCount: number,
+    assignmentCount: number,
+    calendarCount: number,
+    columnCount: number,
+    startColumnIndex = 5,
+    startRowNumber = 5,
+    displayDaysBeforeBaseDate?: number,
+    displayDaysAfterBaseDate?: number,
+    useBusinessDaysForDisplayRange?: boolean,
+    useBusinessDaysForProgressBand?: boolean
+  ) => WBS_SECTIONS.displaySummaryRows(
+    displayDays,
+    businessDays,
+    baseDate,
+    taskCount,
+    resourceCount,
+    assignmentCount,
+    calendarCount,
+    columnCount,
+    startColumnIndex,
+    startRowNumber,
+    displayDaysBeforeBaseDate,
+    displayDaysAfterBaseDate,
+    useBusinessDaysForDisplayRange,
+    useBusinessDaysForProgressBand
+  );
+  const formatWbsDate = (value: string | undefined): string => WBS_SECTIONS.formatWbsDate(value);
 
   function exportWbsWorkbook(model: ProjectModel, options: WbsExportOptions = {}): WbsXlsxWorkbookLike {
     const nonWorkingDayTypes = collectProjectNonWorkingDayTypes(model);
@@ -355,60 +474,6 @@
     return "タスク";
   }
 
-  function firstResourceName(resourceNames: string[] | undefined): string {
-    if (!resourceNames || resourceNames.length === 0) {
-      return "";
-    }
-    return resourceNames[0];
-  }
-
-  function formatCalendarLabel(
-    calendarUID: string | undefined,
-    calendarNameByUid: Map<string, string>
-  ): string {
-    if (!calendarUID) {
-      return "-";
-    }
-    const calendarName = calendarNameByUid.get(calendarUID);
-    return calendarName ? `${calendarUID} ${truncateWbsReference(calendarName, 9)}` : calendarUID;
-  }
-
-  function displayReferenceValue(value: string | undefined): string {
-    return value && value.trim() ? value : "-";
-  }
-
-  function truncateWbsReference(value: string | undefined, maxLength: number): string {
-    const normalized = value?.trim() || "";
-    if (!normalized) {
-      return "";
-    }
-    if (normalized.length <= maxLength) {
-      return normalized;
-    }
-    return `${normalized.slice(0, Math.max(1, maxLength - 3))}...`;
-  }
-
-  function referenceCell(
-    task: TaskModel,
-    value: string | undefined,
-    horizontalAlign: "left" | "center" | "right" = "center"
-  ): WbsXlsxCellLike {
-    const displayValue = displayReferenceValue(value);
-    const placeholder = displayValue === "-";
-    return {
-      value: displayValue,
-      border: "thin",
-      horizontalAlign: placeholder ? "center" : horizontalAlign,
-      verticalAlign: "center",
-      bold: task.summary || task.milestone || false,
-      fillColor: placeholder
-        ? PLACEHOLDER_FILL
-        : (task.summary
-          ? PHASE_FILL
-          : (task.milestone ? MILESTONE_FILL : REFERENCE_COLUMN_FILL))
-    };
-  }
-
   function sheetTitleRow(title: string, columnCount: number) {
     return {
       height: 24,
@@ -436,83 +501,6 @@
           horizontalAlign: "left"
         },
         ...Array.from({ length: Math.max(0, columnCount - 1) }, () => ({}))
-      ]
-    };
-  }
-
-  function projectInfoRows(
-    project: ProjectModel["project"],
-    calendarNameByUid: Map<string, string>,
-    holidayCount: number,
-    columnCount: number,
-    startColumnIndex: number,
-    startRowNumber: number
-  ) {
-    const items: Array<{ label: string; value: string | number; fillColor: string }> = [
-      { label: "プロジェクト名", value: truncateWbsReference(project.name || "-", 18) || "-", fillColor: SUMMARY_ASSIGNMENT_FILL },
-      { label: "カレンダ", value: formatCalendarLabel(project.calendarUID, calendarNameByUid), fillColor: SUMMARY_ASSIGNMENT_FILL },
-      { label: "開始日", value: formatWbsDate(project.startDate), fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "終了日", value: formatWbsDate(project.finishDate), fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "現在日", value: formatWbsDate(project.currentDate), fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "祝日", value: holidayCount, fillColor: SUMMARY_SCHEDULE_FILL }
-    ];
-    return {
-      mergedRanges: [
-        WBS_LAYOUT.range(
-          WBS_LAYOUT.reference(startRowNumber, startColumnIndex),
-          WBS_LAYOUT.reference(startRowNumber, startColumnIndex + 4)
-        ),
-        ...items.map((_, index) => {
-          const rowNumber = startRowNumber + index + 1;
-          return [
-            WBS_LAYOUT.range(
-              WBS_LAYOUT.reference(rowNumber, startColumnIndex),
-              WBS_LAYOUT.reference(rowNumber, startColumnIndex + 1)
-            ),
-            WBS_LAYOUT.range(
-              WBS_LAYOUT.reference(rowNumber, startColumnIndex + 2),
-              WBS_LAYOUT.reference(rowNumber, startColumnIndex + 4)
-            )
-          ];
-        }).flat()
-      ],
-      rows: [
-        projectBlockHeaderRow(columnCount, startColumnIndex, "プロジェクト情報"),
-        ...items.map((item) => projectPairRow(columnCount, startColumnIndex, item.label, item.value, item.fillColor))
-      ]
-    };
-  }
-
-  function legendRows(columnCount: number, startRowNumber: number) {
-    const items: Array<{ value: string; fillColor: string }> = [
-      { value: "進捗済み", fillColor: PROGRESS_BAND_FILL },
-      { value: "予定帯", fillColor: ACTIVE_BAND_FILL },
-      { value: "当日", fillColor: TODAY_BAND_FILL },
-      { value: "週頭", fillColor: WEEK_START_BAND_FILL },
-      { value: "週末", fillColor: WEEKEND_BAND_FILL },
-      { value: "祝日", fillColor: HOLIDAY_BAND_FILL },
-      { value: "━:フェーズ", fillColor: PHASE_FILL },
-      { value: "■:進捗済みタスク", fillColor: PROGRESS_BAND_FILL },
-      { value: "□:予定タスク", fillColor: ACTIVE_BAND_FILL },
-      { value: "◆:マイルストーン", fillColor: MILESTONE_FILL },
-      { value: "Mil:マイルストーン", fillColor: "#FBE4EC" },
-      { value: "Sum:サマリ", fillColor: "#F7EAF0" },
-      { value: "Crit:クリティカル", fillColor: "#F3E1E9" },
-      { value: "-:未設定", fillColor: PLACEHOLDER_FILL }
-    ];
-    const startColumnRef = WBS_LAYOUT.reference(startRowNumber, WBS_LAYOUT.columnIndex("A"));
-    const endColumnRef = WBS_LAYOUT.reference(startRowNumber, WBS_LAYOUT.columnIndex("C"));
-    return {
-      mergedRanges: [
-        WBS_LAYOUT.range(startColumnRef, endColumnRef),
-        ...items.map((_, index) => WBS_LAYOUT.range(
-          WBS_LAYOUT.reference(startRowNumber + index + 1, WBS_LAYOUT.columnIndex("A")),
-          WBS_LAYOUT.reference(startRowNumber + index + 1, WBS_LAYOUT.columnIndex("C"))
-        ))
-      ],
-      rows: [
-        blockHeaderRow(columnCount, 0, "凡例"),
-        ...items.map((item) => mergedLabelRow(columnCount, 0, item.value, item.fillColor))
       ]
     };
   }
@@ -559,216 +547,6 @@
         }),
         ...bandCells
       ]
-    };
-  }
-
-  function displaySummaryRows(
-    displayDays: number,
-    businessDays: number,
-    baseDate: string | undefined,
-    taskCount: number,
-    resourceCount: number,
-    assignmentCount: number,
-    calendarCount: number,
-    columnCount: number,
-    startColumnIndex = 5,
-    startRowNumber = 5,
-    displayDaysBeforeBaseDate?: number,
-    displayDaysAfterBaseDate?: number,
-    useBusinessDaysForDisplayRange?: boolean,
-    useBusinessDaysForProgressBand?: boolean
-  ) {
-    const displayWeeks = displayDays > 0 ? Math.ceil(displayDays / 7) : 0;
-    const scheduleItems: Array<{ label: string; value: string | number; fillColor: string }> = [
-      { label: "表示日", value: displayDays, fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "表示週", value: displayWeeks, fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "営業日", value: businessDays, fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "前日数", value: displayDaysBeforeBaseDate ?? "-", fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "後日数", value: displayDaysAfterBaseDate ?? "-", fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "表示", value: useBusinessDaysForDisplayRange ? "営業日" : "暦日", fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "進捗", value: useBusinessDaysForProgressBand ? "営業日" : "暦日", fillColor: SUMMARY_SCHEDULE_FILL },
-      { label: "基準日", value: (baseDate || "-").slice(0, 10), fillColor: SUMMARY_SCHEDULE_FILL }
-    ];
-    const countItems: Array<{ label: string; value: string | number; fillColor: string }> = [
-      { label: "タスク", value: taskCount, fillColor: SUMMARY_ASSIGNMENT_FILL },
-      { label: "リソース", value: resourceCount, fillColor: SUMMARY_ASSIGNMENT_FILL },
-      { label: "割当", value: assignmentCount, fillColor: SUMMARY_ASSIGNMENT_FILL },
-      { label: "カレンダ", value: calendarCount, fillColor: SUMMARY_ASSIGNMENT_FILL }
-    ];
-    const blockRows = [blockHeaderRow(columnCount, startColumnIndex, "サマリ")];
-    for (const item of scheduleItems) {
-      blockRows.push(summaryPairRow(columnCount, startColumnIndex, item.label, item.value, item.fillColor));
-    }
-    for (const item of countItems) {
-      blockRows.push(summaryPairRow(columnCount, startColumnIndex, item.label, item.value, item.fillColor));
-    }
-    const mergedRanges = [
-      WBS_LAYOUT.range(
-        WBS_LAYOUT.reference(startRowNumber, startColumnIndex),
-        WBS_LAYOUT.reference(startRowNumber, startColumnIndex + 2)
-      )
-    ];
-    for (let index = 1; index < blockRows.length; index += 1) {
-      const rowNumber = startRowNumber + index;
-      mergedRanges.push(WBS_LAYOUT.range(
-        WBS_LAYOUT.reference(rowNumber, startColumnIndex + 1),
-        WBS_LAYOUT.reference(rowNumber, startColumnIndex + 2)
-      ));
-    }
-    return {
-      mergedRanges,
-      rows: blockRows
-    };
-  }
-
-  function blockHeaderRow(columnCount: number, startColumnIndex: number, title: string) {
-    const cells = Array.from({ length: columnCount }, () => ({} as WbsXlsxCellLike));
-    cells[startColumnIndex] = {
-      value: title,
-      border: "thin",
-      horizontalAlign: "left",
-      bold: true,
-      fontSize: 14,
-      fillColor: HEADER_ID_FILL
-    };
-    cells[startColumnIndex + 1] = {
-      value: "",
-      border: "thin",
-      fillColor: HEADER_ID_FILL
-    };
-    cells[startColumnIndex + 2] = {
-      value: "",
-      border: "thin",
-      fillColor: HEADER_ID_FILL
-    };
-    return { height: 24, cells };
-  }
-
-  function projectBlockHeaderRow(columnCount: number, startColumnIndex: number, title: string) {
-    const cells = Array.from({ length: columnCount }, () => ({} as WbsXlsxCellLike));
-    cells[startColumnIndex] = {
-      value: title,
-      border: "thin",
-      horizontalAlign: "left",
-      bold: true,
-      fontSize: 14,
-      fillColor: HEADER_ID_FILL
-    };
-    for (let offset = 1; offset < 5; offset += 1) {
-      cells[startColumnIndex + offset] = {
-        value: "",
-        border: "thin",
-        fillColor: HEADER_ID_FILL
-      };
-    }
-    return { height: 24, cells };
-  }
-
-  function projectPairRow(
-    columnCount: number,
-    startColumnIndex: number,
-    label: string,
-    value: string | number,
-    fillColor: string
-  ) {
-    const cells = Array.from({ length: columnCount }, () => ({} as WbsXlsxCellLike));
-    cells[startColumnIndex] = {
-      value: label,
-      border: "thin",
-      horizontalAlign: "right",
-      bold: true,
-      fillColor
-    };
-    cells[startColumnIndex + 1] = {
-      value: "",
-      border: "thin",
-      fillColor
-    };
-    cells[startColumnIndex + 2] = {
-      value: stringifyCellValue(value),
-      border: "thin",
-      horizontalAlign: typeof value === "number" ? "center" : "left",
-      bold: true,
-      fillColor
-    };
-    cells[startColumnIndex + 3] = {
-      value: "",
-      border: "thin",
-      fillColor
-    };
-    cells[startColumnIndex + 4] = {
-      value: "",
-      border: "thin",
-      fillColor
-    };
-    return { height: 22, cells };
-  }
-
-  function summaryPairRow(
-    columnCount: number,
-    startColumnIndex: number,
-    label: string,
-    value: string | number,
-    fillColor: string
-  ) {
-    const cells = Array.from({ length: columnCount }, () => ({} as WbsXlsxCellLike));
-    cells[startColumnIndex] = summaryStatCell(label, fillColor, false);
-    cells[startColumnIndex + 1] = summaryStatCell(value, fillColor, true);
-    cells[startColumnIndex + 2] = {
-      value: "",
-      border: "thin",
-      fillColor
-    };
-    return { height: 22, cells };
-  }
-
-  function overlaySummaryPair(
-    row: { height?: number; cells: WbsXlsxCellLike[] },
-    startColumnIndex: number,
-    label: string,
-    value: string | number,
-    fillColor: string
-  ) {
-    row.cells[startColumnIndex] = summaryStatCell(label, fillColor, false);
-    row.cells[startColumnIndex + 1] = summaryStatCell(value, fillColor, true);
-    row.height = Math.max(row.height || 22, 22);
-  }
-
-  function mergedLabelRow(
-    columnCount: number,
-    startColumnIndex: number,
-    value: string,
-    fillColor: string
-  ) {
-    const cells = Array.from({ length: columnCount }, () => ({} as WbsXlsxCellLike));
-    cells[startColumnIndex] = {
-      value,
-      border: "thin",
-      horizontalAlign: "center",
-      bold: true,
-      fillColor
-    };
-    cells[startColumnIndex + 1] = {
-      value: "",
-      border: "thin",
-      fillColor
-    };
-    cells[startColumnIndex + 2] = {
-      value: "",
-      border: "thin",
-      fillColor
-    };
-    return { height: 24, cells };
-  }
-
-  function summaryStatCell(value: string | number, fillColor: string, isValueCell: boolean): WbsXlsxCellLike {
-    const valueAlign = typeof value === "number" ? "center" : "left";
-    return {
-      value: stringifyCellValue(value),
-      border: "thin",
-      horizontalAlign: isValueCell ? valueAlign : "right",
-      bold: true,
-      fillColor
     };
   }
 
@@ -872,16 +650,6 @@
       return HEADER_ASSIGNMENT_FILL;
     }
     return HEADER_FILL;
-  }
-
-  function cell(value: string | number | boolean | undefined): WbsXlsxCellLike {
-    if (value === undefined || value === "") {
-      return {};
-    }
-    return {
-      value: stringifyCellValue(value),
-      border: "thin"
-    };
   }
 
   function stringifyCellValue(value: string | number | boolean): string {
@@ -1033,10 +801,6 @@
     return calendarDays > 0 ? `${calendarDays}日` : "-";
   }
 
-  function formatWbsDate(value: string | undefined): string {
-    return value ? value.slice(0, 10) : "-";
-  }
-
   function formatWbsExportTimestamp(value: Date): string {
     const year = value.getFullYear();
     const month = String(value.getMonth() + 1).padStart(2, "0");
@@ -1131,90 +895,8 @@
     return complete ? "■" : "□";
   }
 
-  function buildDateBand(startDate: string | undefined, finishDate: string | undefined): string[] {
-    const start = parseDateOnly(startDate);
-    const finish = parseDateOnly(finishDate);
-    if (!start || !finish || start.getTime() > finish.getTime()) {
-      return [];
-    }
-    const days: string[] = [];
-    const cursor = new Date(start.getTime());
-    while (cursor.getTime() <= finish.getTime()) {
-      days.push(formatDateOnly(cursor));
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    return days;
-  }
-
-  function buildDisplayDateBand(
-    startDate: string | undefined,
-    finishDate: string | undefined,
-    baseDate: string | undefined,
-    displayDaysBeforeBaseDate: number | undefined,
-    displayDaysAfterBaseDate: number | undefined,
-    holidaySet: Set<string>,
-    nonWorkingDayTypes: Set<number>,
-    useBusinessDaysForDisplayRange: boolean | undefined
-  ): string[] {
-    const fullBand = buildDateBand(startDate, finishDate);
-    const before = normalizeDisplayDayCount(displayDaysBeforeBaseDate);
-    const after = normalizeDisplayDayCount(displayDaysAfterBaseDate);
-    if (before === null && after === null) {
-      return fullBand;
-    }
-    const base = parseDateOnly(baseDate);
-    if (!base || fullBand.length === 0) {
-      return fullBand;
-    }
-    const projectStart = parseDateOnly(startDate);
-    const projectFinish = parseDateOnly(finishDate);
-    if (!projectStart || !projectFinish) {
-      return fullBand;
-    }
-    const from = useBusinessDaysForDisplayRange
-      ? shiftBusinessDays(base, -(before || 0), holidaySet, nonWorkingDayTypes)
-      : shiftCalendarDays(base, -(before || 0));
-    const to = useBusinessDaysForDisplayRange
-      ? shiftBusinessDays(base, after || 0, holidaySet, nonWorkingDayTypes)
-      : shiftCalendarDays(base, after || 0);
-    const clampedStart = from.getTime() < projectStart.getTime() ? projectStart : from;
-    const clampedFinish = to.getTime() > projectFinish.getTime() ? projectFinish : to;
-    if (clampedStart.getTime() > clampedFinish.getTime()) {
-      return fullBand;
-    }
-    return buildDateBand(formatDateOnly(clampedStart), formatDateOnly(clampedFinish));
-  }
-
-  function normalizeDisplayDayCount(value: number | undefined): number | null {
-    if (value === undefined || value === null || !Number.isFinite(value)) {
-      return null;
-    }
-    return Math.max(0, Math.floor(value));
-  }
-
   function countBusinessDays(dateBand: string[], holidaySet: Set<string>, nonWorkingDayTypes: Set<number>): number {
     return dateBand.filter((day) => !isWeeklyNonWorkingDay(day, nonWorkingDayTypes) && !holidaySet.has(day)).length;
-  }
-
-  function shiftCalendarDays(base: Date, offset: number): Date {
-    const result = new Date(base.getTime());
-    result.setDate(result.getDate() + offset);
-    return result;
-  }
-
-  function shiftBusinessDays(base: Date, offset: number, holidaySet: Set<string>, nonWorkingDayTypes: Set<number>): Date {
-    const result = new Date(base.getTime());
-    const direction = offset < 0 ? -1 : 1;
-    let remaining = Math.abs(offset);
-    while (remaining > 0) {
-      result.setDate(result.getDate() + direction);
-      const day = formatDateOnly(result);
-      if (isWeeklyNonWorkingDay(day, nonWorkingDayTypes) || holidaySet.has(day)) {
-        continue;
-      }
-      remaining -= 1;
-    }
-    return result;
   }
 
   function buildWeekBandRanges(dateBand: string[], startColumnIndex: number, rowNumber: number) {
@@ -1301,15 +983,6 @@
     return day === (other || "").slice(0, 10);
   }
 
-  function isWeeklyNonWorkingDay(day: string, nonWorkingDayTypes: Set<number>): boolean {
-    const target = parseDateOnly(day);
-    if (!target) {
-      return false;
-    }
-    const dayType = target.getDay() === 0 ? 1 : target.getDay() + 1;
-    return nonWorkingDayTypes.has(dayType);
-  }
-
   function isWeekStart(day: string): boolean {
     const target = parseDateOnly(day);
     if (!target) {
@@ -1324,52 +997,6 @@
       return false;
     }
     return target.getDate() === 1;
-  }
-
-  function parseDateOnly(value: string | undefined): Date | null {
-    if (!value || value.length < 10) {
-      return null;
-    }
-    const dateOnly = value.slice(0, 10);
-    const [yearText, monthText, dayText] = dateOnly.split("-");
-    const year = Number(yearText);
-    const month = Number(monthText);
-    const day = Number(dayText);
-    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
-      return null;
-    }
-    return new Date(year, month - 1, day);
-  }
-
-  function expandExceptionDays(exception: CalendarExceptionModel): string[] {
-    const from = (exception.fromDate || "").slice(0, 10);
-    const to = (exception.toDate || "").slice(0, 10);
-    if (!from) {
-      return [];
-    }
-    if (!to || to === from) {
-      return [from];
-    }
-    const start = parseDateOnly(from);
-    const finish = parseDateOnly(to);
-    if (!start || !finish || start.getTime() > finish.getTime()) {
-      return [from];
-    }
-    const days: string[] = [];
-    const cursor = new Date(start.getTime());
-    while (cursor.getTime() <= finish.getTime()) {
-      days.push(formatDateOnly(cursor));
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    return days;
-  }
-
-  function formatDateOnly(value: Date): string {
-    return [
-      value.getFullYear(),
-      String(value.getMonth() + 1).padStart(2, "0"),
-      String(value.getDate()).padStart(2, "0")
-    ].join("-");
   }
 
   function formatDateValue(day: string): string {
