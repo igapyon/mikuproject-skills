@@ -269,6 +269,14 @@ const wbsDatebandCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-dateband.js"),
   "utf8"
 );
+const wbsXlsxBaseCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-base.js"),
+  "utf8"
+);
+const wbsXlsxTaskmetaCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-taskmeta.js"),
+  "utf8"
+);
 const wbsXlsxLayoutCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx-layout.js"),
   "utf8"
@@ -277,8 +285,60 @@ const wbsXlsxSectionsCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx-sections.js"),
   "utf8"
 );
+const wbsXlsxCellsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-cells.js"),
+  "utf8"
+);
+const wbsXlsxExportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-export.js"),
+  "utf8"
+);
+const wbsXlsxPublicCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-public.js"),
+  "utf8"
+);
 const wbsXlsxCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx.js"),
+  "utf8"
+);
+const wbsSvgZipCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-zip.js"),
+  "utf8"
+);
+const wbsSvgBarsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-bars.js"),
+  "utf8"
+);
+const wbsSvgViewportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-viewport.js"),
+  "utf8"
+);
+const wbsSvgAxisCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-axis.js"),
+  "utf8"
+);
+const wbsSvgScaffoldCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-scaffold.js"),
+  "utf8"
+);
+const wbsSvgLabelsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-labels.js"),
+  "utf8"
+);
+const wbsSvgCalendarCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-calendar.js"),
+  "utf8"
+);
+const wbsSvgTimelineCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-timeline.js"),
+  "utf8"
+);
+const wbsSvgRenderCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-render.js"),
+  "utf8"
+);
+const wbsSvgPublicCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-svg-public.js"),
   "utf8"
 );
 const wbsSvgCode = readFileSync(
@@ -360,9 +420,24 @@ function bootModules() {
     coreApiExternalImportCode,
     coreApiImportCode,
     wbsDatebandCode,
+    wbsXlsxBaseCode,
+    wbsXlsxTaskmetaCode,
     wbsXlsxLayoutCode,
     wbsXlsxSectionsCode,
+    wbsXlsxCellsCode,
+    wbsXlsxExportCode,
+    wbsXlsxPublicCode,
     wbsXlsxCode,
+    wbsSvgZipCode,
+    wbsSvgBarsCode,
+    wbsSvgViewportCode,
+    wbsSvgAxisCode,
+    wbsSvgScaffoldCode,
+    wbsSvgLabelsCode,
+    wbsSvgCalendarCode,
+    wbsSvgTimelineCode,
+    wbsSvgRenderCode,
+    wbsSvgPublicCode,
     wbsSvgCode,
     wbsMarkdownCode,
     coreApiReportCode,
