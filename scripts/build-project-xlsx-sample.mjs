@@ -5,6 +5,16 @@ import { JSDOM } from "jsdom";
 const ROOT = process.cwd();
 const typesCode = fs.readFileSync(path.resolve(ROOT, "src/js/types.js"), "utf8");
 const markdownEscapeCode = fs.readFileSync(path.resolve(ROOT, "src/js/markdown-escape.js"), "utf8");
+const excelIoUtilCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-util.js"), "utf8");
+const excelIoZipCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-zip.js"), "utf8");
+const excelIoNormalizeCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-normalize.js"), "utf8");
+const excelIoPackageXmlCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-package-xml.js"), "utf8");
+const excelIoWorksheetBuildCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-worksheet-build.js"), "utf8");
+const excelIoWorksheetParseCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-worksheet-parse.js"), "utf8");
+const excelIoWorkbookParseCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-workbook-parse.js"), "utf8");
+const excelIoWorkbookBuildCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-workbook-build.js"), "utf8");
+const excelIoStylesBuildCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-styles-build.js"), "utf8");
+const excelIoStylesParseCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io-styles-parse.js"), "utf8");
 const excelIoCode = fs.readFileSync(path.resolve(ROOT, "src/js/excel-io.js"), "utf8");
 const msProjectAiViewsCode = fs.readFileSync(path.resolve(ROOT, "src/js/msproject-ai-views.js"), "utf8");
 const msProjectCalendarCode = fs.readFileSync(path.resolve(ROOT, "src/js/msproject-calendar.js"), "utf8");
@@ -28,6 +38,7 @@ const projectXlsxExportEntitiesCode = fs.readFileSync(path.resolve(ROOT, "src/js
 const projectXlsxExportCalendarsCode = fs.readFileSync(path.resolve(ROOT, "src/js/project-xlsx-export-calendars.js"), "utf8");
 const projectXlsxExportCode = fs.readFileSync(path.resolve(ROOT, "src/js/project-xlsx-export.js"), "utf8");
 const projectXlsxCode = fs.readFileSync(path.resolve(ROOT, "src/js/project-xlsx.js"), "utf8");
+const wbsXlsxLayoutCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx-layout.js"), "utf8");
 const wbsXlsxCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx.js"), "utf8");
 const wbsMarkdownCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-markdown.js"), "utf8");
 
@@ -38,7 +49,7 @@ globalThis.DOMParser = dom.window.DOMParser;
 globalThis.XMLSerializer = dom.window.XMLSerializer;
 globalThis.Node = dom.window.Node;
 
-globalThis.eval(`${typesCode}\n${markdownEscapeCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectWorkbookSchemaCode}\n${projectXlsxImportUtilCode}\n${projectXlsxImportProjectCode}\n${projectXlsxImportCalendarsCode}\n${projectXlsxImportEntitiesCode}\n${projectXlsxImportCode}\n${projectXlsxExportUtilCode}\n${projectXlsxExportProjectCode}\n${projectXlsxExportEntitiesCode}\n${projectXlsxExportCalendarsCode}\n${projectXlsxExportCode}\n${projectXlsxCode}\n${wbsXlsxCode}\n${wbsMarkdownCode}`);
+globalThis.eval(`${typesCode}\n${markdownEscapeCode}\n${excelIoUtilCode}\n${excelIoZipCode}\n${excelIoNormalizeCode}\n${excelIoPackageXmlCode}\n${excelIoWorksheetBuildCode}\n${excelIoWorksheetParseCode}\n${excelIoWorkbookParseCode}\n${excelIoWorkbookBuildCode}\n${excelIoStylesBuildCode}\n${excelIoStylesParseCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectWorkbookSchemaCode}\n${projectXlsxImportUtilCode}\n${projectXlsxImportProjectCode}\n${projectXlsxImportCalendarsCode}\n${projectXlsxImportEntitiesCode}\n${projectXlsxImportCode}\n${projectXlsxExportUtilCode}\n${projectXlsxExportProjectCode}\n${projectXlsxExportEntitiesCode}\n${projectXlsxExportCalendarsCode}\n${projectXlsxExportCode}\n${projectXlsxCode}\n${wbsXlsxLayoutCode}\n${wbsXlsxCode}\n${wbsMarkdownCode}`);
 
 const excelIo = globalThis.__mikuprojectExcelIo;
 const xml = globalThis.__mikuprojectXml;

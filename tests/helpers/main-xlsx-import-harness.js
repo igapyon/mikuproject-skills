@@ -23,8 +23,48 @@ const mainUtilCode = readFileSync(
   path.resolve(__dirname, "../../src/js/main-util.js"),
   "utf8"
 );
+const excelIoUtilCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-util.js"),
+  "utf8"
+);
 const excelIoCode = readFileSync(
   path.resolve(__dirname, "../../src/js/excel-io.js"),
+  "utf8"
+);
+const excelIoZipCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-zip.js"),
+  "utf8"
+);
+const excelIoNormalizeCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-normalize.js"),
+  "utf8"
+);
+const excelIoPackageXmlCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-package-xml.js"),
+  "utf8"
+);
+const excelIoWorksheetBuildCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-worksheet-build.js"),
+  "utf8"
+);
+const excelIoWorksheetParseCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-worksheet-parse.js"),
+  "utf8"
+);
+const excelIoWorkbookParseCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-workbook-parse.js"),
+  "utf8"
+);
+const excelIoWorkbookBuildCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-workbook-build.js"),
+  "utf8"
+);
+const excelIoStylesBuildCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-styles-build.js"),
+  "utf8"
+);
+const excelIoStylesParseCode = readFileSync(
+  path.resolve(__dirname, "../../src/js/excel-io-styles-parse.js"),
   "utf8"
 );
 const msProjectAiViewsCode = readFileSync(
@@ -263,7 +303,7 @@ globalThis.__mikuprojectNativeSvg = {
 };
 `;
 
-const bootPageCode = `${typesCode}\n${markdownEscapeCode}\n${aiJsonUtilCode}\n${mainUtilCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectWorkbookSchemaCode}\n${projectXlsxImportUtilCode}\n${projectXlsxImportProjectCode}\n${projectXlsxImportCalendarsCode}\n${projectXlsxImportEntitiesCode}\n${projectXlsxImportCode}\n${projectXlsxExportUtilCode}\n${projectXlsxExportProjectCode}\n${projectXlsxExportEntitiesCode}\n${projectXlsxExportCalendarsCode}\n${projectXlsxExportCode}\n${projectXlsxCode}\n${projectWorkbookJsonValidateCode}\n${projectWorkbookJsonImportCode}\n${projectWorkbookJsonExportCode}\n${projectWorkbookJsonCode}\n${projectPatchJsonStubCode}\n${wbsXlsxStubCode}\n${wbsMarkdownStubCode}\n${nativeSvgStubCode}\n${mainIoCode}\n${mainImportCode}\n${mainExportCode}\n${mainInputEventsCode}\n${mainButtonEventsCode}\n${mainEventsCode}\n${mainPreviewCode}\n${mainUiCode}\n${mainSupportCode}\n${mainSamplesCode}\n${mainDownloadsCode}\n${mainOutputActionsCode}\n${mainImportActionsCode}\n${mainXmlActionsCode}\n${mainArchiveActionsCode}\n${mainSaveStateCode}\n${mainTabActionsCode}\n${mainPreviewActionsCode}\n${mainTransformCode}\n${mainFlowCode}\n${mainModelCode}\n${mainRenderCode}\n${mainCode}`;
+const bootPageCode = `${typesCode}\n${markdownEscapeCode}\n${aiJsonUtilCode}\n${mainUtilCode}\n${excelIoUtilCode}\n${excelIoZipCode}\n${excelIoNormalizeCode}\n${excelIoPackageXmlCode}\n${excelIoWorksheetBuildCode}\n${excelIoWorksheetParseCode}\n${excelIoWorkbookParseCode}\n${excelIoWorkbookBuildCode}\n${excelIoStylesBuildCode}\n${excelIoStylesParseCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectWorkbookSchemaCode}\n${projectXlsxImportUtilCode}\n${projectXlsxImportProjectCode}\n${projectXlsxImportCalendarsCode}\n${projectXlsxImportEntitiesCode}\n${projectXlsxImportCode}\n${projectXlsxExportUtilCode}\n${projectXlsxExportProjectCode}\n${projectXlsxExportEntitiesCode}\n${projectXlsxExportCalendarsCode}\n${projectXlsxExportCode}\n${projectXlsxCode}\n${projectWorkbookJsonValidateCode}\n${projectWorkbookJsonImportCode}\n${projectWorkbookJsonExportCode}\n${projectWorkbookJsonCode}\n${projectPatchJsonStubCode}\n${wbsXlsxStubCode}\n${wbsMarkdownStubCode}\n${nativeSvgStubCode}\n${mainIoCode}\n${mainImportCode}\n${mainExportCode}\n${mainInputEventsCode}\n${mainButtonEventsCode}\n${mainEventsCode}\n${mainPreviewCode}\n${mainUiCode}\n${mainSupportCode}\n${mainSamplesCode}\n${mainDownloadsCode}\n${mainOutputActionsCode}\n${mainImportActionsCode}\n${mainXmlActionsCode}\n${mainArchiveActionsCode}\n${mainSaveStateCode}\n${mainTabActionsCode}\n${mainPreviewActionsCode}\n${mainTransformCode}\n${mainFlowCode}\n${mainModelCode}\n${mainRenderCode}\n${mainCode}`;
 const bootPageRunner = new Function(bootPageCode);
 
 function mountDom() {

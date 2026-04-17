@@ -77,6 +77,14 @@
   - テスト追加の区切りごとに `npm run build:full` を実行し、build / test が通ることを確認する
   - `build:full` 実行時は error の有無だけでなく、妙に時間が伸びた test がないかも確認する
   - 重くなった test が見つかった場合は、fixture・非同期待ち・不要な統合依存を見直し、`fast / ui / extended` の配置も再点検する
+- リファクタリング残作業の優先順位を、現状の進捗に合わせて整理する
+  - 次の本命は `excel-io.ts`、`wbs-xlsx.ts`、`wbs-svg.ts` とする
+  - `excel-io.ts` は codec / validator / async wrapper / zip helper の責務で分割できるか整理する
+  - `wbs-xlsx.ts` は workbook builder / sheet builder / style helper / option 読み取りの責務で分割できるか整理する
+  - `wbs-svg.ts` は layout 計算 / SVG render / label / timeline / option 読み取りの責務で分割できるか整理する
+  - `main.ts` は追加分割を無条件に続けず、controller としてここで止めるか、残る接着責務だけ薄くするかを判断する
+  - `core-api*`、`project-patch-json*`、`project-xlsx*`、`project-workbook-json*`、`msproject-*` は大きい再分割より stop point の見直しを優先する
+  - 新しい大分割に入る前に、`build:full` が通ることと、`tests/mikuproject-cli.test.js` の実行時間が不自然に悪化していないことを継続確認する
 - 作成するテキストファイルについて、BOM 付き / なしを切り替えるスイッチを追加する
 - `local-data/` 配下のファイルを、参照用・検証用・生成物で整理する
 - `local-data/` に置くべきでない生成物や一時ファイルがないか見直す

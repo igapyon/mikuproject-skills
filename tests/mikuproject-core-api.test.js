@@ -25,6 +25,10 @@ const mainUtilCode = readFileSync(
   path.resolve(__dirname, "../src/js/main-util.js"),
   "utf8"
 );
+const excelIoUtilCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-util.js"),
+  "utf8"
+);
 const msProjectAiViewsCode = readFileSync(
   path.resolve(__dirname, "../src/js/msproject-ai-views.js"),
   "utf8"
@@ -133,6 +137,42 @@ const excelIoCode = readFileSync(
   path.resolve(__dirname, "../src/js/excel-io.js"),
   "utf8"
 );
+const excelIoZipCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-zip.js"),
+  "utf8"
+);
+const excelIoNormalizeCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-normalize.js"),
+  "utf8"
+);
+const excelIoPackageXmlCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-package-xml.js"),
+  "utf8"
+);
+const excelIoWorksheetBuildCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-worksheet-build.js"),
+  "utf8"
+);
+const excelIoWorksheetParseCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-worksheet-parse.js"),
+  "utf8"
+);
+const excelIoWorkbookParseCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-workbook-parse.js"),
+  "utf8"
+);
+const excelIoWorkbookBuildCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-workbook-build.js"),
+  "utf8"
+);
+const excelIoStylesBuildCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-styles-build.js"),
+  "utf8"
+);
+const excelIoStylesParseCode = readFileSync(
+  path.resolve(__dirname, "../src/js/excel-io-styles-parse.js"),
+  "utf8"
+);
 const projectWorkbookJsonCode = readFileSync(
   path.resolve(__dirname, "../src/js/project-workbook-json.js"),
   "utf8"
@@ -225,6 +265,10 @@ const coreApiPublicCode = readFileSync(
   path.resolve(__dirname, "../src/js/core-api-public.js"),
   "utf8"
 );
+const wbsXlsxLayoutCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-layout.js"),
+  "utf8"
+);
 const wbsXlsxCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx.js"),
   "utf8"
@@ -252,6 +296,7 @@ function bootModules() {
     aiJsonUtilCode,
     aiJsonSpecCode,
     mainUtilCode,
+    excelIoUtilCode,
     msProjectAiViewsCode,
     msProjectCalendarCode,
     msProjectSamplesCode,
@@ -264,6 +309,15 @@ function bootModules() {
     msProjectXmlCode,
     markdownEscapeCode,
     projectWorkbookSchemaCode,
+    excelIoZipCode,
+    excelIoNormalizeCode,
+    excelIoPackageXmlCode,
+    excelIoWorksheetBuildCode,
+    excelIoWorksheetParseCode,
+    excelIoWorkbookParseCode,
+    excelIoWorkbookBuildCode,
+    excelIoStylesBuildCode,
+    excelIoStylesParseCode,
     excelIoCode,
     projectXlsxImportUtilCode,
     projectXlsxImportProjectCode,
@@ -297,6 +351,7 @@ function bootModules() {
     coreApiExternalDocumentCode,
     coreApiExternalImportCode,
     coreApiImportCode,
+    wbsXlsxLayoutCode,
     wbsXlsxCode,
     wbsSvgCode,
     wbsMarkdownCode,

@@ -27,6 +27,16 @@ export const CORE_API_MODULE_RELATIVE_PATHS = [
   "src/js/msproject-xml.js",
   "src/js/markdown-escape.js",
   "src/js/project-workbook-schema.js",
+  "src/js/excel-io-util.js",
+  "src/js/excel-io-zip.js",
+  "src/js/excel-io-normalize.js",
+  "src/js/excel-io-package-xml.js",
+  "src/js/excel-io-worksheet-build.js",
+  "src/js/excel-io-worksheet-parse.js",
+  "src/js/excel-io-workbook-parse.js",
+  "src/js/excel-io-workbook-build.js",
+  "src/js/excel-io-styles-build.js",
+  "src/js/excel-io-styles-parse.js",
   "src/js/excel-io.js",
   "src/js/project-xlsx-import-util.js",
   "src/js/project-xlsx-import-project.js",
@@ -60,6 +70,7 @@ export const CORE_API_MODULE_RELATIVE_PATHS = [
   "src/js/core-api-external-document.js",
   "src/js/core-api-external-import.js",
   "src/js/core-api-import.js",
+  "src/js/wbs-xlsx-layout.js",
   "src/js/wbs-xlsx.js",
   "src/js/wbs-svg.js",
   "src/js/wbs-markdown.js",
@@ -128,6 +139,16 @@ function clearMikuprojectGlobals() {
   delete globalThis.__mikuprojectXml;
   delete globalThis.__mikuprojectMarkdownEscape;
   delete globalThis.__mikuprojectProjectWorkbookSchema;
+  delete globalThis.__mikuprojectExcelIoUtil;
+  delete globalThis.__mikuprojectExcelIoZip;
+  delete globalThis.__mikuprojectExcelIoNormalize;
+  delete globalThis.__mikuprojectExcelIoPackageXml;
+  delete globalThis.__mikuprojectExcelIoWorksheetBuild;
+  delete globalThis.__mikuprojectExcelIoWorksheetParse;
+  delete globalThis.__mikuprojectExcelIoWorkbookParse;
+  delete globalThis.__mikuprojectExcelIoWorkbookBuild;
+  delete globalThis.__mikuprojectExcelIoStylesBuild;
+  delete globalThis.__mikuprojectExcelIoStylesParse;
   delete globalThis.__mikuprojectExcelIo;
   delete globalThis.__mikuprojectProjectXlsxImportUtil;
   delete globalThis.__mikuprojectProjectXlsxImportProject;
@@ -155,6 +176,7 @@ function clearMikuprojectGlobals() {
   delete globalThis.__mikuprojectCoreApiExternalDocument;
   delete globalThis.__mikuprojectCoreApiExternalImport;
   delete globalThis.__mikuprojectCoreApiImport;
+  delete globalThis.__mikuprojectWbsXlsxLayout;
   delete globalThis.__mikuprojectCoreApiReport;
   delete globalThis.__mikuprojectCoreApiReportAdapters;
   delete globalThis.__mikuprojectCoreApiReportPublic;
