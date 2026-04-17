@@ -24,7 +24,13 @@
 現時点で使える `mikuproject` CLI は次である。
 
 - `mikuproject ai spec`
+- `mikuproject ai export project-overview`
+- `mikuproject ai export task-edit`
+- `mikuproject ai export phase-detail`
+- `mikuproject ai validate-patch`
 - `mikuproject state from-draft`
+- `mikuproject state summarize`
+- `mikuproject state diff`
 - `mikuproject state apply-patch`
 - `mikuproject export workbook-json`
 - `mikuproject export xml`
@@ -47,7 +53,9 @@
 
 - `spec` の結果を画面にそのまま表示せず、エージェント内部で使う
 - エージェントが生成した `project_draft_view` を `mikuproject` に渡す
+- エージェントが既存WBS修正で局所 projection を取り出す
 - エージェントが生成した `Patch JSON` を `mikuproject` に渡す
+- apply 前に patch を validate し、apply 後に diff を確認する
 - 途中状態を `mikuproject_workbook_json` として持ち回る
 
 ## この仕組みが受け取るもの
@@ -108,11 +116,15 @@
 
 1. エージェントは現在の `mikuproject_workbook_json` を持っている
 2. 利用者が変更内容を書く
-3. エージェントが workbook と変更要求をもとに `Patch JSON` を生成する
-4. エージェントがその JSON を `mikuproject state apply-patch` に渡す
-6. `mikuproject` CLI が `mikuproject_workbook_json` を返す
-5. `mikuproject` CLI が更新後の `mikuproject_workbook_json` を返す
-6. エージェントが更新後 workbook を保存する
+3. エージェントが `mikuproject ai export project-overview` で全体像を取る
+4. 必要に応じて `mikuproject ai export task-edit` または `mikuproject ai export phase-detail` で局所文脈を取る
+5. エージェントがその局所文脈と変更要求をもとに `Patch JSON` を生成する
+6. エージェントがその JSON を `mikuproject ai validate-patch` に渡す
+7. warning / error / change summary を確認する
+8. エージェントがその JSON を `mikuproject state apply-patch` に渡す
+9. 必要に応じて `mikuproject state diff` で変更内容を確認する
+10. `mikuproject` CLI が更新後の `mikuproject_workbook_json` を返す
+11. エージェントが更新後 workbook を保存する
 
 ## 最小フロー 3: 出力だけ欲しいとき
 
@@ -124,10 +136,16 @@
 
 ## エージェントが内部で使う CLI
 
-最初は次の 12 個でよい。
+最初は次のコマンド群でよい。
 
 - `mikuproject ai spec`
+- `mikuproject ai export project-overview`
+- `mikuproject ai export task-edit`
+- `mikuproject ai export phase-detail`
+- `mikuproject ai validate-patch`
 - `mikuproject state from-draft`
+- `mikuproject state summarize`
+- `mikuproject state diff`
 - `mikuproject state apply-patch`
 - `mikuproject export workbook-json`
 - `mikuproject export xml`

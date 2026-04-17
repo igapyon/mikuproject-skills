@@ -18,6 +18,10 @@
 - 構造忠実 workbook `XLSX`: 確認・限定編集向けの表現
 - `mikuproject_workbook_json`: 会話境界で扱いやすい JSON 形式
 
+既存 WBS の通常修正では、file workflow を第一選択にしません。
+その場合は `project_overview_view` / `task_edit_view` / `phase_detail_view` と
+`Patch JSON` を使う AI workflow を優先します。
+
 会話境界の state は、引き続き `mikuproject_workbook_json` を優先します。
 
 ## 現在の利用方針

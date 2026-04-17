@@ -170,6 +170,7 @@ mikuproject で、れでえいやあのWBSつくって
 
 - エージェントが内部で `mikuproject` を使う
 - 中間の `spec` や `project_draft_view` をそのまま画面に出さない
+- 既存修正では `project_overview_view` / `task_edit_view` / `phase_detail_view` を内部で優先する
 - WBS 要約や結果だけを返す
 
 この skill は、通常の planning 語だけでは起動せず、次の明示トリガーを使う前提です。
@@ -195,6 +196,7 @@ mikuproject で、れでえいやあのWBSつくって
 
 ## 補足
 
+- 既存編集の正規フローは `project-overview -> task-edit / phase-detail -> validate -> apply -> diff` です
 - `report` 系 CLI は利用可能です
 - `wbs-xlsx` / `daily-svg` / `weekly-svg` / `monthly-calendar-svg` / `all` / `wbs-markdown` / `mermaid` を扱えます
 

@@ -23,6 +23,14 @@ Use this reference when the skill is already active and you need follow-up handl
 - new WBS drafting: `project_draft_view`
 - existing plan revision: `Patch JSON`
 
+For existing plan revision, prefer this internal flow:
+
+- `project_overview_view` for entry
+- `task_edit_view` or `phase_detail_view` for local context
+- `Patch JSON` for the proposed change
+- validate before apply
+- diff after apply when change review matters
+
 When the user is starting a new WBS from rough requirements, do not switch to:
 
 - `task_edit_view`

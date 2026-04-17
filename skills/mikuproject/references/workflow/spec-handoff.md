@@ -46,6 +46,15 @@ Use this after handing off `mikuproject_workbook_json`:
 
 `次に与える mikuproject_workbook_json を受け取り、変更提案を Patch JSON 形式で返してください。`
 
+Use this only when workbook handoff is actually needed.
+For ordinary existing-WBS revision, prefer local projection handoff first.
+
+### For projection-based iterative editing
+
+Use this after handing off `project_overview_view`, `task_edit_view`, or `phase_detail_view`:
+
+`次に与える局所 projection JSON を受け取り、変更提案を Patch JSON 形式で返してください。`
+
 ### For patch-only correction
 
 Use this after the user explains the desired change:
