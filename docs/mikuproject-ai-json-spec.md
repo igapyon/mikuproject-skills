@@ -2,7 +2,7 @@
 
 この文書は、`mikuproject AI JSON Prompt / Spec` の定義である。
 
-- Version: `v20260410`
+- Version: `v20260417`
 
 私たちは、これから取り組むプロジェクトの内容を理解し、WBS の観点から必要なマイルストーン / フェーズ / タスクを整理し、`mikuproject` に設定するための JSON へ落とし込んでいきます。
 
@@ -32,6 +32,8 @@
 - 実装済み: `project_overview_view` の export
 - 実装済み: `phase_detail_view` の export
 - 実装済み: `task_edit_view` の export
+- 実装済み: CLI から `task_edit_view` export
+- 実装済み: CLI から `phase_detail_view scoped` export
 - 実装済み: `full bundle` には `project_overview_view` / `phase_detail_views_full` / `task_edit_views_full` を含める
 - 実装済み: `project_draft_view` の import
 - 実装済み: Patch JSON の `update_project` / `update_task` / `update_resource` / `update_assignment` / `update_calendar` / `link_tasks` / `unlink_tasks` import / 適用
@@ -49,6 +51,8 @@
 ## 既存編集モードの重要方針
 
 - 既存 project の全体 JSON 再出力は禁止です
+- 既存 project の修正では、可能な限り workbook 全体ではなく局所 projection を入力に使ってください
+- 個別 task の修正では `task_edit_view` を優先し、phase 単位の文脈確認や subtree 切り出しでは `phase_detail_view scoped` を優先してください
 - 不明な値を推測して補完してはいけません
 - 未指定項目は変更しない前提です
 - 与えられた projection と rules の範囲を超えて変更してはいけません
@@ -78,6 +82,36 @@
 `phase_detail_view` は、安全な変更候補の抽出や、次に必要な `task_edit_view` の特定にも使えます。
 `phase_detail_view` には、phase 全体をそのまま渡す `full` モードと、対象を絞る `scoped` モードの両方がありえます。
 必要に応じて、`root_uid` と `max_depth` で対象範囲を絞って渡してよいです。
+既存 project では、projection JSON は Web UI から保存しても、CLI から取得してもかまいません。
+repo には `scripts/cli-ai-workflow-example.mjs` と `scripts/cli-ai-stdio-example.mjs` があり、file-based / stdio-based の両方の最小 CLI 連携例を参照できます。
+
+CLI 例:
+
+- `mikuproject ai export project-overview --in workbook.json`
+- `mikuproject ai export task-edit --in workbook.json --task-uid 123`
+- `mikuproject ai export phase-detail --in workbook.json --phase-uid 100 --mode scoped --root-task-uid 123 --max-depth 2`
+- `mikuproject ai export bundle --in workbook.json`
+
+`export task-edit` は `--task-uid` 省略時に既定選択の `task_edit_view` を返します。
+`export task-edit` は `--select auto|first-task|uid` を受けます。
+`export phase-detail` は `--mode scoped|full` を受けます。
+`export phase-detail` は `--select auto|first-phase|uid` を受けます。
+`ai export`、`detect-kind`、`validate-patch`、`state summarize`、`state diff`、`state apply-patch`、`export`、`report` は `--diagnostics text|json` を受けることがあります。
+CLI では `--in -` / `--out -` を使って標準入力 / 標準出力を明示指定できます。
+同一コマンドで標準入力を読める入力オプションは 1 つだけです。
+`--in path` があればそのファイルを優先し、`--in -` は明示 stdin、`--in` 省略時だけ暗黙 stdin を使います。
+`--out path` があればそのファイルへ書き、`--out -` または `--out` 省略時は stdout を使います。
+`json` diagnostics には少なくとも `diagnostics_version` / `ok` / `command` / `context` / `status` / `exit_code` / `warning_count` / `error_count` / `io` / `warnings` / `errors` が含まれることがあります。
+`--diagnostics json` を指定した場合、usage error や処理失敗でも stderr に JSON diagnostics が返ることがあります。
+異常系 diagnostics には `error_type=usage_error|processing_error` が含まれることがあります。
+異常系 diagnostics には `error_code` が含まれることがあります。
+異常系 diagnostics には top-level の `error_details` が含まれることがあります。
+異常系 diagnostics の `errors[]` 要素にも `code` が含まれることがあります。
+異常系 diagnostics の `errors[]` 要素には `details` が含まれることがあります。
+主要な usage error では、`error_code` は文言推定ではなく CLI 側の安定識別子として返ることがあります。
+代表的な processing error でも、`error_code` は CLI 側の安定識別子として返ることがあります。
+JSON parse failure では、`error_code=invalid_json_input` と `error_details.context` が返ることがあります。
+異常系 diagnostics にも `io` が含まれ、入力元と出力先を追えることがあります。
 
 新規生成モードでは、既存 project の編集は行わず、全く新しい project の草案だけを返します。
 
@@ -157,6 +191,7 @@
 - `root_uid` を指定すると、その task を起点にした subtree を対象にできます
 - `max_depth` を指定すると、`root_uid` から何階層下まで含めるかを制御できます
 - `mode = "full"` では `root_uid = null` かつ `max_depth = null` です
+- CLI の `mikuproject ai export phase-detail` は `mode = "scoped"` と `mode = "full"` を受けます
 
 ### `task_edit_view` の例
 

@@ -127,11 +127,14 @@ XML の parse / serialize は、ブラウザ DOM 直依存ではなく `globalTh
 `mikuproject` は、生成AIとの直接連携に `MS Project XML` ではなく `JSON` を使う。
 
 - 既存 project 向けには `project_overview_view` と `phase_detail_view` と `task_edit_view` を出力する
+- CLI では `mikuproject ai export project-overview|task-edit|phase-detail` から projection を出力できる
+- CLI では `mikuproject ai export bundle` から full bundle を出力できる
+- CLI では `mikuproject ai validate-patch` / `ai detect-kind` / `state summarize` / `state diff` も使える
 - 既存 project 向けには `full bundle` も出力でき、少なくとも `project_overview_view` / `phase_detail_views_full` / `task_edit_views_full` を含む
 - 新規生成向けには、生成AIが返した `project_draft_view` を取り込める
 - 既存 project 向けには、Patch JSON の `add_task` / `add_resource` / `add_assignment` / `add_calendar` / `update_project` / `update_task` / `update_resource` / `update_assignment` / `update_calendar` / `move_task` / `delete_task` / `delete_resource` / `delete_assignment` / `delete_calendar` / `link_tasks` / `unlink_tasks` first cut を取り込める
 - `mikuproject_workbook_json` は `.json`、生成AI 向け編集用 JSON は `.editjson` を推奨拡張子とする
-- 現時点で UI から実装済みなのは `project_overview_view` / `phase_detail_view` / `task_edit_view` / `full bundle` の出力、`project_draft_view` の取込、Patch JSON の `add_task` / `add_resource` / `add_assignment` / `add_calendar` / `update_project` / `update_task` / `update_resource` / `update_assignment` / `update_calendar` / `move_task` / `delete_task` / `delete_resource` / `delete_assignment` / `delete_calendar` / `link_tasks` / `unlink_tasks` first cut の取込である
+- 現時点で UI / CLI から実装済みなのは `project_overview_view` / `phase_detail_view` / `task_edit_view` / `full bundle` の出力、`project_draft_view` の取込、Patch JSON の `add_task` / `add_resource` / `add_assignment` / `add_calendar` / `update_project` / `update_task` / `update_resource` / `update_assignment` / `update_calendar` / `move_task` / `delete_task` / `delete_resource` / `delete_assignment` / `delete_calendar` / `link_tasks` / `unlink_tasks` first cut の取込である
 
 詳細な考え方は `docs/mikuproject-ai-json-spec.md` と `docs/msprojectxml-ai-integration.md` に置く。
 
