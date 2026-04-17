@@ -265,8 +265,16 @@ const coreApiPublicCode = readFileSync(
   path.resolve(__dirname, "../src/js/core-api-public.js"),
   "utf8"
 );
+const wbsDatebandCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-dateband.js"),
+  "utf8"
+);
 const wbsXlsxLayoutCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx-layout.js"),
+  "utf8"
+);
+const wbsXlsxSectionsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-sections.js"),
   "utf8"
 );
 const wbsXlsxCode = readFileSync(
@@ -351,7 +359,9 @@ function bootModules() {
     coreApiExternalDocumentCode,
     coreApiExternalImportCode,
     coreApiImportCode,
+    wbsDatebandCode,
     wbsXlsxLayoutCode,
+    wbsXlsxSectionsCode,
     wbsXlsxCode,
     wbsSvgCode,
     wbsMarkdownCode,
