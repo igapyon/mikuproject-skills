@@ -8,17 +8,6 @@
 - WBS workbook と `mikuproject-sample.xlsx` のタイトル行で、フォントサイズ指定をどこまで使うか整理する
 - `Mermaid` 出力は Markdown / 設計資料向けに残しつつ、見た目を制御しやすい `WBS SVG` 描画を別系統で追加するか検討する
 - `WBS SVG` について、今の既定である `近接ラベル` 表示だけを残し、左側にテキストを描画する `一覧ラベル` モードは将来的に廃止したい
-- `CLI` の入出力ポリシーを整理する
-  - 主成果物は `stdout`、warning / diagnostics / summary は `stderr` を基本とする
-  - `--in` / `--out` と標準入出力の優先順位を決める
-  - script 連携しやすい exit code 方針を決める
-- `CLI` の error 文言と diagnostics 形式を整理する
-  - kind 判別不能 JSON、mode 不一致、base state 欠如などを明示的に返す
-  - warning と failure の境界を整理する
-- `CLI` の sample code または小さな adapter を追加する
-  - Agent Skills / runner / script からの利用例を最小構成で示す
-  - `core API` 直呼びと `CLI` 利用の両方の導線を docs で分かるようにする
-- `importExternal(...)` の次段として、format / mode 不一致時の error 文言と利用例をさらに整える
 - リファクタリングを再開する場合は、まず `main.ts` を controller としてここで止めるか再確認する
   - `main.ts` に pure function や表示 helper が再流入していないかを見る
   - `main.ts` の長さだけで再分割せず、責務混在が再発しているかで判断する
@@ -43,6 +32,10 @@
   - 優先候補: `Resources.StandardRate / OvertimeRate / CostPerUse`
   - 優先候補: `Assignments.Start / Finish`
 - `phase_detail_view scoped` の `phase UID / root UID / max depth` 指定を、より選びやすい UI に改善する
+- 既存WBSの局所修正フローを `CLI` / `Agent Skills` 主導に寄せる方針に合わせて、Web UI の AI 連携欄を軽量化するか検討する
+  - `bundle` や `phase detail full` を前面導線から外すか
+  - `project overview` / `task edit` / `phase detail scoped` / `patch_json import` に絞るか
+  - UI は軽い入口と確認用に留める説明へ寄せるか
 - import 前後で、どの `task / calendar / assignment` がどう変わったかを見やすく確認できる差分可視化を追加する
 - 差分適用を前提として、生成AI や外部編集結果を全件置換ではなく部分適用できる運用を強化する
 - `project_draft_request` を UI から生成しやすくするか整理する

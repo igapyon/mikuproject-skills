@@ -779,22 +779,42 @@ describe("mikuproject core api", () => {
       source: { format: "ms_project_xml", text: dependencyXml },
       mode: "merge",
       baseModel
-    })).toThrow("replace");
+    })).toThrow("format=ms_project_xml");
+    expect(() => api.importExternal({
+      source: { format: "ms_project_xml", text: dependencyXml },
+      mode: "merge",
+      baseModel
+    })).toThrow("mode=replace");
     expect(() => api.importExternal({
       source: { format: "patch_json", document: { operations: [] } },
       mode: "replace",
       baseModel
-    })).toThrow("patch");
+    })).toThrow("format=patch_json");
+    expect(() => api.importExternal({
+      source: { format: "patch_json", document: { operations: [] } },
+      mode: "replace",
+      baseModel
+    })).toThrow("mode=patch");
     expect(() => api.importExternal({
       source: { format: "xlsx", bytes: new Uint8Array() },
       mode: "patch",
       baseModel
-    })).toThrow("replace または merge");
+    })).toThrow("format=xlsx");
+    expect(() => api.importExternal({
+      source: { format: "xlsx", bytes: new Uint8Array() },
+      mode: "patch",
+      baseModel
+    })).toThrow("mode=replace / mode=merge");
     expect(() => api.importExternal({
       source: { format: "workbook_json", document: {} },
       mode: "patch",
       baseModel
-    })).toThrow("patch import");
+    })).toThrow("format=workbook_json");
+    expect(() => api.importExternal({
+      source: { format: "workbook_json", document: {} },
+      mode: "patch",
+      baseModel
+    })).toThrow("mode=replace / mode=merge");
   });
 
   it("rejects merge imports when baseModel is missing", () => {
@@ -807,11 +827,15 @@ describe("mikuproject core api", () => {
     expect(() => api.importExternal({
       source: { format: "xlsx", bytes: xlsxBytes },
       mode: "merge"
-    })).toThrow("baseModel");
+    })).toThrow("format=xlsx mode=merge");
     expect(() => api.importExternal({
       source: { format: "workbook_json", document: workbookJson },
       mode: "merge"
-    })).toThrow("baseModel");
+    })).toThrow("format=workbook_json mode=merge");
+    expect(() => api.importExternal({
+      source: { format: "patch_json", document: { operations: [] } },
+      mode: "patch"
+    })).toThrow("format=patch_json mode=patch");
   });
 
   it("validates patch documents through the unified entrypoint", () => {
