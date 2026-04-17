@@ -10,6 +10,11 @@ Conversation workflow:
 - `draft`: accept AI-produced `project_draft_view`
 - `patch`: accept AI-produced `Patch JSON`
 - `workbook`: return current `mikuproject_workbook_json`
+- `project-overview`: return `project_overview_view` for existing-plan entry
+- `task-edit`: return `task_edit_view` for local task revision
+- `phase-detail`: return `phase_detail_view` for local phase revision
+- `patch-validate`: validate `patch_json` against current workbook state
+- `state-diff`: summarize changes between two workbook states
 
 File workflow:
 
