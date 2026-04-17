@@ -101,6 +101,14 @@ const wbsDatebandCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-dateband.js"),
   "utf8"
 );
+const wbsXlsxBaseCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-base.js"),
+  "utf8"
+);
+const wbsXlsxTaskmetaCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-taskmeta.js"),
+  "utf8"
+);
 const wbsXlsxLayoutCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx-layout.js"),
   "utf8"
@@ -109,13 +117,25 @@ const wbsXlsxSectionsCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx-sections.js"),
   "utf8"
 );
+const wbsXlsxCellsCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-cells.js"),
+  "utf8"
+);
+const wbsXlsxExportCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-export.js"),
+  "utf8"
+);
+const wbsXlsxPublicCode = readFileSync(
+  path.resolve(__dirname, "../src/js/wbs-xlsx-public.js"),
+  "utf8"
+);
 const wbsXlsxCode = readFileSync(
   path.resolve(__dirname, "../src/js/wbs-xlsx.js"),
   "utf8"
 );
 
 function bootModules() {
-  new Function(`${typesCode}\n${excelIoUtilCode}\n${excelIoZipCode}\n${excelIoNormalizeCode}\n${excelIoPackageXmlCode}\n${excelIoWorksheetBuildCode}\n${excelIoWorksheetParseCode}\n${excelIoWorkbookParseCode}\n${excelIoWorkbookBuildCode}\n${excelIoStylesBuildCode}\n${excelIoStylesParseCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${wbsDatebandCode}\n${wbsXlsxLayoutCode}\n${wbsXlsxSectionsCode}\n${wbsXlsxCode}`)();
+  new Function(`${typesCode}\n${excelIoUtilCode}\n${excelIoZipCode}\n${excelIoNormalizeCode}\n${excelIoPackageXmlCode}\n${excelIoWorksheetBuildCode}\n${excelIoWorksheetParseCode}\n${excelIoWorkbookParseCode}\n${excelIoWorkbookBuildCode}\n${excelIoStylesBuildCode}\n${excelIoStylesParseCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${wbsDatebandCode}\n${wbsXlsxBaseCode}\n${wbsXlsxTaskmetaCode}\n${wbsXlsxLayoutCode}\n${wbsXlsxSectionsCode}\n${wbsXlsxCellsCode}\n${wbsXlsxExportCode}\n${wbsXlsxPublicCode}\n${wbsXlsxCode}`)();
   return {
     excelIo: globalThis.__mikuprojectExcelIo,
     xml: globalThis.__mikuprojectXml,

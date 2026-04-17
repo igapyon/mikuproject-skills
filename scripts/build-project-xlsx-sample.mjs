@@ -39,8 +39,13 @@ const projectXlsxExportCalendarsCode = fs.readFileSync(path.resolve(ROOT, "src/j
 const projectXlsxExportCode = fs.readFileSync(path.resolve(ROOT, "src/js/project-xlsx-export.js"), "utf8");
 const projectXlsxCode = fs.readFileSync(path.resolve(ROOT, "src/js/project-xlsx.js"), "utf8");
 const wbsDatebandCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-dateband.js"), "utf8");
+const wbsXlsxBaseCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx-base.js"), "utf8");
+const wbsXlsxTaskmetaCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx-taskmeta.js"), "utf8");
 const wbsXlsxLayoutCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx-layout.js"), "utf8");
 const wbsXlsxSectionsCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx-sections.js"), "utf8");
+const wbsXlsxCellsCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx-cells.js"), "utf8");
+const wbsXlsxExportCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx-export.js"), "utf8");
+const wbsXlsxPublicCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx-public.js"), "utf8");
 const wbsXlsxCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-xlsx.js"), "utf8");
 const wbsMarkdownCode = fs.readFileSync(path.resolve(ROOT, "src/js/wbs-markdown.js"), "utf8");
 
@@ -51,7 +56,7 @@ globalThis.DOMParser = dom.window.DOMParser;
 globalThis.XMLSerializer = dom.window.XMLSerializer;
 globalThis.Node = dom.window.Node;
 
-globalThis.eval(`${typesCode}\n${markdownEscapeCode}\n${excelIoUtilCode}\n${excelIoZipCode}\n${excelIoNormalizeCode}\n${excelIoPackageXmlCode}\n${excelIoWorksheetBuildCode}\n${excelIoWorksheetParseCode}\n${excelIoWorkbookParseCode}\n${excelIoWorkbookBuildCode}\n${excelIoStylesBuildCode}\n${excelIoStylesParseCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectWorkbookSchemaCode}\n${projectXlsxImportUtilCode}\n${projectXlsxImportProjectCode}\n${projectXlsxImportCalendarsCode}\n${projectXlsxImportEntitiesCode}\n${projectXlsxImportCode}\n${projectXlsxExportUtilCode}\n${projectXlsxExportProjectCode}\n${projectXlsxExportEntitiesCode}\n${projectXlsxExportCalendarsCode}\n${projectXlsxExportCode}\n${projectXlsxCode}\n${wbsDatebandCode}\n${wbsXlsxLayoutCode}\n${wbsXlsxSectionsCode}\n${wbsXlsxCode}\n${wbsMarkdownCode}`);
+globalThis.eval(`${typesCode}\n${markdownEscapeCode}\n${excelIoUtilCode}\n${excelIoZipCode}\n${excelIoNormalizeCode}\n${excelIoPackageXmlCode}\n${excelIoWorksheetBuildCode}\n${excelIoWorksheetParseCode}\n${excelIoWorkbookParseCode}\n${excelIoWorkbookBuildCode}\n${excelIoStylesBuildCode}\n${excelIoStylesParseCode}\n${excelIoCode}\n${msProjectAiViewsCode}\n${msProjectCalendarCode}\n${msProjectSamplesCode}\n${msProjectCsvCode}\n${msProjectValidateHelpersCode}\n${msProjectValidateCode}\n${msProjectXmlDomCode}\n${msProjectCodecCode}\n${msProjectMermaidCode}\n${msProjectXmlCode}\n${projectWorkbookSchemaCode}\n${projectXlsxImportUtilCode}\n${projectXlsxImportProjectCode}\n${projectXlsxImportCalendarsCode}\n${projectXlsxImportEntitiesCode}\n${projectXlsxImportCode}\n${projectXlsxExportUtilCode}\n${projectXlsxExportProjectCode}\n${projectXlsxExportEntitiesCode}\n${projectXlsxExportCalendarsCode}\n${projectXlsxExportCode}\n${projectXlsxCode}\n${wbsDatebandCode}\n${wbsXlsxBaseCode}\n${wbsXlsxTaskmetaCode}\n${wbsXlsxLayoutCode}\n${wbsXlsxSectionsCode}\n${wbsXlsxCellsCode}\n${wbsXlsxExportCode}\n${wbsXlsxPublicCode}\n${wbsXlsxCode}\n${wbsMarkdownCode}`);
 
 const excelIo = globalThis.__mikuprojectExcelIo;
 const xml = globalThis.__mikuprojectXml;

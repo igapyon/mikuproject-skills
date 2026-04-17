@@ -129,6 +129,16 @@ npm run build:full
 
 `main.ts` のような file は、長くても controller として整理されていれば、無理にさらに割らない判断がありうる。
 
+## 再開判断
+
+いったん止めどきに達した領域を再度触るときは、次を先に確認する。
+
+- 本当に新しい責務混在が再発しているか
+- 単に wiring が長いだけではないか
+- 既存 facade / public module をこれ以上割っても、追跡コストのほうが増えないか
+
+特に `controller`、`facade`、`public entrypoint` まで整理された file は、長さだけを理由に再分割しない。
+
 ## 注意点
 
 - `src/ts` を正本とし、`src/js` は必ず追随させる

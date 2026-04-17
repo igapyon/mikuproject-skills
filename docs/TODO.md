@@ -8,40 +8,6 @@
 - WBS workbook と `mikuproject-sample.xlsx` のタイトル行で、フォントサイズ指定をどこまで使うか整理する
 - `Mermaid` 出力は Markdown / 設計資料向けに残しつつ、見た目を制御しやすい `WBS SVG` 描画を別系統で追加するか検討する
 - `WBS SVG` について、今の既定である `近接ラベル` 表示だけを残し、左側にテキストを描画する `一覧ラベル` モードは将来的に廃止したい
-- `mikuproject` に最小 CLI first cut を追加する
-  - browser UI の代替ではなく、既存 `core API` の stable な外部呼び出し口として位置づける
-  - `CLI` には独自の業務ロジックを持ち込みすぎず、`core API` の薄い wrapper として設計する
-  - first cut のコマンドは次に絞る
-  - `mikuproject ai spec`
-  - `mikuproject state from-draft`
-  - `mikuproject state apply-patch`
-  - `mikuproject export workbook-json`
-  - `mikuproject export xml`
-  - `mikuproject export xlsx`
-  - 将来の `report` 系出力は `export` と混ぜず、別系統で扱う
-- `mikuproject ai spec` を追加する
-  - `getAiJsonSpec()` / `getAiJsonSpecText()` の CLI 公開面として実装する
-  - canonical な spec 本文を `stdout` へ出力できるようにする
-  - 必要なら spec version や metadata の返し方も整理する
-- `mikuproject state from-draft` を追加する
-  - `project_draft_view` を入力として受け取る
-  - `importExternal({ format: "project_draft_view", mode: "replace" })` 相当で `ProjectModel` に変換する
-  - `mikuproject_workbook_json` を出力する
-  - warning の返し方を整理する
-- `mikuproject state apply-patch` を追加する
-  - `mikuproject_workbook_json` を base state として受け取る
-  - Patch JSON を `baseModel` 前提で適用する
-  - 更新後の `mikuproject_workbook_json` を返す
-  - warning と change summary の返し方を整理する
-  - base state なしでは適用しない
-- `mikuproject export workbook-json` を追加する
-  - `mikuproject_workbook_json` を機械処理向けに安定出力できるようにする
-  - file input / file output と標準入力 / 標準出力の両方を扱えるようにする
-  - normalize / validate をどこまで既定で行うか整理する
-- `mikuproject export xml` と `mikuproject export xlsx` を追加する
-  - `ProjectModel` から主要交換形式を CLI で安定出力できるようにする
-  - `workbook-json` と同列の主要交換形式として扱う
-  - 派生表示の `report` 系出力とは責務を分ける
 - `CLI` の入出力ポリシーを整理する
   - 主成果物は `stdout`、warning / diagnostics / summary は `stderr` を基本とする
   - `--in` / `--out` と標準入出力の優先順位を決める
@@ -52,39 +18,14 @@
 - `CLI` の sample code または小さな adapter を追加する
   - Agent Skills / runner / script からの利用例を最小構成で示す
   - `core API` 直呼びと `CLI` 利用の両方の導線を docs で分かるようにする
-- 将来の派生出力 CLI を `report` 系として整理する
-  - `mikuproject report wbs-xlsx`
-  - `mikuproject report wbs-markdown`
-  - `mikuproject report mermaid`
-  - `mikuproject report daily-svg`
-  - `mikuproject report weekly-svg`
-  - `mikuproject report monthly-calendar-svg`
 - `importExternal(...)` の次段として、format / mode 不一致時の error 文言と利用例をさらに整える
-- リファクタリング前提のテスト追加計画を進める
-  - 第一段は `main.ts` の分割前に、pure function として切り出しやすい境界の挙動を固定する
-  - `importFromFile` 相当の format 判別と dispatch 方針を、DOM 依存を薄くした形で個別テスト化する
-  - `buildCurrentOutputArchive` 相当の出力一覧・命名規則・同梱内容を固定するテストを追加する
-  - `runRoundTripCheck` 相当の normalize 比較と validation error 判定を、UI 外で確認できるテストに切り出す
-  - 第二段は `project-xlsx.ts` の sheet import を列定義単位で固定し、sheet ごとの実装整理に備える
-  - `Project / Tasks / Resources / Assignments / Calendars / NonWorkingDays` について、editable 列だけが反映されることを列単位で確認するテストを追加する
-  - `project-workbook-json` は `project-xlsx` と同じ限定列ポリシーを維持していることを、対応表ベースで確認するテストを追加する
-  - 第三段は `msproject-xml.ts` 分割前に、`AI views / CSV / holiday / calendar helper` の公開挙動を固定する
-  - `project_overview_view / phase_detail_view / task_edit_view` の最小代表ケースを追加し、分離後も JSON shape を維持する
-  - `CSV + ParentID` import/export の代表ケースを追加し、task 階層と predecessor の戻りを固定する
-  - 祝日例外と default calendar 生成について、年境界と project date range の代表ケースを増やす
-  - 実行方針として、追加した小粒テストは `test:fast` または `test:ui` に寄せ、重い回帰確認だけを `test:extended` に残す
-  - `src/js` 生成物読込の統合テストだけに寄せすぎず、将来的には `src/ts` 正本ベースで検証できる導線も整理する
-  - テスト追加の区切りごとに `npm run build:full` を実行し、build / test が通ることを確認する
-  - `build:full` 実行時は error の有無だけでなく、妙に時間が伸びた test がないかも確認する
-  - 重くなった test が見つかった場合は、fixture・非同期待ち・不要な統合依存を見直し、`fast / ui / extended` の配置も再点検する
-- リファクタリング残作業の優先順位を、現状の進捗に合わせて整理する
-  - 次の本命は `excel-io.ts`、`wbs-xlsx.ts`、`wbs-svg.ts` とする
-  - `excel-io.ts` は codec / validator / async wrapper / zip helper の責務で分割できるか整理する
-  - `wbs-xlsx.ts` は workbook builder / sheet builder / style helper / option 読み取りの責務で分割できるか整理する
-  - `wbs-svg.ts` は layout 計算 / SVG render / label / timeline / option 読み取りの責務で分割できるか整理する
-  - `main.ts` は追加分割を無条件に続けず、controller としてここで止めるか、残る接着責務だけ薄くするかを判断する
-  - `core-api*`、`project-patch-json*`、`project-xlsx*`、`project-workbook-json*`、`msproject-*` は大きい再分割より stop point の見直しを優先する
-  - 新しい大分割に入る前に、`build:full` が通ることと、`tests/mikuproject-cli.test.js` の実行時間が不自然に悪化していないことを継続確認する
+- リファクタリングを再開する場合は、まず `main.ts` を controller としてここで止めるか再確認する
+  - `main.ts` に pure function や表示 helper が再流入していないかを見る
+  - `main.ts` の長さだけで再分割せず、責務混在が再発しているかで判断する
+- 完了済みの大分割領域を再度触る前に、本当に新しい責務混在があるか確認する
+  - `core-api*`、`msproject-*`、`project-patch-json*`、`project-xlsx*`、`project-workbook-json*`
+  - `excel-io*`、`wbs-svg*`、`wbs-xlsx*`
+- 構造変更を再開するときは、区切りごとに `npm run build:full` を回し、`tests/mikuproject-cli.test.js` の実行時間も継続確認する
 - 作成するテキストファイルについて、BOM 付き / なしを切り替えるスイッチを追加する
 - `local-data/` 配下のファイルを、参照用・検証用・生成物で整理する
 - `local-data/` に置くべきでない生成物や一時ファイルがないか見直す
