@@ -36,6 +36,24 @@ In that case, either answer normally or ask a brief clarifying question.
 Prefer the reusable upstream APIs exposed by the vendored `mikuproject`.
 Use these before falling back to direct file reads or UI-oriented flows.
 
+## Runtime Discipline
+
+For explicit `mikuproject` import/export or report requests, first check the vendored `mikuproject` runtime before broad workspace exploration or generic tool discovery.
+
+Use this order:
+
+1. read this `SKILL.md`
+2. check the vendored `mikuproject` runtime first
+3. use the vendored API or documented vendored CLI/runtime flow if present
+4. only if that path is missing or unusable, search for alternatives
+
+For this repository:
+
+- in bundled installs, prefer `skills/mikuproject/vendor/mikuproject`
+- in the development repo, prefer `vendor/mikuproject`
+- do not search broadly through the workspace before checking the vendored runtime
+- do not conclude that runtime dependencies are missing until the bundled skill-local runtime path has also been checked when applicable
+
 ## Error Handling
 
 Treat invalid document kind, missing base state for patch application, and missing required structure as hard errors.
