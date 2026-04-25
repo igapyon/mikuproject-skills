@@ -7,9 +7,13 @@ import { afterEach, describe, expect, it } from "vitest";
 
 const ROOT = process.cwd();
 const buildScriptPath = path.resolve(ROOT, "scripts/build-skill-bundle.mjs");
-const builtCliPath = path.resolve(
+const builtNodeRuntimePath = path.resolve(
   ROOT,
-  "bundle/mikuproject-skills/skills/mikuproject/vendor/mikuproject/scripts/mikuproject-cli.mjs"
+  "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject.mjs"
+);
+const builtJavaRuntimePath = path.resolve(
+  ROOT,
+  "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject.jar"
 );
 
 describe("mikuproject bundle smoke", () => {
@@ -21,7 +25,7 @@ describe("mikuproject bundle smoke", () => {
     }
   });
 
-  it("runs the bundled CLI from an isolated install tree", () => {
+  it("runs bundled runtime artifacts from an isolated install tree", () => {
     execFileSync("node", [buildScriptPath], {
       cwd: ROOT,
       encoding: "utf8"
@@ -35,16 +39,27 @@ describe("mikuproject bundle smoke", () => {
       recursive: true
     });
 
-    const isolatedCliPath = path.resolve(
+    const isolatedNodeRuntimePath = path.resolve(
       isolatedSkillRoot,
-      "mikuproject/vendor/mikuproject/scripts/mikuproject-cli.mjs"
+      "mikuproject/runtime/mikuproject.mjs"
     );
-    const output = execFileSync("node", [isolatedCliPath, "--help"], {
+    const isolatedJavaRuntimePath = path.resolve(
+      isolatedSkillRoot,
+      "mikuproject/runtime/mikuproject.jar"
+    );
+
+    const nodeHelp = execFileSync("node", [isolatedNodeRuntimePath, "--help"], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    const javaHelp = execFileSync("java", ["-jar", isolatedJavaRuntimePath], {
       cwd: tempRoot,
       encoding: "utf8"
     });
 
-    expect(fs.existsSync(builtCliPath)).toBe(true);
-    expect(output).toContain("mikuproject report all");
+    expect(fs.existsSync(builtNodeRuntimePath)).toBe(true);
+    expect(fs.existsSync(builtJavaRuntimePath)).toBe(true);
+    expect(nodeHelp).toContain("mikuproject report all");
+    expect(javaHelp).toContain("export-ai-json-spec");
   });
 });

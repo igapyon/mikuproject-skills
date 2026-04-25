@@ -15,6 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,6 +29,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Verify runtime artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s skills/mikuproject/runtime/mikuproject.jar
+          test -s skills/mikuproject/runtime/mikuproject.mjs
+          java -jar skills/mikuproject/runtime/mikuproject.jar export-ai-json-spec >/dev/null
+          node skills/mikuproject/runtime/mikuproject.mjs ai spec >/dev/null
 
       - name: Build release bundle
         run: npm run build

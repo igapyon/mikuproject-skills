@@ -2,12 +2,13 @@
 
 Use this reference when the user wants to move between `MS Project XML` and the current `mikuproject` state.
 
-## Upstream API
+## Runtime Commands
 
-Prefer these functions:
+Prefer the bundled runtime CLI commands:
 
-- `__mikuprojectCoreApi.msProject.importFromXml(xmlText)`
-- `__mikuprojectCoreApi.msProject.exportToXml(model)`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar validate-xml input.xml`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export-workbook-json input.xml`
+- `node skills/mikuproject/runtime/mikuproject.mjs export xml --in workbook.json --out project.xml`
 
 ## `xml-import`
 
@@ -20,7 +21,7 @@ Purpose:
 Processing order:
 
 1. accept XML text
-2. import it with `msProject.importFromXml`
+2. import it with the runtime CLI
 3. validate the resulting `ProjectModel` when useful
 4. export it with `workbookJson.exportDocument`
 5. return the resulting `mikuproject_workbook_json`
@@ -47,7 +48,7 @@ Processing order:
 
 1. require the current state
 2. rebuild `ProjectModel` from `mikuproject_workbook_json` if needed
-3. export XML with `msProject.exportToXml`
+3. export XML with the runtime CLI
 4. return the XML text
 
 Response shape:

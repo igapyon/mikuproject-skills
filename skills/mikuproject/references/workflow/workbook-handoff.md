@@ -14,9 +14,10 @@ Prefer local projection handoff first:
 
 If you already have current state as `mikuproject_workbook_json`, return it directly.
 
-If you have current state as `ProjectModel`, export it with:
+If you need to regenerate current state from runtime input, use:
 
-- `globalThis.__mikuprojectCoreApi.workbookJson.exportDocument(model)`
+- `node skills/mikuproject/runtime/mikuproject.mjs export workbook-json --in workbook.json`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export-workbook-json input.xml`
 
 ## Preferred Behavior
 

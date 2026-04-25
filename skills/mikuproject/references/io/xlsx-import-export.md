@@ -4,16 +4,14 @@ Use this reference when the user wants to move between workbook `XLSX` and the c
 
 This reference is for the structural workbook `XLSX`, not `WBS XLSX`.
 
-## Upstream API
+## Runtime Commands
 
-Prefer these functions:
+Prefer the bundled runtime CLI commands:
 
-- `__mikuprojectCoreApi.xlsx.decodeWorkbook(bytes)`
-- `__mikuprojectCoreApi.xlsx.encodeWorkbook(workbook)`
-- `__mikuprojectCoreApi.xlsx.exportWorkbook(model)`
-- `__mikuprojectCoreApi.xlsx.importAsProjectModel(workbook)`
-- `__mikuprojectCoreApi.xlsx.importIntoProjectModel(workbook, baseModel)`
-- `__mikuprojectCoreApi.importExternal(...)`
+- `node skills/mikuproject/runtime/mikuproject.mjs export xlsx --in workbook.json --out workbook.xlsx`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export-xlsx input.xml output.xlsxbin`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar import-xlsx input.xlsxbin output.xml`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar merge-xlsx base.xml input.xlsxbin output.xml`
 
 ## `xlsx-import`
 
@@ -26,9 +24,7 @@ Purpose:
 Processing order:
 
 1. accept `.xlsx` bytes
-2. for replace import, use either:
-   - `xlsx.decodeWorkbook(bytes)` then `xlsx.importAsProjectModel(workbook)`
-   - or `importExternal({ source: { format: "xlsx", bytes }, mode: "replace" })`
+2. for replace import, use the Java runtime `import-xlsx` command
 3. validate the resulting `ProjectModel` when useful
 4. export it with `workbookJson.exportDocument`
 5. return the resulting `mikuproject_workbook_json`
@@ -49,7 +45,7 @@ Processing order:
 
 1. require the current workbook state
 2. rebuild `baseModel` from the current state
-3. call `importExternal({ source: { format: "xlsx", bytes }, mode: "merge", baseModel })`
+3. call the Java runtime `merge-xlsx` command
 4. export the resulting model with `workbookJson.exportDocument`
 5. return the updated `mikuproject_workbook_json`
 
@@ -71,8 +67,7 @@ Processing order:
 
 1. require the current state
 2. rebuild `ProjectModel` from `mikuproject_workbook_json` if needed
-3. create workbook data with `xlsx.exportWorkbook(model)`
-4. encode it with `xlsx.encodeWorkbook(workbook)`
+3. run the runtime export command
 5. return the bytes as the export result
 
 Response shape:
