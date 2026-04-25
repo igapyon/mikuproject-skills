@@ -33,25 +33,25 @@ In that case, either answer normally or ask a brief clarifying question.
 
 ## Operations
 
-Prefer the reusable upstream APIs exposed by the vendored `mikuproject`.
+Prefer the bundled upstream runtime artifacts in `runtime/`.
 Use these before falling back to direct file reads or UI-oriented flows.
 
 ## Runtime Discipline
 
-For explicit `mikuproject` import/export or report requests, first check the vendored `mikuproject` runtime before broad workspace exploration or generic tool discovery.
+For explicit `mikuproject` import/export or report requests, first check the bundled `mikuproject` runtime artifacts before broad workspace exploration or generic tool discovery.
 
 Use this order:
 
 1. read this `SKILL.md`
-2. check the vendored `mikuproject` runtime first
-3. use the vendored API or documented vendored CLI/runtime flow if present
+2. check `skills/mikuproject/runtime/mikuproject.jar` and `skills/mikuproject/runtime/mikuproject.mjs` first
+3. use the documented Java or Node CLI runtime flow if present
 4. only if that path is missing or unusable, search for alternatives
 
 For this repository:
 
-- in bundled installs, prefer `skills/mikuproject/vendor/mikuproject`
-- in the development repo, prefer `vendor/mikuproject`
-- do not search broadly through the workspace before checking the vendored runtime
+- prefer `skills/mikuproject/runtime/mikuproject.jar` for operations it supports
+- use `skills/mikuproject/runtime/mikuproject.mjs` when the Java runtime is missing or does not support the requested operation
+- do not search broadly through the workspace before checking the bundled runtime artifacts
 - do not conclude that runtime dependencies are missing until the bundled skill-local runtime path has also been checked when applicable
 
 ## Error Handling

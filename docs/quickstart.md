@@ -42,7 +42,8 @@
 必要なのは次です。
 
 - `skills/mikuproject`
-- `vendor/mikuproject`
+- `skills/mikuproject/runtime/mikuproject.jar`
+- `skills/mikuproject/runtime/mikuproject.mjs`
 
 `skills/` だけでは不足します。
 
@@ -279,9 +280,9 @@ Excelガントが欲しい
 
 ## `mikuproject` CLI でできること
 
-bundle 配布物では `skills/mikuproject` 配下に `vendor/mikuproject` が入ります。
-通常の参照元は bundle 内の `skills/mikuproject/vendor/mikuproject` です。
-開発元リポジトリでは repo 直下の `vendor/mikuproject` 側にあります。
+bundle 配布物では `skills/mikuproject` 配下に runtime artifact が入ります。
+通常の参照元は bundle 内の `skills/mikuproject/runtime/mikuproject.jar` と
+`skills/mikuproject/runtime/mikuproject.mjs` です。
 
 ```text
 mikuproject ai spec

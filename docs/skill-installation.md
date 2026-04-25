@@ -7,7 +7,8 @@
 前提:
 
 - この skill の実行には Node.js が必要です
-- 配布 bundle には `mikuproject` CLI 実行用の runtime 依存も同梱されます
+- Java runtime artifact を使う場合は Java も必要です
+- 配布 bundle には `mikuproject` CLI 実行用の runtime artifact が同梱されます
 
 ## 対象
 
@@ -28,9 +29,9 @@
 ```text
 skills/
   mikuproject/
-    vendor/
-      mikuproject/
-        node_modules/
+    runtime/
+      mikuproject.jar
+      mikuproject.mjs
 ```
 
 ## 先に結論
@@ -48,9 +49,9 @@ skills/
 <skill-home>/
   skills/
     mikuproject/
-      vendor/
-        mikuproject/
-          node_modules/
+      runtime/
+        mikuproject.jar
+        mikuproject.mjs
 ```
 
 ## 手順
@@ -64,13 +65,13 @@ skills/
 ### 2. skill home を確認する
 
 `mikuproject` skill は、bundle 版では `skills/mikuproject` の中に
-参照用の vendored upstream を同梱しています。
+実行用の runtime artifact を同梱しています。
 
 必要なのは次です。
 
 - `skills/mikuproject`
-- `skills/mikuproject/vendor/mikuproject`
-- `skills/mikuproject/vendor/mikuproject/node_modules`
+- `skills/mikuproject/runtime/mikuproject.jar`
+- `skills/mikuproject/runtime/mikuproject.mjs`
 
 最終的な構成は次です。
 
@@ -78,9 +79,9 @@ skills/
 <skill-home>/
   skills/
     mikuproject/
-      vendor/
-        mikuproject/
-          node_modules/
+      runtime/
+        mikuproject.jar
+        mikuproject.mjs
 ```
 
 この文書では、この `<skill-home>` をインストール先の配置ルートと呼びます。
@@ -92,8 +93,8 @@ skills/
 重要なのは次です。
 
 - 展開した `skills/mikuproject` を `<skill-home>/skills/mikuproject` に入れる
-- `skills/mikuproject/vendor/mikuproject` も一緒に入ることを保つ
-- `skills/mikuproject/vendor/mikuproject/node_modules` も一緒に入ることを保つ
+- `skills/mikuproject/runtime/mikuproject.jar` も一緒に入ることを保つ
+- `skills/mikuproject/runtime/mikuproject.mjs` も一緒に入ることを保つ
 
 この bundle では、展開した `skills/` をそのまま `<skill-home>/` へコピーすれば足ります。
 
@@ -113,8 +114,8 @@ skill 一覧は起動時に読まれることがあります。
 ここで `mikuproject` が出ない場合は、まず次を確認します。
 
 - コピー先が skill home 直下になっているか
-- `skills/mikuproject/vendor/mikuproject` があるか
-- `skills/mikuproject/vendor/mikuproject/node_modules` があるか
+- `skills/mikuproject/runtime/mikuproject.jar` があるか
+- `skills/mikuproject/runtime/mikuproject.mjs` があるか
 - 実行環境を再起動または再読込したか
 
 ## よくある間違い
@@ -123,23 +124,15 @@ skill 一覧は起動時に読まれることがあります。
 
 これは不足です。
 
-`mikuproject` skill は、bundle 版では `vendor/mikuproject` を含めて成立します。
+`mikuproject` skill は、bundle 版では `runtime/` を含めて成立します。
 `skills/mikuproject` の中身を欠いた状態では、`spec` や import/export 系で不足する可能性があります。
 
-### `vendor/mikuproject` を落としてしまう
+### `runtime/` を落としてしまう
 
 これは不足です。
 
-今回の bundle 配布では、参照用 upstream は `skills/mikuproject/vendor/mikuproject` に同梱されています。
-この vendor 部分を落とすと、参照先の一貫性が崩れ、bundle 内の `skills/mikuproject` 単体で自己完結しません。
-
-### `node_modules` を落としてしまう
-
-これは不足です。
-
-bundle 版では `skills/mikuproject/vendor/mikuproject/node_modules` まで含めて、
-CLI 実行に必要な runtime 依存を自己完結させます。
-この部分を落とすと、配布先によっては `jsdom` などの解決に失敗します。
+今回の bundle 配布では、実行用 runtime artifact は `skills/mikuproject/runtime/` に同梱されています。
+この runtime 部分を落とすと、bundle 内の `skills/mikuproject` 単体で自己完結しません。
 
 ### 展開場所の `skills/` 以外までまとめて入れてしまう
 
@@ -151,9 +144,9 @@ CLI 実行に必要な runtime 依存を自己完結させます。
 <skill-home>/
   skills/
     mikuproject/
-      vendor/
-        mikuproject/
-          node_modules/
+      runtime/
+        mikuproject.jar
+        mikuproject.mjs
 ```
 
 ## インストール後の最初の試し方

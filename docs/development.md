@@ -12,17 +12,18 @@
 - レポート出力: [report-export.md](./report-export.md)
 - 実装 TODO: [../TODO.md](../TODO.md)
 
-## subtree 運用
+## upstream runtime artifact 運用
 
-`mikuproject` は `vendor/mikuproject/` に `git subtree` で取り込んでいます。
+`mikuproject-skills` は、通常の skill 実行時に upstream source tree を直接使わず、
+`skills/mikuproject/runtime/` に置いた runtime artifact を使います。
 
-運用方針:
+現在の必須 runtime artifact:
 
-- `vendor/mikuproject/` は、できるだけ upstream をそのまま受信する場所として扱う
-- このリポジトリ固有の都合で `vendor/mikuproject/` のソースを常用的に書き換えない
-- skill 側や bundle 側の都合は、まず `skills/` や root 側の文書・補助コードで吸収する
-- `subtree pull` で競合した場合は、原則として upstream 側を優先して解消する
-- `vendor/mikuproject/` に local 修正を入れる場合は、次回同期で競合しやすくなることを理解したうえで、例外として扱う
+- `skills/mikuproject/runtime/mikuproject.jar`
+- `skills/mikuproject/runtime/mikuproject.mjs`
+
+更新時は upstream 側で artifact を生成して、この 2 ファイルを差し替えます。
+upstream source tree をこのリポジトリに同期する運用は通常不要です。
 
 ## 生成物の配置方針
 
@@ -54,16 +55,21 @@ mikuproject/
 - `202604082215-weekly.svg`
 - `202604082215-patch.json`
 
-取得:
+Node.js runtime artifact の生成元:
 
 ```bash
-git fetch https://github.com/igapyon/mikuproject.git devel
+cd /path/to/mikuproject
+npm ci
+npm run build:cli-bundle
+cp bundle/mikuproject.mjs /path/to/mikuproject-skills/skills/mikuproject/runtime/mikuproject.mjs
 ```
 
-同期:
+Java runtime artifact の生成元:
 
 ```bash
-git subtree pull --prefix=vendor/mikuproject https://github.com/igapyon/mikuproject.git devel
+cd /path/to/mikuproject-java
+mvn package
+cp target/mikuproject.jar /path/to/mikuproject-skills/skills/mikuproject/runtime/mikuproject.jar
 ```
 
 ## テスト
@@ -79,32 +85,25 @@ npm test
 
 - `tests/**/*.test.js`
 
-upstream 側 test は必要時だけ明示的に実行します。
-
-```bash
-npm run test:upstream
-```
-
-ただし運用上は、`vendor/mikuproject/` 全体をこのリポジトリ側で常に検証対象にすることを主目的とはしません。
+upstream 側 test は upstream 各リポジトリで実行します。
+このリポジトリでは、受け取った runtime artifact の存在と CLI contract を smoke test で確認します。
 
 - このリポジトリで重視するのは、skill 側の動作確認と最低限の smoke test
 - upstream `mikuproject` 自体の詳細な検証は、まず upstream 側で行われる前提とする
-- `vendor/mikuproject/tests/**/*.test.js` を毎回必須で回すかどうかは、変更範囲に応じて判断する
-- `vendor/mikuproject/` を単に同期しただけの場合は、upstream 全体テストをこのリポジトリで必須にしない
+- runtime artifact を差し替えた場合は `npm test` と `npm run build:bundle` を実行する
 
 ## 既知メモ: upstream CLI 速度
 
-upstream 側の `mikuproject-cli-bundle` は、軽い処理でも CLI を毎回起動する固定費が目立ちます。
+upstream 側の CLI runtime artifact は、軽い処理でも CLI を毎回起動する固定費が目立つことがあります。
 
 - 簡易計測では、CLI 1 回あたりがおおむね 1 秒前後
 - 同じ条件の in-process 計測では、個別の import / patch / export 自体は数 ms から数十 ms 程度
 
 そのため、現時点では「JSON 処理そのもの」よりも、「CLI を毎回 spawn する構造」のほうが支配的に遅い可能性が高いです。
-ただし、この repo の skill bundle は現在 `vendor/mikuproject` 同梱を基本とし、
-この速度改善対応自体は作業対象に含めません。
+ただし、この repo の skill bundle は runtime artifact 同梱を基本とし、この速度改善対応自体は作業対象に含めません。
 
 ## 現在の MVP の前提
 
 - skill は `skills/mikuproject` にある
 - 会話境界の state は `mikuproject_workbook_json`
-- upstream の stable API と unified core API を前提にしている
+- upstream の Java CLI runtime artifact と Node.js CLI runtime artifact を前提にしている

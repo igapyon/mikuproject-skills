@@ -5,12 +5,12 @@ or when the host runtime cannot keep the spec internal.
 
 ## Retrieval Rule
 
-Prefer upstream API retrieval:
+Prefer upstream runtime retrieval:
 
-- `globalThis.__mikuprojectAiJsonSpec.getAiJsonSpecText()`
-- `globalThis.__mikuprojectAiJsonSpec.getAiJsonSpec()`
+- `node skills/mikuproject/runtime/mikuproject.mjs ai spec`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export-ai-json-spec`
 
-Use the markdown file directly only if the stable API is unavailable.
+Use bundled markdown or source-tree files directly only if the runtime artifacts are unavailable.
 
 ## Preferred Behavior
 

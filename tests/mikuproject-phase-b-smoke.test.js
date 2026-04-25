@@ -1,61 +1,132 @@
-// @vitest-environment jsdom
-
-import { readFileSync } from "node:fs";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import { loadMikuprojectCoreApi } from "../vendor/mikuproject/scripts/lib/core-api-loader.mjs";
-
 const ROOT = process.cwd();
-const dependencyXml = readFileSync(path.resolve(ROOT, "vendor/mikuproject/testdata/dependency.xml"), "utf8");
+const nodeRuntimePath = path.resolve(ROOT, "skills/mikuproject/runtime/mikuproject.mjs");
 
-function bootModules() {
-  return loadMikuprojectCoreApi({
-    rootDir: path.resolve(ROOT, "vendor/mikuproject")
-  });
-}
-
-describe("mikuproject phase b smoke", () => {
-  let loaded = null;
+describe("mikuproject file workflow smoke", () => {
+  const tempDirs = [];
 
   afterEach(() => {
-    loaded?.dispose();
-    loaded = null;
+    while (tempDirs.length > 0) {
+      fs.rmSync(tempDirs.pop(), { recursive: true, force: true });
+    }
   });
 
-  it("supports xml import/export, workbook import/export, and xlsx import/export", () => {
-    loaded = bootModules();
-    const { api } = loaded;
+  it("supports workbook JSON, XML, XLSX, and Markdown report CLI flows", () => {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "mikuproject-file-workflow-test-"));
+    tempDirs.push(tempRoot);
 
-    const xmlImportedModel = api.msProject.importFromXml(dependencyXml);
-    const xmlImportedWorkbook = api.workbookJson.exportDocument(xmlImportedModel);
-    expect(xmlImportedWorkbook.format).toBe("mikuproject_workbook_json");
+    const draftPath = path.resolve(tempRoot, "draft.editjson");
+    const workbookPath = path.resolve(tempRoot, "workbook.json");
+    const xmlPath = path.resolve(tempRoot, "project.xml");
+    const xlsxPath = path.resolve(tempRoot, "project.xlsx");
+    const markdownPath = path.resolve(tempRoot, "wbs.md");
+    fs.writeFileSync(draftPath, `${JSON.stringify(buildDraft(), null, 2)}\n`, "utf8");
 
-    const xmlExported = api.msProject.exportToXml(xmlImportedModel);
-    expect(xmlExported).toContain("<Project");
+    execFileSync("node", [
+      nodeRuntimePath,
+      "state",
+      "from-draft",
+      "--in",
+      draftPath,
+      "--out",
+      workbookPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
 
-    const workbookReplaced = api.workbookJson.importAsProjectModel(xmlImportedWorkbook);
-    expect(workbookReplaced.model.project.name).toBe(xmlImportedModel.project.name);
+    const workbookJson = execFileSync("node", [
+      nodeRuntimePath,
+      "export",
+      "workbook-json",
+      "--in",
+      workbookPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    expect(JSON.parse(workbookJson).format).toBe("mikuproject_workbook_json");
 
-    const workbookDocument = structuredClone(xmlImportedWorkbook);
-    workbookDocument.sheets.Project.find((row) => row.Field === "Name").Value = "Phase B Workbook Merge";
-    const workbookMerged = api.workbookJson.importIntoProjectModel(workbookDocument, xmlImportedModel);
-    expect(workbookMerged.model.project.name).toBe("Phase B Workbook Merge");
-    expect(Array.isArray(workbookMerged.changes)).toBe(true);
+    const xmlText = execFileSync("node", [
+      nodeRuntimePath,
+      "export",
+      "xml",
+      "--in",
+      workbookPath,
+      "--out",
+      xmlPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    expect(xmlText).toBe("");
+    expect(fs.readFileSync(xmlPath, "utf8")).toContain("<Project");
 
-    const xlsxWorkbook = api.xlsx.exportWorkbook(xmlImportedModel);
-    xlsxWorkbook.sheets
-      .find((sheet) => sheet.name === "Project")
-      .rows.find((row) => row.cells[0]?.value === "Name")
-      .cells[1].value = "Phase B Xlsx Replace";
-    const xlsxBytes = api.xlsx.encodeWorkbook(xlsxWorkbook);
-    const xlsxDecoded = api.xlsx.decodeWorkbook(xlsxBytes);
-    const xlsxReplacedModel = api.xlsx.importAsProjectModel(xlsxDecoded);
-    const xlsxMergedModel = api.xlsx.importIntoProjectModel(xlsxDecoded, xmlImportedModel);
+    execFileSync("node", [
+      nodeRuntimePath,
+      "export",
+      "xlsx",
+      "--in",
+      workbookPath,
+      "--out",
+      xlsxPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    expect(fs.statSync(xlsxPath).size).toBeGreaterThan(0);
 
-    expect(xlsxBytes).toBeInstanceOf(Uint8Array);
-    expect(xlsxReplacedModel.project.name).toBe("Phase B Xlsx Replace");
-    expect(xlsxMergedModel.project.name).toBe("Phase B Xlsx Replace");
+    execFileSync("node", [
+      nodeRuntimePath,
+      "report",
+      "wbs-markdown",
+      "--in",
+      workbookPath,
+      "--out",
+      markdownPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    expect(fs.readFileSync(markdownPath, "utf8")).toContain("# WBS");
   });
 });
+
+function buildDraft() {
+  return {
+    view_type: "project_draft_view",
+    project: {
+      name: "File Workflow Smoke",
+      planned_start: "2026-04-01",
+      planned_finish: "2026-04-05"
+    },
+    tasks: [
+      {
+        uid: "draft-1",
+        name: "Planning",
+        parent_uid: null,
+        position: 0,
+        planned_start: "2026-04-01",
+        planned_finish: "2026-04-02"
+      },
+      {
+        uid: "draft-2",
+        name: "Review",
+        parent_uid: null,
+        position: 1,
+        is_milestone: true,
+        planned_start: "2026-04-05",
+        planned_finish: "2026-04-05",
+        predecessor_uids: ["draft-1"]
+      }
+    ],
+    resources: [],
+    assignments: []
+  };
+}

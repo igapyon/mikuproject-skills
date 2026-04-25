@@ -1,6 +1,6 @@
 # Operations Map
 
-Use this reference when you need the supported operation list or the preferred upstream API surface.
+Use this reference when you need the supported operation list or the preferred upstream runtime surface.
 
 ## Operations
 
@@ -39,21 +39,23 @@ Report workflow:
 
 ## Runtime Search Order
 
-When this skill is installed from `skill-bundle`, prefer:
+When this skill is installed from `skill-bundle`, prefer the bundled runtime artifacts:
 
-- `skills/mikuproject/vendor/mikuproject`
+- `skills/mikuproject/runtime/mikuproject.jar`
+- `skills/mikuproject/runtime/mikuproject.mjs`
 
-When working in the development repository, use:
+When working in the development repository, use the same skill-local runtime paths:
 
-- `vendor/mikuproject`
+- `skills/mikuproject/runtime/mikuproject.jar`
+- `skills/mikuproject/runtime/mikuproject.mjs`
 
 Do not search broadly for alternate copies before checking these expected locations.
 
-## Preferred API Surface
+## Preferred Runtime Surface
 
 Prefer:
 
-- `globalThis.__mikuprojectAiJsonSpec`
-- `globalThis.__mikuprojectCoreApi`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ...`
+- `node skills/mikuproject/runtime/mikuproject.mjs ...`
 
-Use the reusable upstream APIs before falling back to direct file reads or UI-oriented flows.
+Use the upstream CLI runtime artifacts before falling back to direct file reads or UI-oriented flows.
