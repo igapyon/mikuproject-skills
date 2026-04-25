@@ -119,6 +119,23 @@
 - [x] `mikuproject-skills` 側だけで無理に実装せず、upstream (`mikuproject`) 側の API 追加や公開面整理が妥当な場合は、その都度 `mikuproject` 側アクション候補として相談する
 - [ ] upstream の Java CLI runtime artifact と Node.js CLI runtime artifact に `--version` を追加してもらう
   - `mikuproject.jar` / `mikuproject.mjs` はファイル名に version が含まれないため、受け取った artifact の由来や新旧を CLI から判別できる必要がある
+- [ ] upstream `mikuproject-java` 側で、Node.js runtime の agent-friendly な CLI 引数体系に寄せた Java facade command を追加してもらう
+  - `mikuproject-skills` 側の実装項目ではなく、`mikuproject-java` 側メンバーへの TODO として扱う
+  - 現状の Java CLI は XML と位置引数を中心にした低レベル command が多く、Node.js CLI は `ai spec`、`state from-draft --in --out`、`state apply-patch --state --in --out`、`report all --in --out` のように生成AIが組み立てやすい
+  - 既存 Java command は残しつつ、生成AI向けには Node.js CLI と近い階層・命名・`--in` / `--out` 引数を持つ入口を追加するのが望ましい
+- [ ] upstream `mikuproject-java` 側で、agent-friendly Java facade command 追加時に `output.xlsxbin` のような分かりにくい拡張子をユーザー向け例示から消せるか確認してもらう
+  - コマンド体系を Node.js runtime 側へ寄せるなら、構造 workbook `XLSX` や report `WBS XLSX` の出力例も `.xlsx` のような自然な拡張子で示せることが期待される
+  - 内部実装上の都合で `xlsxbin` 相当の概念が残る場合でも、生成AI向け・利用者向けの facade CLI では露出しない形にできるかを確認する
+- [ ] upstream `mikuproject-java` 側で、ASIS 対応表に `Not available as a direct Java command` と記録した操作の Java 実装を追加してもらう
+  - 少なくとも `state summarize` 相当の直接コマンドを追加する
+  - 少なくとも `state diff` 相当の直接コマンドを追加する
+  - agent-friendly Java facade command では、Node.js runtime と同様に workbook JSON を入力として扱える形が望ましい
+- [ ] upstream `mikuproject` 側で、ASIS 対応表に `Not available as a direct Node.js command` と記録した操作の Node.js 実装を追加してもらう
+  - workbook JSON の validate / replace import / merge import に相当する直接コマンドを追加する
+  - XML validate に相当する直接コマンドを追加する
+  - 構造 workbook `XLSX` の validate / replace import / merge import に相当する直接コマンドを追加する
+  - report directory export に相当する直接コマンドを追加するか、Node.js runtime では bundle ZIP を正とする方針を明記する
+  - Node.js runtime 側では、既存の `--in` / `--out` / `--state` 形式と workbook JSON 中心の会話 state を維持する
 
 ## 11. 将来拡張の候補
 

@@ -32,9 +32,10 @@
 ## 利用できる upstream runtime
 
 主要な入口は `skills/mikuproject/runtime/` の CLI runtime artifact です。
+生成AI向けの例では、Java runtime の例を先に示し、続けて Node.js runtime の例を示します。
 
-- Node.js runtime: `report all`, `report wbs-xlsx`, `report daily-svg`, `report weekly-svg`, `report monthly-calendar-svg`, `report wbs-markdown`, `report mermaid`
 - Java runtime: `export-report-bundle`, `export-report-dir`, `export-wbs-xlsx`, `export-daily-svg`, `export-weekly-svg`, `export-monthly-svg-zip`, `export-wbs-markdown`, `export-mermaid`
+- Node.js runtime: `report all`, `report wbs-xlsx`, `report daily-svg`, `report weekly-svg`, `report monthly-calendar-svg`, `report wbs-markdown`, `report mermaid`
 
 ## `WBS XLSX`
 

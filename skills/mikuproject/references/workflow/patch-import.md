@@ -7,7 +7,14 @@ Use this reference when the user provides AI output that should be treated as `P
 `Patch JSON` cannot be applied by itself.
 Require an existing `mikuproject_workbook_json` as the base state.
 
-Use the Node.js runtime command:
+Show the Java runtime path first:
+
+- `java -jar skills/mikuproject/runtime/mikuproject.jar import-workbook-json workbook.json base.xml`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar validate-patch-json patch.editjson`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar apply-patch-json base.xml patch.editjson output.xml`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export-workbook-json output.xml > workbook.next.json`
+
+Node.js runtime example:
 
 - `node skills/mikuproject/runtime/mikuproject.mjs state apply-patch --state workbook.json --in patch.editjson --out workbook.next.json`
 
@@ -18,13 +25,9 @@ Accept either:
 - raw JSON text
 - a full LLM response that ends with a `json` fenced block
 
-For validation, prefer:
+For validation through the Node.js runtime:
 
 - `node skills/mikuproject/runtime/mikuproject.mjs ai validate-patch --state workbook.json --in patch.editjson`
-
-The Java runtime can apply a patch when the base is XML:
-
-- `java -jar skills/mikuproject/runtime/mikuproject.jar apply-patch-json base.xml patch.editjson output.xml`
 
 ## Required Kind
 
