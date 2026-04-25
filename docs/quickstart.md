@@ -61,8 +61,9 @@ npm run build:bundle
 bundle/mikuproject-skills/
   skills/
     mikuproject/
-      vendor/
-        mikuproject/
+      runtime/
+        mikuproject.jar
+        mikuproject.mjs
 ```
 
 その中身を skill home にコピーします。

@@ -10,6 +10,7 @@
     "build:bundle": "node scripts/build-skill-bundle.mjs",
     "build:bundle:zip": "npm run build:bundle && node scripts/build-skill-bundle-zip.mjs",
     "build:full": "npm run build",
+    "update:runtime": "sh scripts/update-mikuproject-runtime.sh",
     "test": "vitest run",
     "test:watch": "vitest"
   },
