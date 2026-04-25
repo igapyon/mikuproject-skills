@@ -8,10 +8,11 @@ This is different from the conversational handoff use case because the focus her
 
 Prefer the bundled runtime CLI commands:
 
-- `node skills/mikuproject/runtime/mikuproject.mjs export workbook-json --in workbook.json --out workbook.normalized.json`
 - `java -jar skills/mikuproject/runtime/mikuproject.jar validate-workbook-json input.json`
 - `java -jar skills/mikuproject/runtime/mikuproject.jar import-workbook-json input.json output.xml`
 - `java -jar skills/mikuproject/runtime/mikuproject.jar merge-workbook-json base.xml input.json output.xml`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export-workbook-json input.xml`
+- `node skills/mikuproject/runtime/mikuproject.mjs export workbook-json --in workbook.json --out workbook.normalized.json`
 
 ## `workbook-import`
 

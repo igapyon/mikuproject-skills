@@ -33,21 +33,22 @@
 ## 利用できる upstream runtime
 
 主要な入口は `skills/mikuproject/runtime/` の CLI runtime artifact です。
+生成AI向けの例では、Java runtime の例を先に示し、続けて Node.js runtime の例を示します。
 
 ### `MS Project XML`
 
-- Node.js runtime: `export xml`
 - Java runtime: `validate-xml`, `export-workbook-json`, `import-ai-json`, `import-external`
+- Node.js runtime: `export xml`
 
 ### `mikuproject_workbook_json`
 
-- Node.js runtime: `state from-draft`, `state summarize`, `state diff`, `state apply-patch`, `export workbook-json`
 - Java runtime: `validate-workbook-json`, `import-workbook-json`, `merge-workbook-json`, `export-workbook-json`
+- Node.js runtime: `state from-draft`, `state summarize`, `state diff`, `state apply-patch`, `export workbook-json`
 
 ### 構造忠実 workbook `XLSX`
 
-- Node.js runtime: `export xlsx`
 - Java runtime: `export-xlsx`, `validate-xlsx`, `import-xlsx`, `merge-xlsx`
+- Node.js runtime: `export xlsx`
 
 ## `MS Project XML`
 

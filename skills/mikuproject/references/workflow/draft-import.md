@@ -9,13 +9,14 @@ Accept either:
 - raw JSON text
 - a full LLM response that ends with a `json` fenced block
 
-Prefer the Node.js runtime command:
-
-- `node skills/mikuproject/runtime/mikuproject.mjs state from-draft --in draft.editjson --out workbook.json`
-
-The Java runtime can also import AI JSON to XML:
+Show the Java runtime path first:
 
 - `java -jar skills/mikuproject/runtime/mikuproject.jar import-ai-json draft.editjson output.xml`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export-workbook-json output.xml > workbook.json`
+
+Node.js runtime example:
+
+- `node skills/mikuproject/runtime/mikuproject.mjs state from-draft --in draft.editjson --out workbook.json`
 
 ## Required Kind
 
