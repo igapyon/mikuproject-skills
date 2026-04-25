@@ -45,18 +45,26 @@ ensure_checkout "$mikuproject_java_root" "$mikuproject_java_repo" "$mikuproject_
 )
 
 test -s "$mikuproject_root/bundle/mikuproject.mjs"
+test -s "$mikuproject_root/bundle/mikuproject-sources.tgz"
 test -s "$mikuproject_java_root/target/mikuproject.jar"
+test -s "$mikuproject_java_root/target/mikuproject-sources.jar"
 
 cp "$mikuproject_root/bundle/mikuproject.mjs" "$runtime_root/mikuproject.mjs"
+cp "$mikuproject_root/bundle/mikuproject-sources.tgz" "$runtime_root/mikuproject-sources.tgz"
 cp "$mikuproject_java_root/target/mikuproject.jar" "$runtime_root/mikuproject.jar"
+cp "$mikuproject_java_root/target/mikuproject-sources.jar" "$runtime_root/mikuproject-sources.jar"
 
 java -jar "$runtime_root/mikuproject.jar" export-ai-json-spec >/dev/null
+java -jar "$runtime_root/mikuproject.jar" --version >/dev/null
 node "$runtime_root/mikuproject.mjs" ai spec >/dev/null
+node "$runtime_root/mikuproject.mjs" --version >/dev/null
 
 cat <<EOF
 [update-mikuproject-runtime] updated runtime artifacts
   - skills/mikuproject/runtime/mikuproject.jar
+  - skills/mikuproject/runtime/mikuproject-sources.jar
   - skills/mikuproject/runtime/mikuproject.mjs
+  - skills/mikuproject/runtime/mikuproject-sources.tgz
   - workplace: $workplace_root
   - mikuproject ref: $mikuproject_ref
   - mikuproject-java ref: $mikuproject_java_ref

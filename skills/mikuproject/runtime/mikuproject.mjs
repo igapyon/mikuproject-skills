@@ -5,6 +5,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Blob as NodeBlob, File as NodeFile } from "node:buffer";
 
+const BUNDLED_PACKAGE_VERSION = "0.8.0";
+
 const BUNDLED_CORE_API_MODULE_RELATIVE_PATHS = Object.freeze(
 [
   "src/js/types.js",
@@ -426,6 +428,10 @@ class CliProcessingError extends Error {
 async function main() {
   const rawArgv = process.argv.slice(2);
   const { command, options } = parseArgs(rawArgv);
+  if (options.version) {
+    process.stdout.write(`mikuproject ${getCliVersion()}\n`);
+    return;
+  }
   if (options.help || command.length === 0) {
     writeHelp(process.stdout);
     return;
@@ -464,6 +470,10 @@ function parseArgs(argv) {
       options.help = true;
       continue;
     }
+    if (key === "version") {
+      options.version = true;
+      continue;
+    }
 
     const value = argv[index + 1];
     if (value === undefined || value.startsWith("--")) {
@@ -476,6 +486,21 @@ function parseArgs(argv) {
   }
 
   return { command, options };
+}
+
+function getCliVersion() {
+  if (typeof BUNDLED_PACKAGE_VERSION === "string" && BUNDLED_PACKAGE_VERSION) {
+    return BUNDLED_PACKAGE_VERSION;
+  }
+  try {
+    const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8"));
+    if (typeof packageJson.version === "string" && packageJson.version) {
+      return packageJson.version;
+    }
+  } catch {
+    // Fall through to an explicit unknown marker when package metadata is unavailable.
+  }
+  return "unknown";
 }
 
 async function runCommand(command, options, api) {
@@ -1539,6 +1564,7 @@ function writeOutput(output, outPath) {
 function writeHelp(stream) {
   stream.write([
     "Usage:",
+    "  mikuproject --version",
     "  mikuproject ai spec",
     "  mikuproject ai export project-overview [--in workbook.json|-] [--diagnostics text|json] [--out overview.editjson|-]",
     "  mikuproject ai export task-edit [--in workbook.json|-] [--task-uid 123] [--select auto|first-task|uid] [--diagnostics text|json] [--out task.editjson|-]",

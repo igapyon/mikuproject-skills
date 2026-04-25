@@ -20,7 +20,9 @@
 現在の必須 runtime artifact:
 
 - `skills/mikuproject/runtime/mikuproject.jar`
+- `skills/mikuproject/runtime/mikuproject-sources.jar`
 - `skills/mikuproject/runtime/mikuproject.mjs`
+- `skills/mikuproject/runtime/mikuproject-sources.tgz`
 
 更新時は upstream 側で artifact を生成して、この 2 ファイルを差し替えます。
 upstream source tree をこのリポジトリに同期する運用は通常不要です。
@@ -65,12 +67,18 @@ mikuproject/
 npm run update:runtime
 ```
 
+フルビルドや runtime artifact 更新を行う前には、`workplace/upstream/` 以下の
+`mikuproject` と `mikuproject-java` について、最新 clone または pull が必要かを確認します。
+未取得または古い可能性がある場合は、先に upstream を更新してから artifact 生成と bundle build を行います。
+
 このコマンドは次を行います。
 
 - `workplace/upstream/mikuproject` に `mikuproject` を clone または更新する
 - `workplace/upstream/mikuproject-java` に `mikuproject-java` を clone または更新する
 - Node.js 側で `bundle/mikuproject.mjs` を生成する
+- Node.js 側で `bundle/mikuproject-sources.tgz` を生成する
 - Java 側で `target/mikuproject.jar` を生成する
+- Java 側で `target/mikuproject-sources.jar` を生成する
 - 生成物を `skills/mikuproject/runtime/` にコピーする
 - コピー後の `mikuproject.jar` と `mikuproject.mjs` を smoke test する
 

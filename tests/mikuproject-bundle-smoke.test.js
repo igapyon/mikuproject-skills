@@ -15,6 +15,14 @@ const builtJavaRuntimePath = path.resolve(
   ROOT,
   "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject.jar"
 );
+const builtJavaSourcesPath = path.resolve(
+  ROOT,
+  "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject-sources.jar"
+);
+const builtNodeSourcesPath = path.resolve(
+  ROOT,
+  "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject-sources.tgz"
+);
 
 describe("mikuproject bundle smoke", () => {
   const tempDirs = [];
@@ -52,14 +60,26 @@ describe("mikuproject bundle smoke", () => {
       cwd: tempRoot,
       encoding: "utf8"
     });
+    const nodeVersion = execFileSync("node", [isolatedNodeRuntimePath, "--version"], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
     const javaHelp = execFileSync("java", ["-jar", isolatedJavaRuntimePath], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    const javaVersion = execFileSync("java", ["-jar", isolatedJavaRuntimePath, "--version"], {
       cwd: tempRoot,
       encoding: "utf8"
     });
 
     expect(fs.existsSync(builtNodeRuntimePath)).toBe(true);
     expect(fs.existsSync(builtJavaRuntimePath)).toBe(true);
+    expect(fs.existsSync(builtJavaSourcesPath)).toBe(true);
+    expect(fs.existsSync(builtNodeSourcesPath)).toBe(true);
     expect(nodeHelp).toContain("mikuproject report all");
+    expect(nodeVersion).toMatch(/^mikuproject \d+\.\d+\.\d+/);
     expect(javaHelp).toContain("export-ai-json-spec");
+    expect(javaVersion).toMatch(/^mikuproject-java \d+\.\d+\.\d+/);
   });
 });
