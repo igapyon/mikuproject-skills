@@ -25,6 +25,10 @@
 更新時は upstream 側で artifact を生成して、この 2 ファイルを差し替えます。
 upstream source tree をこのリポジトリに同期する運用は通常不要です。
 
+このリポジトリで一時的に upstream を取得して artifact を更新する場合は、
+repo 直下の `workplace/` を使います。`workplace/` はローカル作業用であり、
+通常の内容は Git 管理しません。
+
 ## 生成物の配置方針
 
 WBS 関連の生成物は、workspace ルートへ散らさず、`mikuproject/` 配下へ寄せる方針を推奨します。
@@ -55,21 +59,30 @@ mikuproject/
 - `202604082215-weekly.svg`
 - `202604082215-patch.json`
 
-Node.js runtime artifact の生成元:
+推奨更新手順:
 
 ```bash
-cd /path/to/mikuproject
-npm ci
-npm run build:cli-bundle
-cp bundle/mikuproject.mjs /path/to/mikuproject-skills/skills/mikuproject/runtime/mikuproject.mjs
+npm run update:runtime
 ```
 
-Java runtime artifact の生成元:
+このコマンドは次を行います。
+
+- `workplace/upstream/mikuproject` に `mikuproject` を clone または更新する
+- `workplace/upstream/mikuproject-java` に `mikuproject-java` を clone または更新する
+- Node.js 側で `bundle/mikuproject.mjs` を生成する
+- Java 側で `target/mikuproject.jar` を生成する
+- 生成物を `skills/mikuproject/runtime/` にコピーする
+- コピー後の `mikuproject.jar` と `mikuproject.mjs` を smoke test する
+
+既定の取得元と ref:
+
+- `mikuproject`: `https://github.com/igapyon/mikuproject.git` の `devel`
+- `mikuproject-java`: `https://github.com/igapyon/mikuproject-java.git` の `devel`
+
+必要に応じて環境変数で変更できます。
 
 ```bash
-cd /path/to/mikuproject-java
-mvn package
-cp target/mikuproject.jar /path/to/mikuproject-skills/skills/mikuproject/runtime/mikuproject.jar
+MIKUPROJECT_REF=main MIKUPROJECT_JAVA_REF=main npm run update:runtime
 ```
 
 ## テスト

@@ -1,6 +1,0 @@
-.DS_Store
-local-data
-node_modules/
-coverage/
-*.log
-bundle/
