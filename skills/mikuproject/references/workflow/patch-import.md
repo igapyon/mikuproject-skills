@@ -9,10 +9,8 @@ Require an existing `mikuproject_workbook_json` as the base state.
 
 Show the Java runtime path first:
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar import-workbook-json workbook.json base.xml`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar validate-patch-json patch.editjson`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar apply-patch-json base.xml patch.editjson output.xml`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-workbook-json output.xml > workbook.next.json`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai validate-patch --state workbook.json --in patch.editjson`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state apply-patch --state workbook.json --in patch.editjson --out workbook.next.json`
 
 Node.js runtime example:
 

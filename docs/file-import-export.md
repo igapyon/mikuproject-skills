@@ -37,17 +37,17 @@
 
 ### `MS Project XML`
 
-- Java runtime: `validate-xml`, `export-workbook-json`, `import-ai-json`, `import-external`
+- Java runtime: `validate xml`, `export xml`
 - Node.js runtime: `export xml`
 
 ### `mikuproject_workbook_json`
 
-- Java runtime: `validate-workbook-json`, `import-workbook-json`, `merge-workbook-json`, `export-workbook-json`
+- Java runtime: `state validate`, `state import`, `state merge`, `export workbook-json`
 - Node.js runtime: `state from-draft`, `state summarize`, `state diff`, `state apply-patch`, `export workbook-json`
 
 ### 構造忠実 workbook `XLSX`
 
-- Java runtime: `export-xlsx`, `validate-xlsx`, `import-xlsx`, `merge-xlsx`
+- Java runtime: `export xlsx`, `validate xlsx`, `import xlsx`, `merge xlsx`
 - Node.js runtime: `export xlsx`
 
 ## `MS Project XML`
@@ -55,7 +55,7 @@
 ### import
 
 - XML テキストを受け取り、runtime CLI で `mikuproject_workbook_json` に揃えます
-- 必要なら Java runtime の `validate-xml` で検査します
+- 必要なら Java runtime の `validate xml` で検査します
 - file workflow から AI workflow へ入る入口として使えます
 
 ### export

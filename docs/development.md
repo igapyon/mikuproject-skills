@@ -10,6 +10,9 @@
 - skill 配置手順: [skill-installation.md](./skill-installation.md)
 - ファイル入出力: [file-import-export.md](./file-import-export.md)
 - レポート出力: [report-export.md](./report-export.md)
+- upstream Java CLI 変更依頼（完了）: [upstream-mikuproject-java-cli-request.md](./upstream-mikuproject-java-cli-request.md)
+- upstream Java `ai export bundle` 追加依頼（完了）: [upstream-mikuproject-java-ai-export-bundle-request.md](./upstream-mikuproject-java-ai-export-bundle-request.md)
+- miku MCP server 共通設計: [miku-soft-50-mcp-design-v20260426.md](./miku-soft-50-mcp-design-v20260426.md)
 - 実装 TODO: [../TODO.md](../TODO.md)
 
 ## upstream runtime artifact 運用
@@ -24,7 +27,9 @@
 - `skills/mikuproject/runtime/mikuproject.mjs`
 - `skills/mikuproject/runtime/mikuproject-sources.tgz`
 
-更新時は upstream 側で artifact を生成して、この 2 ファイルを差し替えます。
+更新時は upstream 側で artifact を生成して、該当する runtime artifact を差し替えます。
+Java runtime 更新時は `mikuproject.jar` と `mikuproject-sources.jar` を差し替えます。
+Node.js runtime 更新時は `mikuproject.mjs` と `mikuproject-sources.tgz` を差し替えます。
 upstream source tree をこのリポジトリに同期する運用は通常不要です。
 
 このリポジトリで一時的に upstream を取得して artifact を更新する場合は、

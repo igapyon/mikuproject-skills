@@ -16,9 +16,9 @@ When both are present, prefer the Java runtime for operations it supports. Use t
 Java runtime:
 
 ```bash
-java -jar skills/mikuproject/runtime/mikuproject.jar export-ai-json-spec
-java -jar skills/mikuproject/runtime/mikuproject.jar import-ai-json input.editjson output.xml
-java -jar skills/mikuproject/runtime/mikuproject.jar export-report-bundle input.xml output.zip
+java -jar skills/mikuproject/runtime/mikuproject.jar ai spec
+java -jar skills/mikuproject/runtime/mikuproject.jar state from-draft --in draft.editjson --out workbook.json
+java -jar skills/mikuproject/runtime/mikuproject.jar report all --in workbook.json --out report-bundle.zip
 ```
 
 Node.js runtime:
@@ -33,19 +33,19 @@ node skills/mikuproject/runtime/mikuproject.mjs report all --in workbook.json --
 ## Main Formats
 
 - `MS Project XML`
-  - Java CLI: XML-first commands such as `validate-xml`, `export-workbook-json`, and report exports
+  - Java CLI: `validate xml` and `export xml`
   - Node CLI: workbook-state commands such as `export xml`
 - workbook `XLSX`
-  - Java CLI: `export-xlsx`, `import-xlsx`, `merge-xlsx`
+  - Java CLI: `export xlsx`, `import xlsx`, `merge xlsx`
   - Node CLI: `export xlsx`
 - `project_draft_view`
-  - Java CLI: `import-ai-json`
+  - Java CLI: `state from-draft`
   - Node CLI: `state from-draft`
 - `Patch JSON`
-  - Java CLI: `apply-patch-json`
+  - Java CLI: `ai validate-patch` and `state apply-patch`
   - Node CLI: `ai validate-patch` and `state apply-patch`
 - `mikuproject_workbook_json`
-  - Java CLI: `export-workbook-json`, `import-workbook-json`, `merge-workbook-json`
+  - Java CLI: `export workbook-json`, `state import`, `state merge`, `state summarize`, `state diff`
   - Node CLI: `export workbook-json`, `state summarize`, `state diff`
 
 ## Working Assumption

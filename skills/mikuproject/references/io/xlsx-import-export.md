@@ -8,10 +8,10 @@ This reference is for the structural workbook `XLSX`, not `WBS XLSX`.
 
 Prefer the bundled runtime CLI commands:
 
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export xlsx --in workbook.json --out workbook.xlsx`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar import xlsx --in workbook.xlsx --out workbook.json`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar merge xlsx --state workbook.json --in workbook.xlsx --out workbook.next.json`
 - `node skills/mikuproject/runtime/mikuproject.mjs export xlsx --in workbook.json --out workbook.xlsx`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-xlsx input.xml output.xlsxbin`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar import-xlsx input.xlsxbin output.xml`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar merge-xlsx base.xml input.xlsxbin output.xml`
 
 ## `xlsx-import`
 
@@ -24,7 +24,7 @@ Purpose:
 Processing order:
 
 1. accept `.xlsx` bytes
-2. for replace import, use the Java runtime `import-xlsx` command
+2. for replace import, use the Java runtime `import xlsx` command
 3. validate the resulting `ProjectModel` when useful
 4. export it with `workbookJson.exportDocument`
 5. return the resulting `mikuproject_workbook_json`
@@ -45,7 +45,7 @@ Processing order:
 
 1. require the current workbook state
 2. rebuild `baseModel` from the current state
-3. call the Java runtime `merge-xlsx` command
+3. call the Java runtime `merge xlsx` command
 4. export the resulting model with `workbookJson.exportDocument`
 5. return the updated `mikuproject_workbook_json`
 

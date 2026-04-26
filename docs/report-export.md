@@ -34,7 +34,7 @@
 主要な入口は `skills/mikuproject/runtime/` の CLI runtime artifact です。
 生成AI向けの例では、Java runtime の例を先に示し、続けて Node.js runtime の例を示します。
 
-- Java runtime: `export-report-bundle`, `export-report-dir`, `export-wbs-xlsx`, `export-daily-svg`, `export-weekly-svg`, `export-monthly-svg-zip`, `export-wbs-markdown`, `export-mermaid`
+- Java runtime: `report all`, `report dir`, `report wbs-xlsx`, `report daily-svg`, `report weekly-svg`, `report monthly-calendar-svg`, `report wbs-markdown`, `report mermaid`
 - Node.js runtime: `report all`, `report wbs-xlsx`, `report daily-svg`, `report weekly-svg`, `report monthly-calendar-svg`, `report wbs-markdown`, `report mermaid`
 
 ## `WBS XLSX`
@@ -68,7 +68,7 @@
 
 ## report bundle
 
-- `report all` または `export-report-bundle` は report 一式をまとめて返します
+- `report all` は report 一式をまとめて返します
 - 返り値は ZIP file artifact として扱います
 - 少なくとも `wbs.xlsx`、`wbs.md`、`mermaid.mmd`、`daily.svg`、`weekly.svg`、月次 SVG 群を含められます
 

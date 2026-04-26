@@ -18,7 +18,7 @@ describe("mikuproject runtime artifact smoke", () => {
     }
   });
 
-  it("supports spec, draft import, state summary, report bundle, and Java spec retrieval", () => {
+  it("supports spec, draft import, state summary, report bundle, and Java AI exports", () => {
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "mikuproject-runtime-test-"));
     tempDirs.push(tempRoot);
 
@@ -73,11 +73,29 @@ describe("mikuproject runtime artifact smoke", () => {
     });
     expect(fs.statSync(reportPath).size).toBeGreaterThan(0);
 
-    const javaSpec = execFileSync("java", ["-jar", javaRuntimePath, "export-ai-json-spec"], {
+    const javaSpec = execFileSync("java", ["-jar", javaRuntimePath, "ai", "spec"], {
       cwd: tempRoot,
       encoding: "utf8"
     });
     expect(javaSpec).toContain("# mikuproject AI JSON Prompt / Spec");
+
+    const javaBundle = execFileSync("java", [
+      "-jar",
+      javaRuntimePath,
+      "ai",
+      "export",
+      "bundle",
+      "--in",
+      workbookPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    const parsedJavaBundle = JSON.parse(javaBundle);
+    expect(parsedJavaBundle.view_type).toBe("ai_projection_bundle");
+    expect(parsedJavaBundle.project_overview_view.project.name).toBe("Runtime Artifact Smoke");
+    expect(Array.isArray(parsedJavaBundle.phase_detail_views_full)).toBe(true);
+    expect(Array.isArray(parsedJavaBundle.task_edit_views_full)).toBe(true);
   });
 });
 
