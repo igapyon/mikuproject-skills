@@ -54,7 +54,7 @@ cp "$mikuproject_root/bundle/mikuproject-sources.tgz" "$runtime_root/mikuproject
 cp "$mikuproject_java_root/target/mikuproject.jar" "$runtime_root/mikuproject.jar"
 cp "$mikuproject_java_root/target/mikuproject-sources.jar" "$runtime_root/mikuproject-sources.jar"
 
-java -jar "$runtime_root/mikuproject.jar" export-ai-json-spec >/dev/null
+java -jar "$runtime_root/mikuproject.jar" ai spec >/dev/null
 java -jar "$runtime_root/mikuproject.jar" --version >/dev/null
 node "$runtime_root/mikuproject.mjs" ai spec >/dev/null
 node "$runtime_root/mikuproject.mjs" --version >/dev/null

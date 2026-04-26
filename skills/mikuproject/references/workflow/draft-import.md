@@ -11,8 +11,7 @@ Accept either:
 
 Show the Java runtime path first:
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar import-ai-json draft.editjson output.xml`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-workbook-json output.xml > workbook.json`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state from-draft --in draft.editjson --out workbook.json`
 
 Node.js runtime example:
 

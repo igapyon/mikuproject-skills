@@ -51,7 +51,7 @@
 前提:
 
 - `skills/mikuproject/runtime/mikuproject.mjs ai spec` で spec を取得できる
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-ai-json-spec` で spec を取得できる
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai spec` で spec を取得できる
 
 ## 6. `project_draft_view` 取込機能
 
@@ -117,19 +117,33 @@
 ## Cross-Cutting Note
 
 - [x] `mikuproject-skills` 側だけで無理に実装せず、upstream (`mikuproject`) 側の API 追加や公開面整理が妥当な場合は、その都度 `mikuproject` 側アクション候補として相談する
-- [ ] upstream の Java CLI runtime artifact と Node.js CLI runtime artifact に `--version` を追加してもらう
+
+### upstream `mikuproject-java`: completed
+
+現時点で、Agent Skills から Java runtime を優先利用するための主要 CLI surface は揃った。
+
+- [x] upstream の Java CLI runtime artifact と Node.js CLI runtime artifact に `--version` を追加してもらう
   - `mikuproject.jar` / `mikuproject.mjs` はファイル名に version が含まれないため、受け取った artifact の由来や新旧を CLI から判別できる必要がある
-- [ ] upstream `mikuproject-java` 側で、Node.js runtime の agent-friendly な CLI 引数体系に寄せた Java facade command を追加してもらう
+- [x] upstream `mikuproject-java` 側で、Node.js runtime の agent-friendly な CLI 引数体系に合わせて Java CLI 引数を変更してもらう
   - `mikuproject-skills` 側の実装項目ではなく、`mikuproject-java` 側メンバーへの TODO として扱う
-  - 現状の Java CLI は XML と位置引数を中心にした低レベル command が多く、Node.js CLI は `ai spec`、`state from-draft --in --out`、`state apply-patch --state --in --out`、`report all --in --out` のように生成AIが組み立てやすい
-  - 既存 Java command は残しつつ、生成AI向けには Node.js CLI と近い階層・命名・`--in` / `--out` 引数を持つ入口を追加するのが望ましい
-- [ ] upstream `mikuproject-java` 側で、agent-friendly Java facade command 追加時に `output.xlsxbin` のような分かりにくい拡張子をユーザー向け例示から消せるか確認してもらう
-  - コマンド体系を Node.js runtime 側へ寄せるなら、構造 workbook `XLSX` や report `WBS XLSX` の出力例も `.xlsx` のような自然な拡張子で示せることが期待される
-  - 内部実装上の都合で `xlsxbin` 相当の概念が残る場合でも、生成AI向け・利用者向けの facade CLI では露出しない形にできるかを確認する
-- [ ] upstream `mikuproject-java` 側で、ASIS 対応表に `Not available as a direct Java command` と記録した操作の Java 実装を追加してもらう
-  - 少なくとも `state summarize` 相当の直接コマンドを追加する
-  - 少なくとも `state diff` 相当の直接コマンドを追加する
-  - agent-friendly Java facade command では、Node.js runtime と同様に workbook JSON を入力として扱える形が望ましい
+  - 依頼文書: `docs/upstream-mikuproject-java-cli-request.md`
+  - grouped command / named option / workbook JSON 中心の CLI surface に移行済み
+- [x] upstream `mikuproject-java` 側で、Java CLI 引数変更時に `output.xlsxbin` のような分かりにくい拡張子をユーザー向け例示から消してもらう
+  - public help では `.xlsx` の自然な拡張子を使う形に整理済み
+- [x] upstream `mikuproject-java` 側で、ASIS 対応表に `Not available as a direct Java command` と記録した操作の Java 実装を追加してもらう
+  - `state summarize` 相当の直接コマンドを追加済み
+  - `state diff` 相当の直接コマンドを追加済み
+  - agent-friendly Java CLI では、Node.js runtime と同様に workbook JSON を入力として扱える形が望ましい
+- [x] upstream `mikuproject-java` 側で、Node.js runtime の `ai export bundle` 相当を追加してもらう
+  - 依頼文書: `docs/upstream-mikuproject-java-ai-export-bundle-request.md`
+  - Java runtime 優先でも `ai_projection_bundle` を取得できるようになった
+  - project overview / phase detail full / task edit full をまとめた JSON contract を Node.js runtime と揃えた
+
+### upstream `mikuproject`: optional parity backlog
+
+以下は Java runtime 側が先に持っている direct command を Node.js runtime 側にも揃えるかどうかの検討項目。
+現状の Agent Skills 運用では Java runtime を優先できるため、直ちに blocker ではない。
+
 - [ ] upstream `mikuproject` 側で、ASIS 対応表に `Not available as a direct Node.js command` と記録した操作の Node.js 実装を追加してもらう
   - workbook JSON の validate / replace import / merge import に相当する直接コマンドを追加する
   - XML validate に相当する直接コマンドを追加する

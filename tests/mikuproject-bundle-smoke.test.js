@@ -79,7 +79,7 @@ describe("mikuproject bundle smoke", () => {
     expect(fs.existsSync(builtNodeSourcesPath)).toBe(true);
     expect(nodeHelp).toContain("mikuproject report all");
     expect(nodeVersion).toMatch(/^mikuproject \d+\.\d+\.\d+/);
-    expect(javaHelp).toContain("export-ai-json-spec");
+    expect(javaHelp).toContain("ai spec");
     expect(javaVersion).toMatch(/^mikuproject-java \d+\.\d+\.\d+/);
   });
 });

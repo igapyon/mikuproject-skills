@@ -103,15 +103,15 @@ MVP では、次の upstream runtime artifact を主要入口とする。
 主に使う想定のコマンドは、生成AIに渡す例示で Java runtime が先に見えるように並べる。
 その後に Node.js runtime の例を示す。
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-ai-json-spec`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar import-ai-json`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-project-overview-view`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-task-edit-view`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-phase-detail-view`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar validate-patch-json`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar apply-patch-json`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-workbook-json`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export-report-bundle`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai spec`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state from-draft`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai export project-overview`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai export task-edit`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai export phase-detail`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai validate-patch`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state apply-patch`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export workbook-json`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar report all`
 - `node skills/mikuproject/runtime/mikuproject.mjs ai spec`
 - `node skills/mikuproject/runtime/mikuproject.mjs state from-draft`
 - `node skills/mikuproject/runtime/mikuproject.mjs ai export project-overview`
