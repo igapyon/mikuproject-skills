@@ -196,7 +196,81 @@
 
 ### Other Future Candidates
 
-- [ ] MCP 対応
 - [ ] WBS レビュー支援
 - [ ] スケジュール圧縮や分解の助言
 - [ ] 複数プロンプトテンプレートの整備
+
+## 12. Execution Backend Policy
+
+`mikuproject-skills` は、既定では成熟している同梱 CLI backend をやや優先する。
+ただし、この既定値は環境ポリシーより下位であり、CLI 実行が禁止される環境では
+MCP backend を使えるようにする。
+
+目的:
+
+- CLI を追加できるが MCP server / adapter process を許可しない現場を維持する
+- CLI 実行を許可しないが承認済み MCP server を使える現場に対応する
+- Agent Skill の workflow 知識を保ち、実行面だけを backend として差し替えられるようにする
+- backend の自動 fallback が現場ポリシー違反にならないよう、strict policy を扱えるようにする
+
+### Backend policy values
+
+- [ ] `cli-only`: 同梱 CLI backend だけを使い、MCP へ自動 fallback しない
+- [ ] `cli-preferred`: まず同梱 CLI backend を使い、許可されている場合だけ MCP へ fallback する
+- [ ] `mcp-only`: MCP backend だけを使い、CLI へ自動 fallback しない
+- [ ] `mcp-preferred`: まず MCP backend を使い、許可されている場合だけ CLI へ fallback する
+- [ ] `handoff-only`: backend 実行を行わず、spec / JSON / 手順を visible handoff として返す
+
+既定値:
+
+- [ ] 明示 policy がない場合の既定を `cli-preferred` として文書化する
+- [ ] `*-only` policy では別 backend に逃げないことを明記する
+- [ ] `*-preferred` policy の場合だけ fallback できることを明記する
+- [ ] ユーザー指示、環境設定、repo 設定、チーム運用ルールの順序関係を整理する
+
+### Agent Skill documentation updates
+
+- [ ] `docs/miku-soft-40-agentskills-design-v20260425.md` に execution backend policy を反映する
+  - Agent Skill が workflow layer として残り、実行面は CLI backend / MCP backend / handoff backend を選べることを追記する
+  - 既定は `cli-preferred` だが、環境 policy が上位であることを明記する
+  - `cli-only` / `mcp-only` の strict policy では別 backend へ自動 fallback しないことを明記する
+  - MCP backend は `miku-soft-50` の MCP server layer を利用する形であり、Agent Skill が MCP server の実装責務を持たないことを明記する
+- [ ] `skills/mikuproject/SKILL.md` の Runtime Discipline を backend policy 前提に更新する
+- [ ] `skills/mikuproject/references/runtime/operations-map.md` に CLI backend と MCP backend の対応表を追加する
+- [ ] `skills/mikuproject/references/workflow/active-workflow-rules.md` に backend policy をまたぐ fallback 禁止ルールを追加する
+- [ ] `docs/agent-skill-design.md` に `Agent Skill over CLI backend` と `Agent Skill over MCP backend` の責務分担を追記する
+- [ ] `docs/quickstart.md` に `cli-preferred` 既定と `mcp-only` / `cli-only` の使い分けを追記する
+- [ ] `docs/development.md` に backend policy の保守方針と検証対象を追記する
+
+### MCP backend alignment
+
+- [ ] `workplace/mikuproject-mcp-devel` の MCP tool 名と Agent Skill operation 名の対応を確認する
+- [ ] MCP backend で使う主要 tool を Phase A / Phase B / Phase C に分ける
+- [ ] MCP backend 利用時の state 境界を `mikuproject_workbook_json`、resource URI、server-managed path の関係で整理する
+- [ ] MCP backend 利用時に `mikuproject://state/current` などの resource URI をどこまで Agent Skill 文書に出すか決める
+- [ ] direct CLI の file path 中心の結果と MCP の resource / operationId 中心の結果を同じ artifact role で説明できるようにする
+
+### Implementation candidates
+
+- [ ] backend policy を会話上の明示指示として解釈するルールを作る
+- [ ] backend policy を設定ファイルで固定できるか検討する
+- [ ] MCP tools が利用可能な環境では、CLI コマンド例だけでなく MCP tool 名も参照できるようにする
+- [ ] `mcp-only` のときに CLI runtime artifact を探索しないことを明文化する
+- [ ] `cli-only` のときに MCP tool 探索へ進まないことを明文化する
+- [ ] fallback した場合は、どの backend からどの backend へ移ったかを concise diagnostics として返す
+
+### Tests and smoke checks
+
+- [ ] `cli-only` policy で MCP fallback しないことを smoke test する
+- [ ] `mcp-only` policy で CLI fallback しないことを smoke test する
+- [ ] `cli-preferred` policy で CLI unavailable 時に MCP へ fallback するケースを smoke test する
+- [ ] `mcp-preferred` policy で MCP unavailable 時に CLI へ fallback するケースを smoke test する
+- [ ] `handoff-only` policy で backend 実行しないことを smoke test する
+- [ ] report export 系でも backend policy が同じルールで適用されることを確認する
+
+### Out of scope for this policy work
+
+- [ ] MCP server 自体を `mikuproject-skills` repo に内包する
+- [ ] Agent Skill 側で upstream 変換ロジックを再実装する
+- [ ] 外部 AI model 呼び出し、API key 管理、model selection を skill に持たせる
+- [ ] backend policy を無視して利便性だけで自動実行経路を切り替える
