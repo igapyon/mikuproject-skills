@@ -304,14 +304,41 @@ MCP backend を使えるようにする。
 - 既定 policy は `cli-preferred`
 - `cli-only` / `mcp-only` / `handoff-only` は strict policy として扱う
 - MCP backend の参照 contract は `workplace/mikuproject-mcp-devel` の `mikuproject-mcp`
-- MCP tool 名は `mikuproject.ai_spec` のようなドット区切り
+- MCP tool 名は `workplace/igapyon-mikuproject-mcp-node-0.8.1.tgz` 以降、`mikuproject_ai_spec` のようなアンダースコア区切り
+- MCP prompt 名は `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz` 以降、`mikuproject_create_project_draft` のようなアンダースコア区切り
 - MCP server product / repo / adapter 名は `mikuproject-mcp`
 - MCP client configuration の server key は短く `mikuproject` でよい
 - custom `outputPath` の成果物には固定 `mikuproject://` resource URI を付けない
 - 会話上の明示 policy は exact value (`cli-only` / `cli-preferred` / `mcp-only` / `mcp-preferred` / `handoff-only`) を含む場合に解釈する
 
+### MCP tool / prompt name underscore migration
+
+`workplace/igapyon-mikuproject-mcp-node-0.8.1.tgz` では、MCP client 互換性のため tool 名を
+旧ドット形式から `mikuproject_ai_spec` 形式へ変更した。
+Agent Skill 側の文書、registry、テストもこの実 contract に合わせる。
+
+- [x] `skills/mikuproject/lib/backend-operations.mjs` の `mcpTool` をアンダースコア形式へ更新する
+- [x] `tests/mikuproject-backend-operations.test.js` の MCP tool 名期待値をアンダースコア形式へ更新する
+- [x] `tests/mikuproject-backend-switching-manual-doc.test.js` の期待値をアンダースコア形式へ更新する
+- [x] `README.md` の MCP tool prefix 説明を `mikuproject_*` 形式へ更新する
+- [x] `docs/development.md` の現行 MCP backend 参照と注意書きをアンダースコア形式へ更新する
+- [x] `docs/backend-switching-manual-test.md` の手動確認プロンプトと tool list をアンダースコア形式へ更新する
+- [x] `skills/mikuproject/references/runtime/operations-map.md` の MCP backend tool 表をアンダースコア形式へ更新する
+- [x] `TODO.md` 内の古い dot-form tool 名メモを履歴として残すか、現行前提と混同しない表現へ更新する
+- [x] root の `npm test` を実行して registry / docs 期待値の整合を確認する
+  - 2026-04-29: 12 files / 28 tests passed を確認した
+
+注意:
+
+- MCP tool 名だけをアンダースコア形式へ変更する
+- MCP resource URI は `mikuproject://spec/ai-json` などのまま維持する
+- MCP prompt 名も `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz` 以降は `mikuproject_create_project_draft` のようなアンダースコア形式を使う
+- MCP server product / repo / adapter 名は `mikuproject-mcp` のまま維持する
+
 検証済み:
 
+- 2026-04-29: `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz` で prompt 名が `mikuproject_create_project_draft` / `mikuproject_revise_state_with_patch` / `mikuproject_review_artifact_diagnostics` に更新済みであることを確認した
+- 2026-04-29: `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz` で Phase C report tools が `registerTool` されていることを確認した
 - 2026-04-29: `workplace/mikuproject-mcp-devel` で `npm install` 後に `npm run build && npm run test` が通過した
 - 2026-04-29: root の `npm test` が通過した
 - 2026-04-29: `skills/mikuproject/config/backend-policy.json` を追加し、bundle 同梱と policy contract を `tests/mikuproject-backend-policy-config.test.js` で確認するようにした
@@ -326,30 +353,33 @@ MCP backend を使えるようにする。
 
 MCP 側 Phase C report tool 対応後の再開メモ:
 
-- [ ] `workplace/mikuproject-mcp-devel` を MCP 側の対応済み commit / release に更新する
-- [ ] MCP tool list に次が追加されたか確認する
-  - `mikuproject.report_wbs_xlsx`
-  - `mikuproject.report_daily_svg`
-  - `mikuproject.report_weekly_svg`
-  - `mikuproject.report_monthly_calendar_svg`
-  - `mikuproject.report_all`
-- [ ] `skills/mikuproject/lib/backend-operations.mjs` の Phase C report operation で `mcpTool: null` を対応 tool 名に更新する
-  - `wbs-xlsx-export` -> `mikuproject.report_wbs_xlsx`
-  - `daily-svg-export` -> `mikuproject.report_daily_svg`
-  - `weekly-svg-export` -> `mikuproject.report_weekly_svg`
-  - `monthly-calendar-svg-export` -> `mikuproject.report_monthly_calendar_svg`
-  - `all-report-export` -> `mikuproject.report_all`
-- [ ] `skills/mikuproject/references/runtime/operations-map.md` の Phase C gap 表記を MCP 対応済みに更新する
-- [ ] `docs/development.md` と `docs/backend-switching-manual-test.md` の「MCP backend 未対応」説明を更新する
-- [ ] `tests/mikuproject-backend-operations.test.js` と `tests/mikuproject-backend-policy-selector.test.js` の MCP capability 期待値を更新する
-- [ ] 必要なら `tests/mikuproject-backend-switching-manual-doc.test.js` の文書期待値を更新する
-- [ ] root の `npm test` を実行する
-- [ ] release tarball 版で確認する場合は、`docs/backend-switching-manual-test.md` の release tag / tarball URL を対象 release に更新する
+- [x] `workplace/mikuproject-mcp-devel` を MCP 側の対応済み commit / release に更新する
+  - 2026-04-29: `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz` を確認した
+- [x] MCP tool list に次が追加されたか確認する
+  - `mikuproject_report_wbs_xlsx`
+  - `mikuproject_report_daily_svg`
+  - `mikuproject_report_weekly_svg`
+  - `mikuproject_report_monthly_calendar_svg`
+  - `mikuproject_report_all`
+- [x] `skills/mikuproject/lib/backend-operations.mjs` の Phase C report operation で `mcpTool: null` を対応 tool 名に更新する
+  - `wbs-xlsx-export` -> `mikuproject_report_wbs_xlsx`
+  - `daily-svg-export` -> `mikuproject_report_daily_svg`
+  - `weekly-svg-export` -> `mikuproject_report_weekly_svg`
+  - `monthly-calendar-svg-export` -> `mikuproject_report_monthly_calendar_svg`
+  - `all-report-export` -> `mikuproject_report_all`
+- [x] `skills/mikuproject/references/runtime/operations-map.md` の Phase C gap 表記を MCP 対応済みに更新する
+- [x] `docs/development.md` と `docs/backend-switching-manual-test.md` の「MCP backend 未対応」説明を更新する
+- [x] `tests/mikuproject-backend-operations.test.js` と `tests/mikuproject-backend-policy-selector.test.js` の MCP capability 期待値を更新する
+- [x] 必要なら `tests/mikuproject-backend-switching-manual-doc.test.js` の文書期待値を更新する
+- [x] root の `npm test` を実行する
+  - 2026-04-29: 12 files / 28 tests passed を確認した
+- [x] release tarball 版で確認する場合は、`docs/backend-switching-manual-test.md` の release tag / tarball URL を対象 release に更新する
+  - 2026-04-29: `v0.8.2` / `igapyon-mikuproject-mcp-node-0.8.2.tgz` に更新した
 
 注意:
 
-- `mikuproject.export_xlsx` は `export xlsx` の structural workbook XLSX export
-- `mikuproject.report_wbs_xlsx` は `report wbs-xlsx` の WBS report XLSX export
+- `mikuproject_export_xlsx` は `export xlsx` の structural workbook XLSX export
+- `mikuproject_report_wbs_xlsx` は `report wbs-xlsx` の WBS report XLSX export
 - 上記 2 つは別 operation として扱う
 
 ### Tests and smoke checks

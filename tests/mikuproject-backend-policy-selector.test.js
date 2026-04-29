@@ -97,9 +97,9 @@ describe("mikuproject backend policy selector", () => {
       operation: "wbs-xlsx-export"
     });
 
-    expect(wbsXlsxPlan.mode).toBe("error");
-    expect(wbsXlsxPlan.selectedBackend).toBe(null);
+    expect(wbsXlsxPlan.mode).toBe("execute");
+    expect(wbsXlsxPlan.selectedBackend).toBe("mcp");
     expect(wbsXlsxPlan.attemptedBackends).toEqual(["mcp"]);
-    expect(wbsXlsxPlan.error.reason).toBe("mcp_not_supported");
+    expect(wbsXlsxPlan.error).toBe(null);
   });
 });

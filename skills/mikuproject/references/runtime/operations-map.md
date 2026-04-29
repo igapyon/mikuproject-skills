@@ -71,53 +71,53 @@ MCP backend phase grouping:
 
 - Phase A: AI/state workflow tools used for spec, draft, projections, patch validation, patch apply, diff, summarize, and workbook JSON export
 - Phase B: primary file import/export tools for structural workbook XLSX and MS Project XML export
-- Phase C: report/presentation tools, currently WBS Markdown and Mermaid in the MCP backend
+- Phase C: report/presentation tools exposed by `mikuproject-mcp` 0.8.2, including WBS XLSX, SVG reports, report bundle, WBS Markdown, and Mermaid
 
-Current `mikuproject-mcp` does not expose every CLI report or merge operation.
+Current `mikuproject-mcp` does not expose every CLI import or merge operation.
 Under `mcp-only`, missing MCP tools remain unavailable rather than falling back
 to CLI.
 
 | Agent Skill operation | CLI backend command family | MCP backend tool | Notes |
 | --- | --- | --- | --- |
-| `spec` | `ai spec` | `mikuproject.ai_spec` | Phase A. Same AI spec role. |
-| `draft` | `state from-draft` | `mikuproject.state_from_draft` | Phase A. Converts `project_draft_view` to workbook state. |
-| `patch` | `state apply-patch` | `mikuproject.state_apply_patch` | Phase A. Requires base workbook state. |
-| `workbook` / `workbook-export` | `export workbook-json` | `mikuproject.export_workbook_json` | Phase A. Exports or normalizes workbook JSON. |
-| `project-overview` | `ai export project-overview` | `mikuproject.ai_export_project_overview` | Phase A. AI projection for existing-plan entry. |
-| `task-edit` | `ai export task-edit` | `mikuproject.ai_export_task_edit` | Phase A. AI projection for task-level editing. |
-| `phase-detail` | `ai export phase-detail` | `mikuproject.ai_export_phase_detail` | Phase A. AI projection for phase-level editing. |
-| `patch-validate` | `ai validate-patch` | `mikuproject.ai_validate_patch` | Phase A. Validates patch against workbook state. |
-| `state-diff` | `state diff` | `mikuproject.state_diff` | Phase A. Compares before / after workbook states. |
-| `state-summarize` | `state summarize` | `mikuproject.state_summarize` | Phase A. Summarizes workbook state. |
-| `detect-kind` | `ai detect-kind` | `mikuproject.ai_detect_kind` | Phase A. Detects product document kind. |
-| `xml-export` | `export xml` | `mikuproject.export_xml` | Phase B. Exports MS Project XML. |
+| `spec` | `ai spec` | `mikuproject_ai_spec` | Phase A. Same AI spec role. |
+| `draft` | `state from-draft` | `mikuproject_state_from_draft` | Phase A. Converts `project_draft_view` to workbook state. |
+| `patch` | `state apply-patch` | `mikuproject_state_apply_patch` | Phase A. Requires base workbook state. |
+| `workbook` / `workbook-export` | `export workbook-json` | `mikuproject_export_workbook_json` | Phase A. Exports or normalizes workbook JSON. |
+| `project-overview` | `ai export project-overview` | `mikuproject_ai_export_project_overview` | Phase A. AI projection for existing-plan entry. |
+| `task-edit` | `ai export task-edit` | `mikuproject_ai_export_task_edit` | Phase A. AI projection for task-level editing. |
+| `phase-detail` | `ai export phase-detail` | `mikuproject_ai_export_phase_detail` | Phase A. AI projection for phase-level editing. |
+| `patch-validate` | `ai validate-patch` | `mikuproject_ai_validate_patch` | Phase A. Validates patch against workbook state. |
+| `state-diff` | `state diff` | `mikuproject_state_diff` | Phase A. Compares before / after workbook states. |
+| `state-summarize` | `state summarize` | `mikuproject_state_summarize` | Phase A. Summarizes workbook state. |
+| `detect-kind` | `ai detect-kind` | `mikuproject_ai_detect_kind` | Phase A. Detects product document kind. |
+| `xml-export` | `export xml` | `mikuproject_export_xml` | Phase B. Exports MS Project XML. |
 | `xml-import` | `import xml` when supported by CLI | Not currently exposed | Phase B gap. Keep as CLI or handoff until MCP parity exists. |
-| `xlsx-import` | `import xlsx` | `mikuproject.import_xlsx` | Phase B. Imports structural workbook XLSX. |
-| `xlsx-export` | `export xlsx` | `mikuproject.export_xlsx` | Phase B. Exports structural workbook XLSX. |
+| `xlsx-import` | `import xlsx` | `mikuproject_import_xlsx` | Phase B. Imports structural workbook XLSX. |
+| `xlsx-export` | `export xlsx` | `mikuproject_export_xlsx` | Phase B. Exports structural workbook XLSX. |
 | `xlsx-merge-import` | `merge xlsx` | Not currently exposed | Phase B gap. Keep as CLI or handoff until MCP parity exists. |
 | `workbook-import` | `state import` | Not currently exposed | Phase B gap. Keep as CLI or handoff until MCP parity exists. |
 | `workbook-merge-import` | `state merge` | Not currently exposed | Phase B gap. Keep as CLI or handoff until MCP parity exists. |
-| `wbs-markdown-export` | `report wbs-markdown` | `mikuproject.report_wbs_markdown` | Phase C. Human-facing Markdown report. |
-| `mermaid-export` | `report mermaid` | `mikuproject.report_mermaid` | Phase C. Mermaid gantt text. |
-| `wbs-xlsx-export` | `report wbs-xlsx` | Not currently exposed | Phase C gap. Keep as CLI or handoff until MCP parity exists. |
-| `daily-svg-export` | `report daily-svg` | Not currently exposed | Phase C gap. Keep as CLI or handoff until MCP parity exists. |
-| `weekly-svg-export` | `report weekly-svg` | Not currently exposed | Phase C gap. Keep as CLI or handoff until MCP parity exists. |
-| `monthly-calendar-svg-export` | `report monthly-calendar-svg` | Not currently exposed | Phase C gap. Keep as CLI or handoff until MCP parity exists. |
-| `all-report-export` | `report all` | Not currently exposed | Phase C gap. Keep as CLI or handoff until MCP parity exists. |
+| `wbs-markdown-export` | `report wbs-markdown` | `mikuproject_report_wbs_markdown` | Phase C. Human-facing Markdown report. |
+| `mermaid-export` | `report mermaid` | `mikuproject_report_mermaid` | Phase C. Mermaid gantt text. |
+| `wbs-xlsx-export` | `report wbs-xlsx` | `mikuproject_report_wbs_xlsx` | Phase C. Human-facing WBS XLSX report. |
+| `daily-svg-export` | `report daily-svg` | `mikuproject_report_daily_svg` | Phase C. Daily SVG report. |
+| `weekly-svg-export` | `report weekly-svg` | `mikuproject_report_weekly_svg` | Phase C. Weekly SVG report. |
+| `monthly-calendar-svg-export` | `report monthly-calendar-svg` | `mikuproject_report_monthly_calendar_svg` | Phase C. Monthly calendar SVG archive. |
+| `all-report-export` | `report all` | `mikuproject_report_all` | Phase C. Report bundle ZIP. |
 
 Under `cli-only`, use only the CLI backend column. Under `mcp-only`, use only
 the MCP backend column and fail if the operation is not exposed there. Under a
 preferred policy, switch backend only when fallback is allowed and report the
 reason.
 
-The current `mikuproject-mcp` contract uses dot-separated MCP tool names derived
+The current `mikuproject-mcp` contract uses underscore-separated MCP tool names derived
 from the upstream CLI command tree:
 
-- `ai spec` -> `mikuproject.ai_spec`
-- `state from-draft` -> `mikuproject.state_from_draft`
-- `export workbook-json` -> `mikuproject.export_workbook_json`
+- `ai spec` -> `mikuproject_ai_spec`
+- `state from-draft` -> `mikuproject_state_from_draft`
+- `export workbook-json` -> `mikuproject_export_workbook_json`
 
-Do not rewrite these as underscore-only names in Agent Skill documentation.
+Do not rewrite these as dot-separated names in Agent Skill documentation.
 
 ## MCP Resource and Artifact Roles
 
@@ -132,6 +132,11 @@ The current `mikuproject-mcp` contract uses these common resource URI roles:
 - `mikuproject://projection/{name}`
 - `mikuproject://report/wbs-markdown`
 - `mikuproject://report/mermaid`
+- `mikuproject://report/wbs-xlsx`
+- `mikuproject://report/daily-svg`
+- `mikuproject://report/weekly-svg`
+- `mikuproject://report/monthly-calendar-svg`
+- `mikuproject://report/all`
 - `mikuproject://summary/{operationId}`
 - `mikuproject://diagnostics/{operationId}`
 

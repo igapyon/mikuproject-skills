@@ -39,7 +39,7 @@ Typical things you can ask for:
 - This repository does not aim to replace the `mikuproject` browser UI.
 - For advanced workflows, the skill can also work with structured plan data such as workbook JSON.
 - The skill is designed as a workflow layer that can run as `Agent Skill over CLI backend` or `Agent Skill over MCP backend`, depending on the execution policy.
-- The MCP server adapter product is named `mikuproject-mcp`; MCP tools keep the `mikuproject.*` product prefix.
+- The MCP server adapter product is named `mikuproject-mcp`; MCP tools use `mikuproject_*` names such as `mikuproject_ai_spec`.
 - If you are evaluating or developing the repository itself, see the documents under [`docs/`](./docs/).
 
 Developer-oriented entry points:
@@ -93,7 +93,7 @@ This project is licensed under the Apache License 2.0. See [`LICENSE`](./LICENSE
 - このリポジトリは `mikuproject` のブラウザ UI を置き換えることを目的にはしていません。
 - より高度な運用では、workbook JSON などの構造化された計画データも扱えます。
 - この skill は workflow layer として設計されており、実行 policy に応じて `Agent Skill over CLI backend` または `Agent Skill over MCP backend` として扱えます。
-- MCP server adapter の製品名は `mikuproject-mcp` で、MCP tool は `mikuproject.*` の product prefix を使います。
+- MCP server adapter の製品名は `mikuproject-mcp` で、MCP tool は `mikuproject_ai_spec` のような `mikuproject_*` 名を使います。
 - リポジトリ自体の評価や開発を行う場合は [`docs/`](./docs/) 以下の文書を参照してください。
 
 開発者向けの入口:

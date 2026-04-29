@@ -7,24 +7,26 @@ const manualTestPath = path.resolve(ROOT, "docs/backend-switching-manual-test.md
 const developmentPath = path.resolve(ROOT, "docs/development.md");
 
 describe("backend switching manual test documentation", () => {
-  it("documents both local checkout and release tarball MCP server startup paths", () => {
+  it("documents the VS Code tarball MCP server startup path", () => {
     const text = fs.readFileSync(manualTestPath, "utf8");
 
-    expect(text).toContain("local checkout 版");
-    expect(text).toContain("workplace/mikuproject-mcp-devel");
-    expect(text).toContain("release tarball 版");
-    expect(text).toContain(
-      "https://github.com/igapyon/mikuproject-mcp/releases/download/v0.1.0/igapyon-mikuproject-mcp-node-0.1.0.tgz"
-    );
+    expect(text).toContain("VS Code");
+    expect(text).toContain(".vscode/mcp.json");
+    expect(text).toContain("workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz");
+    expect(text).toContain("${workspaceFolder}/workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz");
     expect(text).toContain("npm exec --yes");
   });
 
   it("keeps the backend switching policy checks visible", () => {
     const text = fs.readFileSync(manualTestPath, "utf8");
 
-    expect(text).toContain("mikuproject.ai_spec");
-    expect(text).toContain("mikuproject.state_from_draft");
-    expect(text).toContain("mikuproject.report_wbs_markdown");
+    expect(text).toContain("mikuproject_ai_spec");
+    expect(text).toContain("mikuproject_state_from_draft");
+    expect(text).toContain("mikuproject_report_wbs_markdown");
+    expect(text).toContain("mikuproject_report_wbs_xlsx");
+    expect(text).toContain("mikuproject_create_project_draft");
+    expect(text).toContain("mikuproject_revise_state_with_patch");
+    expect(text).toContain("mikuproject_review_artifact_diagnostics");
     expect(text).toContain("mcp-only");
     expect(text).toContain("cli-only");
     expect(text).toContain("handoff-only");
