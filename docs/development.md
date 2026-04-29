@@ -10,6 +10,7 @@
 - skill 配置手順: [skill-installation.md](./skill-installation.md)
 - ファイル入出力: [file-import-export.md](./file-import-export.md)
 - レポート出力: [report-export.md](./report-export.md)
+- backend switching 手動テスト: [backend-switching-manual-test.md](./backend-switching-manual-test.md)
 - miku software 共通 overview: [miku-soft-00-overview-design-v20260427.md](./miku-soft-00-overview-design-v20260427.md)
 - upstream Java CLI 変更依頼（完了）: [upstream-mikuproject-java-cli-request.md](./upstream-mikuproject-java-cli-request.md)
 - upstream Java `ai export bundle` 追加依頼（完了）: [upstream-mikuproject-java-ai-export-bundle-request.md](./upstream-mikuproject-java-ai-export-bundle-request.md)
