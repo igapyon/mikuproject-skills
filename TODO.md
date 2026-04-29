@@ -202,9 +202,18 @@
 
 ### Other Future Candidates
 
-- [ ] WBS レビュー支援
-- [ ] スケジュール圧縮や分解の助言
-- [ ] 複数プロンプトテンプレートの整備
+- [x] WBS レビュー支援
+- [x] スケジュール圧縮や分解の助言
+- [x] 複数プロンプトテンプレートの整備
+
+検証メモ:
+
+- 2026-04-29: `skills/mikuproject/references/workflow/schedule-adjustment.md` を追加し、schedule compression / task split / review-to-patch flow を整理した
+- 2026-04-29: `tests/mikuproject-schedule-adjustment-reference.test.js` を追加し、schedule adjustment workflow の導線、Patch 操作、境界を確認するようにした
+- 2026-04-29: `skills/mikuproject/references/workflow/wbs-review.md` を追加し、projection 優先の WBS review と review-to-patch flow を整理した
+- 2026-04-29: `tests/mikuproject-wbs-review-reference.test.js` を追加し、WBS review workflow の導線と境界を確認するようにした
+- 2026-04-29: `skills/mikuproject/references/prompts/` に new WBS draft、existing WBS review、schedule compression、patch request の短いテンプレートを追加した
+- 2026-04-29: `tests/mikuproject-prompt-references.test.js` を追加し、prompt reference の存在、INDEX 導線、必須語彙を確認するようにした
 
 ## 12. Execution Backend Policy
 
