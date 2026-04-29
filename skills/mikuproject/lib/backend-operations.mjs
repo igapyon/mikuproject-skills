@@ -4,57 +4,57 @@ export const DEFAULT_NODE_RUNTIME_PATH = "skills/mikuproject/runtime/mikuproject
 export const operationRegistry = {
   spec: {
     cliArgs: ["ai", "spec"],
-    mcpTool: "mikuproject.ai_spec",
+    mcpTool: "mikuproject_ai_spec",
     requires: []
   },
   draft: {
     cliArgs: ["state", "from-draft"],
-    mcpTool: "mikuproject.state_from_draft",
+    mcpTool: "mikuproject_state_from_draft",
     requires: ["inputPath", "outputPath"]
   },
   patch: {
     cliArgs: ["state", "apply-patch"],
-    mcpTool: "mikuproject.state_apply_patch",
+    mcpTool: "mikuproject_state_apply_patch",
     requires: ["statePath", "inputPath", "outputPath"]
   },
   "workbook-export": {
     cliArgs: ["export", "workbook-json"],
-    mcpTool: "mikuproject.export_workbook_json",
+    mcpTool: "mikuproject_export_workbook_json",
     requires: ["inputPath", "outputPath"]
   },
   "wbs-markdown-export": {
     cliArgs: ["report", "wbs-markdown"],
-    mcpTool: "mikuproject.report_wbs_markdown",
+    mcpTool: "mikuproject_report_wbs_markdown",
     requires: ["inputPath", "outputPath"]
   },
   "mermaid-export": {
     cliArgs: ["report", "mermaid"],
-    mcpTool: "mikuproject.report_mermaid",
+    mcpTool: "mikuproject_report_mermaid",
     requires: ["inputPath", "outputPath"]
   },
   "wbs-xlsx-export": {
     cliArgs: ["report", "wbs-xlsx"],
-    mcpTool: null,
+    mcpTool: "mikuproject_report_wbs_xlsx",
     requires: ["inputPath", "outputPath"]
   },
   "daily-svg-export": {
     cliArgs: ["report", "daily-svg"],
-    mcpTool: null,
+    mcpTool: "mikuproject_report_daily_svg",
     requires: ["inputPath", "outputPath"]
   },
   "weekly-svg-export": {
     cliArgs: ["report", "weekly-svg"],
-    mcpTool: null,
+    mcpTool: "mikuproject_report_weekly_svg",
     requires: ["inputPath", "outputPath"]
   },
   "monthly-calendar-svg-export": {
     cliArgs: ["report", "monthly-calendar-svg"],
-    mcpTool: null,
+    mcpTool: "mikuproject_report_monthly_calendar_svg",
     requires: ["inputPath", "outputPath"]
   },
   "all-report-export": {
     cliArgs: ["report", "all"],
-    mcpTool: null,
+    mcpTool: "mikuproject_report_all",
     requires: ["inputPath", "outputPath"]
   }
 };

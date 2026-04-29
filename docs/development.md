@@ -12,6 +12,7 @@
 - レポート出力: [report-export.md](./report-export.md)
 - backend switching 手動テスト: [backend-switching-manual-test.md](./backend-switching-manual-test.md)
 - miku software 共通 overview: [miku-soft-00-overview-design-v20260427.md](./miku-soft-00-overview-design-v20260427.md)
+- upstream MCP tool surface 連絡メモ: [upstream-mikuproject-mcp-tool-surface-note.md](./upstream-mikuproject-mcp-tool-surface-note.md)
 - upstream Java CLI 変更依頼（完了）: [upstream-mikuproject-java-cli-request.md](./upstream-mikuproject-java-cli-request.md)
 - upstream Java `ai export bundle` 追加依頼（完了）: [upstream-mikuproject-java-ai-export-bundle-request.md](./upstream-mikuproject-java-ai-export-bundle-request.md)
 - miku MCP server 共通設計: [miku-soft-50-mcp-design-v20260426.md](./miku-soft-50-mcp-design-v20260426.md)
@@ -168,29 +169,34 @@ MCP backend の参照実装は `workplace/mikuproject-mcp-devel` の
 - `contract/results/artifact-roles.md`
 - `contract/tools/*.schema.json`
 
-現行 tool 名は upstream CLI command tree から導出されたドット区切りです。
+現行 tool 名は upstream CLI command tree から導出されたアンダースコア区切りです。
 
 例:
 
-- `mikuproject.ai_spec`
-- `mikuproject.ai_detect_kind`
-- `mikuproject.state_from_draft`
-- `mikuproject.ai_export_project_overview`
-- `mikuproject.ai_export_task_edit`
-- `mikuproject.ai_export_phase_detail`
-- `mikuproject.ai_validate_patch`
-- `mikuproject.state_apply_patch`
-- `mikuproject.state_diff`
-- `mikuproject.state_summarize`
-- `mikuproject.export_workbook_json`
-- `mikuproject.export_xml`
-- `mikuproject.export_xlsx`
-- `mikuproject.import_xlsx`
-- `mikuproject.report_wbs_markdown`
-- `mikuproject.report_mermaid`
+- `mikuproject_ai_spec`
+- `mikuproject_ai_detect_kind`
+- `mikuproject_state_from_draft`
+- `mikuproject_ai_export_project_overview`
+- `mikuproject_ai_export_task_edit`
+- `mikuproject_ai_export_phase_detail`
+- `mikuproject_ai_validate_patch`
+- `mikuproject_state_apply_patch`
+- `mikuproject_state_diff`
+- `mikuproject_state_summarize`
+- `mikuproject_export_workbook_json`
+- `mikuproject_export_xml`
+- `mikuproject_export_xlsx`
+- `mikuproject_import_xlsx`
+- `mikuproject_report_wbs_markdown`
+- `mikuproject_report_mermaid`
+- `mikuproject_report_wbs_xlsx`
+- `mikuproject_report_daily_svg`
+- `mikuproject_report_weekly_svg`
+- `mikuproject_report_monthly_calendar_svg`
+- `mikuproject_report_all`
 
-Agent Skill 側の docs で MCP tool 名を書く場合は、このドット区切り名を使います。
-underscore-only の `mikuproject_ai_spec` のような名前に置き換えません。
+Agent Skill 側の docs で MCP tool 名を書く場合は、このアンダースコア区切り名を使います。
+旧ドット区切り名に戻しません。
 
 現行 resource URI の代表例:
 

@@ -1,272 +1,321 @@
 # Backend Switching Manual Test
 
-この文書は、`mikuproject-skills` の CLI backend / MCP backend 切り替えを手動確認するための手順です。
+この文書は、VS Code で `mikuproject-skills` の MCP backend を手動確認するための手順です。
 
-ここでは自動テストではなく、MCP server を起動して MCP client から呼び出す確認を中心にします。
+この手順では MCP server を `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz` から起動します。
+local checkout 版や GitHub Releases URL は使いません。
 
-## 位置づけ
+## 1. 前提確認
 
-- `mikuproject-skills` は Agent Skill workflow layer
-- CLI backend は `skills/mikuproject/runtime/` の bundled runtime artifact
-- MCP backend は `mikuproject-mcp`
-- 参照 checkout は `workplace/mikuproject-mcp-devel`
-- release tarball 版は GitHub Releases の配布 artifact
-
-`mikuproject-skills` は MCP server 実装を内包しません。
-
-## 1. local checkout 版 MCP server を build する
-
-local checkout 版は、`mikuproject-mcp` 側の未リリース変更や手元の開発変更を確認する場合に使います。
-
-```bash
-npm --prefix workplace/mikuproject-mcp-devel install
-npm --prefix workplace/mikuproject-mcp-devel run build
-```
-
-build 後の stdio entrypoint:
+この repository root を VS Code で開いていることを確認します。
+以降の VS Code 設定例では、この repository root を `${workspaceFolder}` として参照します。
 
 ```text
-workplace/mikuproject-mcp-devel/packages/node/dist/index.js
+mikuproject-skills
 ```
 
-## 2. local checkout 版 MCP server を手動起動する
-
-MCP server は local stdio server です。
-単独で起動すると、標準入出力で MCP client からの通信を待ちます。
+tarball があることを確認します。
 
 ```bash
-cd workplace/mikuproject-mcp-devel
-node packages/node/dist/index.js
+ls -lh workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz
 ```
 
-通常は terminal で直接操作するのではなく、MCP client 設定から起動します。
+VS Code 側の前提:
 
-MCP client 設定例:
+- GitHub Copilot Chat が使える
+- Copilot Chat で Agent mode を使える
+- MCP server 設定を workspace の `.vscode/mcp.json` から読める
+
+## 2. VS Code MCP 設定を作る
+
+repository root に `.vscode/mcp.json` を作ります。
+
+```text
+.vscode/mcp.json
+```
+
+内容:
 
 ```json
 {
-  "mcpServers": {
+  "servers": {
     "mikuproject": {
-      "command": "node",
-      "args": ["packages/node/dist/index.js"],
-      "cwd": "workplace/mikuproject-mcp-devel"
-    }
-  }
-}
-```
-
-client が `cwd` をサポートしない場合は、client 環境から見える path を指定してください。
-この repo の文書には machine-local な絶対 path を固定しません。
-
-## 3. release tarball 版 MCP server を手動起動する
-
-release tarball 版は、公開済みの `mikuproject-mcp` server で backend switching を確認する場合に使います。
-`mikuproject-mcp` 側の local checkout を使わないため、手元の未リリース変更は反映されません。
-
-対象 release:
-
-```text
-https://github.com/igapyon/mikuproject-mcp/releases/tag/v0.1.0
-```
-
-tarball:
-
-```text
-https://github.com/igapyon/mikuproject-mcp/releases/download/v0.1.0/igapyon-mikuproject-mcp-node-0.1.0.tgz
-```
-
-手動起動例:
-
-```bash
-npm exec --yes --package=https://github.com/igapyon/mikuproject-mcp/releases/download/v0.1.0/igapyon-mikuproject-mcp-node-0.1.0.tgz -- mikuproject-mcp
-```
-
-MCP client 設定例:
-
-```json
-{
-  "mcpServers": {
-    "mikuproject": {
+      "type": "stdio",
       "command": "npm",
       "args": [
         "exec",
         "--yes",
-        "--package=https://github.com/igapyon/mikuproject-mcp/releases/download/v0.1.0/igapyon-mikuproject-mcp-node-0.1.0.tgz",
+        "--package=${workspaceFolder}/workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz",
         "--",
         "mikuproject-mcp"
-      ]
+      ],
+      "env": {
+        "MIKUPROJECT_MCP_WORKSPACE": "${workspaceFolder}/workplace/mikuproject-mcp-vscode"
+      }
     }
   }
 }
 ```
 
-release tarball 版での確認では、MCP server の version と tool list が対象 release 由来であることを確認します。
-local checkout 版と混在させないため、同じ client 設定で両方を同時に有効化しません。
+この設定は実質的に `npm exec --yes --package ... -- mikuproject-mcp` を VS Code から stdio server として起動します。
 
-## 4. MCP backend の手動確認
-
-MCP client から次を確認します。
-
-### Tool list
-
-少なくとも次の tool が見えることを確認します。
-
-- `mikuproject.ai_spec`
-- `mikuproject.state_from_draft`
-- `mikuproject.export_workbook_json`
-- `mikuproject.report_wbs_markdown`
-- `mikuproject.report_mermaid`
-
-### `spec`
-
-MCP tool:
+この設定では、生成物は次の下に出ます。
 
 ```text
-mikuproject.ai_spec
+workplace/mikuproject-mcp-vscode
+```
+
+## 3. VS Code を再読み込みする
+
+Command Palette から次を実行します。
+
+```text
+Developer: Reload Window
+```
+
+## 4. MCP server 一覧を確認する
+
+再読み込み後、Command Palette から MCP server 一覧を開きます。
+
+```text
+MCP: List Servers
+```
+
+一覧で `mikuproject` server が見えることを確認します。
+
+期待:
+
+- server 名が `mikuproject`
+- 設定元が workspace の `.vscode/mcp.json`
+- 起動 command が `npm exec --yes --package ... -- mikuproject-mcp` 相当
+- server state が running、または start / restart 可能な状態
+
+見えない場合は、Command Palette で MCP 関連のコマンドを開き、`mikuproject` server を start / restart します。
+
+Copilot Chat 側でも、Agent mode の tools 一覧を開き、`mikuproject` server または `mikuproject_*` tools が見えることを確認します。
+
+## 5. Tool list を確認する
+
+Copilot Chat を Agent mode にして、次のように依頼します。
+
+```text
+mikuproject MCP server の tool list を確認して。使える mikuproject* tool 名を列挙して。
+```
+
+少なくとも次が見えることを確認します。
+
+- `mikuproject_ai_spec`
+- `mikuproject_ai_detect_kind`
+- `mikuproject_ai_export_phase_detail`
+- `mikuproject_ai_export_project_overview`
+- `mikuproject_ai_export_task_edit`
+- `mikuproject_ai_validate_patch`
+- `mikuproject_state_from_draft`
+- `mikuproject_state_apply_patch`
+- `mikuproject_state_diff`
+- `mikuproject_state_summarize`
+- `mikuproject_export_workbook_json`
+- `mikuproject_export_xlsx`
+- `mikuproject_export_xml`
+- `mikuproject_import_xlsx`
+- `mikuproject_report_wbs_markdown`
+- `mikuproject_report_mermaid`
+- `mikuproject_report_wbs_xlsx`
+- `mikuproject_report_daily_svg`
+- `mikuproject_report_weekly_svg`
+- `mikuproject_report_monthly_calendar_svg`
+- `mikuproject_report_all`
+
+`mikuproject_report_wbs_xlsx` などの Phase C report tools が見えない場合は、0.8.2 tarball ではなく古い MCP server package が起動している可能性があります。
+
+その場合は、MCP server 一覧で `mikuproject` server を stop / restart し、VS Code を再読み込みしてから再確認します。
+
+古い package が疑われる場合は、起動中の server が参照している package version も確認します。期待値は `@igapyon/mikuproject-mcp-node` version `0.8.2` です。
+
+## 6. Prompt list を確認する
+
+Copilot Chat を Agent mode にして、次のように依頼します。
+
+```text
+mikuproject MCP server の prompt list を確認して。使える mikuproject* prompt 名を列挙して。
+```
+
+少なくとも次が見えることを確認します。
+
+- `mikuproject_create_project_draft`
+- `mikuproject_revise_state_with_patch`
+- `mikuproject_review_artifact_diagnostics`
+
+`mikuproject.create_project_draft` のようなドット区切り prompt 名が見える場合は、0.8.2 tarball ではなく古い MCP server package が起動している可能性があります。
+
+## 7. AI spec を読む
+
+Copilot Chat で次を依頼します。
+
+```text
+mikuproject_ai_spec を呼び出して、結果の ok / operation / diagnostics を短く確認して。
 ```
 
 期待:
 
-- AI JSON spec が返る
-- operation result が error ではない
+- `operation` が `mikuproject_ai_spec`
+- hard error ではない
+- `mikuproject://spec/ai-json` または AI spec 本文を参照できる
 
-CLI backend の対応:
+## 8. Draft から workbook state を作る
 
-```bash
-java -jar skills/mikuproject/runtime/mikuproject.jar ai spec
-node skills/mikuproject/runtime/mikuproject.mjs ai spec
-```
-
-### `draft`
-
-MCP tool:
+まず、Copilot Chat で `mikuproject` skill を使い、テスト用 `project_draft_view` を作ります。
 
 ```text
-mikuproject.state_from_draft
+mikuproject skill を使って、次の要件から project_draft_view 形式の WBS 草案を作って。
+
+要件:
+- project name: VS Code MCP Manual Test
+- planned_start: 2026-05-01
+- phases:
+  - Planning: 1 day
+  - Implementation: 2 days
+  - Review: 1 day
+
+出力では次を守って。
+- 新規作成なので Patch JSON ではなく project_draft_view を返して
+- 依存関係は各 task の predecessor_uids または predecessors[].task_uid に書いて
+- top-level dependencies は使わないで
+- task uid は draft-1, draft-2 のような仮 UID でよい
+- 最後に JSON だけを 1 個返して
+```
+
+返ってきた JSON を次のファイルに保存します。
+
+```text
+workplace/mikuproject-mcp-vscode/input/sample-draft.json
+```
+
+Copilot Chat で次を依頼します。
+
+```text
+mikuproject_state_from_draft を使って、${workspaceFolder}/workplace/mikuproject-mcp-vscode/input/sample-draft.json から workbook state を作って。
+outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/state/manual-workbook.json にして。
+結果の ok / operation / artifacts を確認して。
 ```
 
 期待:
 
-- `project_draft_view` から workbook state が生成される
-- result に generated artifact / operation summary が含まれる
+- `operation` が `mikuproject_state_from_draft`
+- `workplace/mikuproject-mcp-vscode/state/manual-workbook.json` が生成される
+- artifact role が workbook state として扱われる
 
-CLI backend の対応:
+## 9. WBS Markdown report を作る
 
-```bash
-java -jar skills/mikuproject/runtime/mikuproject.jar state from-draft --in draft.editjson --out workbook.json
-node skills/mikuproject/runtime/mikuproject.mjs state from-draft --in draft.editjson --out workbook.json
-```
-
-### `wbs-markdown-export`
-
-MCP tool:
+Copilot Chat で次を依頼します。
 
 ```text
-mikuproject.report_wbs_markdown
+mikuproject_report_wbs_markdown を使って、${workspaceFolder}/workplace/mikuproject-mcp-vscode/state/manual-workbook.json から WBS Markdown report を作って。
+outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/report/manual-wbs.md にして。
+結果の ok / operation / artifacts を確認して。
 ```
 
 期待:
 
-- workbook state から WBS Markdown report が生成される
-- report artifact または report resource が確認できる
+- `operation` が `mikuproject_report_wbs_markdown`
+- `workplace/mikuproject-mcp-vscode/report/manual-wbs.md` が生成される
+- report artifact として扱われる
 
-CLI backend の対応:
+## 10. WBS XLSX report を作る
 
-```bash
-java -jar skills/mikuproject/runtime/mikuproject.jar report wbs-markdown --in workbook.json --out wbs.md
-node skills/mikuproject/runtime/mikuproject.mjs report wbs-markdown --in workbook.json --out wbs.md
+Copilot Chat で次を依頼します。
+
+```text
+mikuproject_report_wbs_xlsx を使って、${workspaceFolder}/workplace/mikuproject-mcp-vscode/state/manual-workbook.json から WBS XLSX report を作って。
+outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/report/manual-wbs.xlsx にして。
+結果の ok / operation / artifacts を確認して。
 ```
 
-## 5. backend policy ごとの手動確認
+期待:
 
-### `mcp-only`
+- `operation` が `mikuproject_report_wbs_xlsx`
+- `workplace/mikuproject-mcp-vscode/report/manual-wbs.xlsx` が生成される
+- report artifact として扱われる
+- `mikuproject_export_xlsx` は structural workbook `XLSX` export であり、WBS XLSX report とは別物として扱う
 
-確認したいこと:
+## 11. SVG / bundle report tools を確認する
 
-- MCP backend だけを使う
-- CLI runtime artifact を fallback として探さない
-- MCP tool がない operation は hard execution-path error として扱う
+Copilot Chat で次を順に依頼します。
 
-手動確認例:
-
-- `mikuproject.ai_spec` は実行できる
-- `mikuproject.report_wbs_markdown` は実行できる
-- `wbs-xlsx-export` は現行 MCP backend tool がないため、`mcp-only` では CLI に fallback しない
-
-### `cli-only`
-
-確認したいこと:
-
-- CLI backend だけを使う
-- MCP tool を fallback として呼ばない
-
-手動確認例:
-
-```bash
-java -jar skills/mikuproject/runtime/mikuproject.jar ai spec
-node skills/mikuproject/runtime/mikuproject.mjs ai spec
+```text
+mikuproject_report_daily_svg を使って、${workspaceFolder}/workplace/mikuproject-mcp-vscode/state/manual-workbook.json から daily SVG を作って。
+outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/report/manual-daily.svg にして。
 ```
 
-MCP server が起動していても、`cli-only` の確認では MCP tool を呼ばない。
+```text
+mikuproject_report_weekly_svg を使って、${workspaceFolder}/workplace/mikuproject-mcp-vscode/state/manual-workbook.json から weekly SVG を作って。
+outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/report/manual-weekly.svg にして。
+```
 
-### `cli-preferred`
+```text
+mikuproject_report_monthly_calendar_svg を使って、${workspaceFolder}/workplace/mikuproject-mcp-vscode/state/manual-workbook.json から monthly calendar SVG archive を作って。
+outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/report/manual-monthly-calendar.zip にして。
+```
 
-確認したいこと:
+```text
+mikuproject_report_all を使って、${workspaceFolder}/workplace/mikuproject-mcp-vscode/state/manual-workbook.json から report bundle を作って。
+outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/report/manual-report-bundle.zip にして。
+```
 
-- CLI backend を先に使う
-- CLI が unavailable / unsuitable の場合だけ、許可されていれば MCP backend を使う
-- fallback した場合は source backend、target backend、理由を記録する
+期待:
 
-手動確認では、まず CLI で同じ operation が通ることを確認し、次に MCP tool でも同等 operation が通ることを確認します。
+- 各 tool が hard error なく完了する
+- 指定した `outputPath` に成果物が生成される
+- `daily-svg` / `weekly-svg` は SVG、`monthly-calendar-svg` / `report_all` は ZIP として扱われる
 
-### `mcp-preferred`
+## 12. backend policy の確認
 
-確認したいこと:
+この手動確認では、VS Code MCP server が Phase C report tools を公開していることを確認します。
 
-- MCP backend を先に使う
-- MCP が unavailable / unsuitable の場合だけ、許可されていれば CLI backend を使う
-- fallback した場合は source backend、target backend、理由を記録する
-
-手動確認では、まず MCP tool が通ることを確認し、同じ operation の CLI command も fallback 候補として通ることを確認します。
-
-### `handoff-only`
-
-確認したいこと:
-
-- CLI command を実行しない
-- MCP tool を呼ばない
-- spec / JSON / 手順を visible handoff として返す
-
-## 6. 現行 MCP backend の注意
-
-現行 MCP backend はすべての CLI operation を公開しているわけではありません。
-
-MCP backend で利用できる代表例:
-
-- `mikuproject.ai_spec`
-- `mikuproject.state_from_draft`
-- `mikuproject.export_workbook_json`
-- `mikuproject.report_wbs_markdown`
-- `mikuproject.report_mermaid`
-
-MCP backend 未対応として扱う代表例:
+`mikuproject-skills` 側の backend policy では、次の report operations は MCP 対応済みとして扱われます。
 
 - `wbs-xlsx-export`
 - `daily-svg-export`
 - `weekly-svg-export`
 - `monthly-calendar-svg-export`
 - `all-report-export`
+- `wbs-markdown-export`
+- `mermaid-export`
 
-strict policy の `mcp-only` では、未対応 operation を CLI に自動 fallback しません。
+`mcp-only` の考え方:
 
-## 7. 手動確認の完了条件
+- MCP 対応済み operation は MCP backend で実行できる
+- MCP 未対応 operation は CLI に自動 fallback しない
+- 0.8.2 tarball を起動しているのに Phase C report tools が出ない場合は、古い MCP server package が起動しているか、MCP client 側の server reload が未完了と判断する
 
-- MCP client から `mikuproject` server が見える
-- local checkout 版または release tarball 版のどちらで確認したかを記録している
-- MCP tool list に product-prefixed tool が見える
-- `mikuproject.ai_spec` が通る
-- `mikuproject.state_from_draft` が通る
-- `mikuproject.report_wbs_markdown` が通る
-- 対応する CLI command も通る
-- `mcp-only` では MCP 未対応 operation が CLI fallback されないことを確認できる
-- `cli-only` では MCP server が起動していても MCP tool を呼ばない運用で確認できる
+他の policy 名との区別:
+
+- `cli-only` は CLI backend だけを使う policy
+- `handoff-only` は CLI / MCP を実行しない policy
+
+MCP backend 未対応として扱う代表例:
+
+- `xml-import`
+- `xlsx-merge-import`
+- `workbook-import`
+- `workbook-merge-import`
+
+## 13. 完了条件
+
+次を確認できたら、この manual test は完了です。
+
+- VS Code から `mikuproject` MCP server が見える
+- MCP server 一覧で `mikuproject` server の設定元と状態を確認できる
+- `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz` から起動している
+- `mikuproject_ai_spec` が通る
+- `mikuproject_create_project_draft` が prompt list に見える
+- `mikuproject_revise_state_with_patch` が prompt list に見える
+- `mikuproject_review_artifact_diagnostics` が prompt list に見える
+- `mikuproject_state_from_draft` が通る
+- `mikuproject_report_wbs_markdown` が通る
+- `mikuproject_report_wbs_xlsx` が通る
+- `mikuproject_report_daily_svg` が通る
+- `mikuproject_report_weekly_svg` が通る
+- `mikuproject_report_monthly_calendar_svg` が通る
+- `mikuproject_report_all` が通る
+- 生成物が `workplace/mikuproject-mcp-vscode/` 以下に出る

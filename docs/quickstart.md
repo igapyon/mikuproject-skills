@@ -57,7 +57,7 @@ skill bundle には `skills/mikuproject/config/backend-policy.json` が含まれ
 MCP backend を使う場合の server product 名は `mikuproject-mcp` です。
 MCP client 設定上の server key は短く `mikuproject` としてよいですが、repo / package / server adapter の名称は `mikuproject-mcp` として扱います。
 
-現行 `mikuproject-mcp` の tool 名は `mikuproject.ai_spec`、`mikuproject.state_from_draft`、`mikuproject.state_apply_patch` のようなドット区切りです。
+現行 `mikuproject-mcp` の tool 名は `mikuproject_ai_spec`、`mikuproject_state_from_draft`、`mikuproject_state_apply_patch` のようなアンダースコア区切りです。
 resource URI は `mikuproject://state/current`、`mikuproject://summary/{operationId}` などを使います。
 
 会話で明示する場合は、依頼に含めます。
