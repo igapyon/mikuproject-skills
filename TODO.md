@@ -170,20 +170,27 @@
 - [x] `XLSX`
 - [x] `mikuproject_workbook_json`
 
-対象外:
+対象外 / Deferred:
 
-- [ ] `CSV`
-- [ ] AI 向け編集用 JSON 群
+- [x] `CSV`
+- [x] AI 向け編集用 JSON 群
   - `project_overview_view`
   - `phase_detail_view`
   - `task_edit_view`
   - `full bundle`
+
+補足:
+
+- `CSV` は primary file import/export workflow の対象外として維持する
+- AI 向け編集用 JSON 群は file workflow ではなく AI workflow / projection workflow として扱う
+- `full bundle` は全体把握や handoff の補助であり、primary import/export 形式としては扱わない
 
 設計メモ:
 
 - [x] `docs/file-import-export.md` に主要ファイル形式の import / export を統合して整理する
 - [x] `skills/mikuproject/SKILL.md` に Phase B の操作を反映する
 - [x] `skills/mikuproject/references/` に `xml/xlsx/workbook` の短い利用例を追加する
+- [x] `docs/file-import-export.md` に `CSV` と AI 向け編集用 JSON 群を対象外 / Deferred として明記する
 
 ### Phase C: Report / Presentation Outputs
 

@@ -8,6 +8,15 @@
 - 構造忠実 workbook `XLSX`
 - `mikuproject_workbook_json`
 
+対象外 / Deferred:
+
+- `CSV`
+- AI 向け編集用 JSON 群
+  - `project_overview_view`
+  - `phase_detail_view`
+  - `task_edit_view`
+  - `ai_projection_bundle` / full bundle
+
 この文書では、旧 `Phase B` 系メモを統合し、現在の実装前提に合わせて整理しています。
 
 ## 位置づけ
@@ -23,6 +32,10 @@
 `Patch JSON` を使う AI workflow を優先します。
 
 会話境界の state は、引き続き `mikuproject_workbook_json` を優先します。
+
+`CSV` は primary file import/export workflow の対象外として扱います。
+AI 向け編集用 JSON 群は file workflow ではなく、projection / patch の AI workflow として扱います。
+`ai_projection_bundle` は全体把握や handoff の補助であり、primary import/export 形式ではありません。
 
 ## 現在の利用方針
 
