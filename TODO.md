@@ -266,6 +266,8 @@ MCP backend を使えるようにする。
 - [x] fallback した場合は、どの backend からどの backend へ移ったかを concise diagnostics として返す
 - [x] skill-local 設定ファイル `skills/mikuproject/config/backend-policy.json` を追加する
 - [x] 設定ファイルをユーザー明示指示と実行環境 policy より下位に置くことを文書化する
+- [x] policy と operation capability から backend 実行計画を決める純粋 helper `skills/mikuproject/lib/backend-policy.mjs` を追加する
+- [x] Agent Skill operation から CLI invocation と MCP tool 名を引く registry `skills/mikuproject/lib/backend-operations.mjs` を追加する
 
 ### Next implementation handoff
 
@@ -292,6 +294,8 @@ MCP backend を使えるようにする。
 - 2026-04-29: `workplace/mikuproject-mcp-devel` で `npm install` 後に `npm run build && npm run test` が通過した
 - 2026-04-29: root の `npm test` が通過した
 - 2026-04-29: `skills/mikuproject/config/backend-policy.json` を追加し、bundle 同梱と policy contract を `tests/mikuproject-backend-policy-config.test.js` で確認するようにした
+- 2026-04-29: `tests/mikuproject-backend-policy-selector.test.js` を追加し、CLI/MCP を実行しない selector contract として strict policy / fallback / report export policy を確認するようにした
+- 2026-04-29: `tests/mikuproject-backend-operations.test.js` を追加し、operation capability、CLI invocation builder、MCP tool 名の対応を確認するようにした
 
 `mikuproject-mcp` 側への申し送り:
 
@@ -301,12 +305,12 @@ MCP backend を使えるようにする。
 
 ### Tests and smoke checks
 
-- [ ] `cli-only` policy で MCP fallback しないことを smoke test する
-- [ ] `mcp-only` policy で CLI fallback しないことを smoke test する
-- [ ] `cli-preferred` policy で CLI unavailable 時に MCP へ fallback するケースを smoke test する
-- [ ] `mcp-preferred` policy で MCP unavailable 時に CLI へ fallback するケースを smoke test する
-- [ ] `handoff-only` policy で backend 実行しないことを smoke test する
-- [ ] report export 系でも backend policy が同じルールで適用されることを確認する
+- [x] `cli-only` policy で MCP fallback しないことを smoke test する
+- [x] `mcp-only` policy で CLI fallback しないことを smoke test する
+- [x] `cli-preferred` policy で CLI unavailable 時に MCP へ fallback するケースを smoke test する
+- [x] `mcp-preferred` policy で MCP unavailable 時に CLI へ fallback するケースを smoke test する
+- [x] `handoff-only` policy で backend 実行しないことを smoke test する
+- [x] report export 系でも backend policy が同じルールで適用されることを確認する
 
 ### Out of scope for this policy work
 
