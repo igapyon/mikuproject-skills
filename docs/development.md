@@ -115,6 +115,19 @@ skill-local 設定:
 - 優先順位は `user-request`、`environment-policy`、`skill-config`、`repository-default`
 - ユーザー明示指示や実行環境 policy と衝突する場合、設定ファイル側を優先しない
 
+policy selector:
+
+- `skills/mikuproject/lib/backend-policy.mjs`
+- CLI や MCP を実行せず、policy と operation capability から実行 backend の候補を決める純粋 helper として扱う
+- 実際の backend runner が追加される場合も、この helper の strict policy / fallback contract を崩さない
+
+backend operation registry:
+
+- `skills/mikuproject/lib/backend-operations.mjs`
+- Agent Skill operation から CLI invocation と MCP tool 名を引くための小さな registry として扱う
+- CLI invocation builder は command / args を返すだけで、CLI process は実行しない
+- MCP tool 名が `null` の operation は、現行 MCP backend では未対応として扱う
+
 policy 値:
 
 - `cli-only`: CLI backend だけを使い、MCP fallback しない

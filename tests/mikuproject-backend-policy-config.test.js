@@ -3,6 +3,11 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import {
+  BACKEND_POLICIES,
+  resolveBackendPolicy
+} from "../skills/mikuproject/lib/backend-policy.mjs";
+
 const ROOT = process.cwd();
 const policyConfigPath = path.resolve(
   ROOT,
@@ -42,6 +47,27 @@ describe("mikuproject backend policy config", () => {
       "mcp-preferred": true,
       "handoff-only": false
     });
+    expect(config.allowed_policies).toEqual(BACKEND_POLICIES);
   });
 
+  it("resolves policy by user, environment, skill config, then repository default", () => {
+    const config = JSON.parse(fs.readFileSync(policyConfigPath, "utf8"));
+
+    expect(resolveBackendPolicy({
+      userRequestPolicy: "mcp-only",
+      environmentPolicy: "cli-only",
+      skillConfigPolicy: "cli-preferred"
+    }, config)).toBe("mcp-only");
+
+    expect(resolveBackendPolicy({
+      environmentPolicy: "cli-only",
+      skillConfigPolicy: "mcp-preferred"
+    }, config)).toBe("cli-only");
+
+    expect(resolveBackendPolicy({
+      skillConfigPolicy: "mcp-preferred"
+    }, config)).toBe("mcp-preferred");
+
+    expect(resolveBackendPolicy({}, config)).toBe("cli-preferred");
+  });
 });
