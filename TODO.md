@@ -145,8 +145,13 @@
 
 以下は Java runtime 側が先に持っている direct command を Node.js runtime 側にも揃えるかどうかの検討項目。
 現状の Agent Skills 運用では Java runtime を優先できるため、直ちに blocker ではない。
+今すぐ upstream request は作らず、必要になった時点で再検討する。
 
 - [ ] upstream `mikuproject` 側で、ASIS 対応表に `Not available as a direct Node.js command` と記録した操作の Node.js 実装を追加してもらう
+  - Status: deferred
+  - 現時点では対応しない
+  - Java runtime 優先運用で回避できるため、`mikuproject-skills` の直近作業 blocker ではない
+  - Node.js runtime parity が必要になった場合に、upstream request 文書を新規作成する
   - workbook JSON の validate / replace import / merge import に相当する直接コマンドを追加する
   - XML validate に相当する直接コマンドを追加する
   - 構造 workbook `XLSX` の validate / replace import / merge import に相当する直接コマンドを追加する
