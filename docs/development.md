@@ -10,6 +10,7 @@
 - skill 配置手順: [skill-installation.md](./skill-installation.md)
 - ファイル入出力: [file-import-export.md](./file-import-export.md)
 - レポート出力: [report-export.md](./report-export.md)
+- MCP backend 利用設定: [mcp-backend-setup.md](./mcp-backend-setup.md)
 - backend switching 手動テスト: [backend-switching-manual-test.md](./backend-switching-manual-test.md)
 - miku software 共通 overview: [miku-soft-00-overview-design-v20260427.md](./miku-soft-00-overview-design-v20260427.md)
 - upstream MCP tool surface 連絡メモ: [upstream-mikuproject-mcp-tool-surface-note.md](./upstream-mikuproject-mcp-tool-surface-note.md)
