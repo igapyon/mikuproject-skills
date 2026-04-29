@@ -36,7 +36,7 @@ jobs:
           set -euo pipefail
           test -s skills/mikuproject/runtime/mikuproject.jar
           test -s skills/mikuproject/runtime/mikuproject.mjs
-          java -jar skills/mikuproject/runtime/mikuproject.jar export-ai-json-spec >/dev/null
+          java -jar skills/mikuproject/runtime/mikuproject.jar ai spec >/dev/null
           node skills/mikuproject/runtime/mikuproject.mjs ai spec >/dev/null
 
       - name: Build release bundle
