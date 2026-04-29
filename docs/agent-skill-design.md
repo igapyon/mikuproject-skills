@@ -121,6 +121,131 @@ MVP では、次の upstream runtime artifact を主要入口とする。
 - `node skills/mikuproject/runtime/mikuproject.mjs state apply-patch`
 - `node skills/mikuproject/runtime/mikuproject.mjs state diff`
 
+## Execution Backend Policy
+
+Agent Skill は workflow layer として残し、実行面だけを backend policy で切り替える。
+
+既定値は `cli-preferred` とする。
+ただし、ユーザー指示、実行環境の制約、repo 設定がある場合はそれを優先する。
+
+policy 値:
+
+- `cli-only`: CLI backend だけを使い、MCP へ自動 fallback しない
+- `cli-preferred`: CLI backend を先に使い、許可されている場合だけ MCP へ fallback する
+- `mcp-only`: MCP backend だけを使い、CLI へ自動 fallback しない
+- `mcp-preferred`: MCP backend を先に使い、許可されている場合だけ CLI へ fallback する
+- `handoff-only`: backend 実行を行わず、spec / JSON / 手順を visible handoff として返す
+
+`cli-only` と `mcp-only` は strict policy として扱う。
+選ばれた backend が使えない場合は、別 backend に逃げず、実行経路エラーとして返す。
+
+fallback が許可されていて実際に発生した場合は、どの backend からどの backend へ移ったか、
+および理由を短く返す。
+
+会話上の明示 policy は、現在のユーザー依頼に `cli-only`、`cli-preferred`、
+`mcp-only`、`mcp-preferred`、`handoff-only` のいずれかが exact value として
+含まれる場合に解釈する。`で`、`として`、`固定`、`only`、`preferred`、
+`fallbackなし` のような周辺語は許容する。
+
+例:
+
+- `mikuproject、mcp-only で要約して`
+- `mikuproject cli-only 固定で WBS XLSX を出して`
+- `mikuproject handoff-only として spec を出して`
+
+同一依頼内に複数の policy 値が出て、どれかが明確に否定されているわけではない場合は、
+実行前にどの policy を使うか確認する。`MCP でも使える?` のような backend 名だけの質問は
+capability question として扱い、`mcp-only` の strict policy とは解釈しない。
+
+## Agent Skill over CLI backend
+
+CLI backend を使う場合でも、Agent Skill の責務は CLI wrapper そのものではない。
+
+Agent Skill 側の責務:
+
+- `mikuproject` の activation boundary を守る
+- `spec` / `draft` / `patch` / `workbook` などの操作単位を選ぶ
+- `project_draft_view`、`Patch JSON`、`mikuproject_workbook_json` の artifact role を守る
+- Java CLI と Node.js CLI のどちらを使うかを runtime policy に従って決める
+- 中間ファイルと出力ファイルの置き場所を整理する
+- warning / error / diff summary を利用者に分かる形で返す
+
+CLI backend 側の責務:
+
+- upstream runtime artifact として product operation を実行する
+- import / export / validate / apply / report などの変換実体を持つ
+- upstream product の diagnostics を返す
+
+CLI backend を使っても、skill 側で upstream 変換ロジックを再実装しない。
+
+## Agent Skill over MCP backend
+
+MCP backend を使う場合も、Agent Skill は MCP server にはならない。
+
+Agent Skill 側の責務:
+
+- CLI backend 利用時と同じ operation vocabulary を維持する
+- Agent Skill operation と MCP tool / resource の対応を選ぶ
+- `mcp-only` / `mcp-preferred` / fallback policy を守る
+- MCP tool の結果を、skill の artifact role と response shape に合わせて説明する
+- MCP resource URI、server-managed path、workbook JSON の境界を混同しない
+
+MCP backend 側の責務:
+
+- product-specific MCP server として tool / resource / prompt contract を提供する
+- tool input schema と result schema を管理する
+- state や generated artifact を MCP resource として公開する
+- upstream runtime artifact または public API を呼び出す
+
+`mikuproject-skills` 側では、MCP tool 名や resource URI contract を勝手に再定義しない。
+MCP backend は `mikuproject-mcp` などの MCP server layer によって提供される前提とする。
+
+### 現行 `mikuproject-mcp` contract との対応
+
+現行の `mikuproject-mcp` は、MCP tool 名を upstream CLI command tree から導出している。
+
+例:
+
+- `ai spec` -> `mikuproject.ai_spec`
+- `ai detect-kind` -> `mikuproject.ai_detect_kind`
+- `state from-draft` -> `mikuproject.state_from_draft`
+- `ai export project-overview` -> `mikuproject.ai_export_project_overview`
+- `state apply-patch` -> `mikuproject.state_apply_patch`
+- `export workbook-json` -> `mikuproject.export_workbook_json`
+
+Agent Skill operation との対応は次の考え方で扱う。
+
+- Agent Skill の `spec` は MCP tool `mikuproject.ai_spec` に対応する
+- Agent Skill の `draft` は MCP tool `mikuproject.state_from_draft` に対応する
+- Agent Skill の `patch-validate` は MCP tool `mikuproject.ai_validate_patch` に対応する
+- Agent Skill の `patch` は MCP tool `mikuproject.state_apply_patch` に対応する
+- Agent Skill の `workbook` / `workbook-export` は MCP tool `mikuproject.export_workbook_json` に対応する
+- Agent Skill の report 系のうち、現行 MCP backend では `wbs-markdown` と `mermaid` が対応済みである
+
+現行 `mikuproject-mcp` の主な resource URI は次の通り。
+
+- `mikuproject://spec/ai-json`
+- `mikuproject://state/current`
+- `mikuproject://state/{name}`
+- `mikuproject://export/workbook-json`
+- `mikuproject://export/project-xml`
+- `mikuproject://export/project-xlsx`
+- `mikuproject://projection/{name}`
+- `mikuproject://report/wbs-markdown`
+- `mikuproject://report/mermaid`
+- `mikuproject://summary/{operationId}`
+- `mikuproject://diagnostics/{operationId}`
+
+state 境界は次のように整理する。
+
+- Agent Skill の会話境界 state は引き続き `mikuproject_workbook_json`
+- MCP backend の現在状態は `mikuproject://state/current` として参照できる
+- MCP server-managed path に書かれた artifact だけが固定 `mikuproject://` URI を持つ
+- custom `outputPath` へ出した artifact は、固定 resource URI ではなく file path artifact として扱う
+- operation summary と diagnostics は `operationId` で `mikuproject://summary/{operationId}` / `mikuproject://diagnostics/{operationId}` に紐づける
+
+この対応を使うことで、CLI backend の file path 中心の結果と、MCP backend の resource URI / `operationId` 中心の結果を、同じ artifact role で説明できる。
+
 ## 操作単位
 
 MVP では、Skill の責務を 4 つの操作単位として定義する。

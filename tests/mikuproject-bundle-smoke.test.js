@@ -23,6 +23,14 @@ const builtNodeSourcesPath = path.resolve(
   ROOT,
   "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject-sources.tgz"
 );
+const sourcePolicyConfigPath = path.resolve(
+  ROOT,
+  "skills/mikuproject/config/backend-policy.json"
+);
+const builtPolicyConfigPath = path.resolve(
+  ROOT,
+  "bundle/mikuproject-skills/skills/mikuproject/config/backend-policy.json"
+);
 
 describe("mikuproject bundle smoke", () => {
   const tempDirs = [];
@@ -77,6 +85,9 @@ describe("mikuproject bundle smoke", () => {
     expect(fs.existsSync(builtJavaRuntimePath)).toBe(true);
     expect(fs.existsSync(builtJavaSourcesPath)).toBe(true);
     expect(fs.existsSync(builtNodeSourcesPath)).toBe(true);
+    expect(JSON.parse(fs.readFileSync(builtPolicyConfigPath, "utf8"))).toEqual(
+      JSON.parse(fs.readFileSync(sourcePolicyConfigPath, "utf8"))
+    );
     expect(nodeHelp).toContain("mikuproject report all");
     expect(nodeVersion).toMatch(/^mikuproject \d+\.\d+\.\d+/);
     expect(javaHelp).toContain("ai spec");
