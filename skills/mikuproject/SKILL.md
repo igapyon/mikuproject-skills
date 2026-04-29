@@ -107,3 +107,4 @@ Do not overreach beyond the MVP.
 Read these only when needed:
 
 - [references/INDEX.md](references/INDEX.md) for detailed workflow, I/O, runtime, and example references
+- [references/prompts/](references/prompts/) for optional prompt templates for draft, review, schedule compression, and patch request handoff
