@@ -324,6 +324,34 @@ MCP backend を使えるようにする。
 - issue 候補: `packages/node/src/test/serverSmoke.test.ts` の workspace root assertion が checkout 名 `mikuproject-mcp` 固定になっており、`mikuproject-mcp-devel` では落ちる
 - 推奨修正例: `assert.match(workspace.root, /mikuproject-mcp(?:-devel)?\/workplace$/);`
 
+MCP 側 Phase C report tool 対応後の再開メモ:
+
+- [ ] `workplace/mikuproject-mcp-devel` を MCP 側の対応済み commit / release に更新する
+- [ ] MCP tool list に次が追加されたか確認する
+  - `mikuproject.report_wbs_xlsx`
+  - `mikuproject.report_daily_svg`
+  - `mikuproject.report_weekly_svg`
+  - `mikuproject.report_monthly_calendar_svg`
+  - `mikuproject.report_all`
+- [ ] `skills/mikuproject/lib/backend-operations.mjs` の Phase C report operation で `mcpTool: null` を対応 tool 名に更新する
+  - `wbs-xlsx-export` -> `mikuproject.report_wbs_xlsx`
+  - `daily-svg-export` -> `mikuproject.report_daily_svg`
+  - `weekly-svg-export` -> `mikuproject.report_weekly_svg`
+  - `monthly-calendar-svg-export` -> `mikuproject.report_monthly_calendar_svg`
+  - `all-report-export` -> `mikuproject.report_all`
+- [ ] `skills/mikuproject/references/runtime/operations-map.md` の Phase C gap 表記を MCP 対応済みに更新する
+- [ ] `docs/development.md` と `docs/backend-switching-manual-test.md` の「MCP backend 未対応」説明を更新する
+- [ ] `tests/mikuproject-backend-operations.test.js` と `tests/mikuproject-backend-policy-selector.test.js` の MCP capability 期待値を更新する
+- [ ] 必要なら `tests/mikuproject-backend-switching-manual-doc.test.js` の文書期待値を更新する
+- [ ] root の `npm test` を実行する
+- [ ] release tarball 版で確認する場合は、`docs/backend-switching-manual-test.md` の release tag / tarball URL を対象 release に更新する
+
+注意:
+
+- `mikuproject.export_xlsx` は `export xlsx` の structural workbook XLSX export
+- `mikuproject.report_wbs_xlsx` は `report wbs-xlsx` の WBS report XLSX export
+- 上記 2 つは別 operation として扱う
+
 ### Tests and smoke checks
 
 - [x] `cli-only` policy で MCP fallback しないことを smoke test する
