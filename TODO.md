@@ -106,6 +106,8 @@
 - 2026-04-14: `tests/mikuproject-bundle-smoke.test.js` を追加し、bundle を一時ディレクトリへ展開した孤立環境でも CLI が起動することを回帰確認に入れた
 - 2026-04-25: `docs/skill-installation.md` に bundle の必須構成として `skills/mikuproject/runtime/mikuproject.jar` と `mikuproject.mjs` を追記した
 - 2026-04-14: `npm test` で 3 files / 3 tests passed を確認し、`npm run build:bundle:zip` で `bundle/mikuproject-skills-20260413.zip` を再生成した
+- 2026-04-29: `workplace/mikuproject-mcp-devel` で `npm install` 後に `npm run build && npm run test` を実行し、27 tests passed を確認した
+- 2026-04-29: root の `npm test` で 3 files / 3 tests passed を確認した
 
 ## 10. 文書化
 
@@ -185,14 +187,18 @@
 
 ### Phase C: Report / Presentation Outputs
 
-- [ ] `WBS XLSX` 出力支援
-- [ ] `SVG` 出力各種の支援
-- [ ] `Markdown` 出力支援
-- [ ] `Mermaid` 出力支援
+- [x] `WBS XLSX` 出力支援
+- [x] `SVG` 出力各種の支援
+- [x] `Markdown` 出力支援
+- [x] `Mermaid` 出力支援
 
 設計メモ:
 
 - [x] `docs/report-export.md` に report / presentation 出力を統合して整理する
+
+検証メモ:
+
+- 2026-04-29: `tests/mikuproject-phase-c-smoke.test.js` を追加し、Node.js / Java runtime の両方で `report wbs-xlsx`、`daily-svg`、`weekly-svg`、`monthly-calendar-svg`、`wbs-markdown`、`mermaid`、`all` の生成を確認するようにした
 
 ### Other Future Candidates
 
@@ -215,49 +221,83 @@ MCP backend を使えるようにする。
 
 ### Backend policy values
 
-- [ ] `cli-only`: 同梱 CLI backend だけを使い、MCP へ自動 fallback しない
-- [ ] `cli-preferred`: まず同梱 CLI backend を使い、許可されている場合だけ MCP へ fallback する
-- [ ] `mcp-only`: MCP backend だけを使い、CLI へ自動 fallback しない
-- [ ] `mcp-preferred`: まず MCP backend を使い、許可されている場合だけ CLI へ fallback する
-- [ ] `handoff-only`: backend 実行を行わず、spec / JSON / 手順を visible handoff として返す
+- [x] `cli-only`: 同梱 CLI backend だけを使い、MCP へ自動 fallback しない
+- [x] `cli-preferred`: まず同梱 CLI backend を使い、許可されている場合だけ MCP へ fallback する
+- [x] `mcp-only`: MCP backend だけを使い、CLI へ自動 fallback しない
+- [x] `mcp-preferred`: まず MCP backend を使い、許可されている場合だけ CLI へ fallback する
+- [x] `handoff-only`: backend 実行を行わず、spec / JSON / 手順を visible handoff として返す
 
 既定値:
 
-- [ ] 明示 policy がない場合の既定を `cli-preferred` として文書化する
-- [ ] `*-only` policy では別 backend に逃げないことを明記する
-- [ ] `*-preferred` policy の場合だけ fallback できることを明記する
-- [ ] ユーザー指示、環境設定、repo 設定、チーム運用ルールの順序関係を整理する
+- [x] 明示 policy がない場合の既定を `cli-preferred` として文書化する
+- [x] `*-only` policy では別 backend に逃げないことを明記する
+- [x] `*-preferred` policy の場合だけ fallback できることを明記する
+- [x] ユーザー指示、環境設定、repo 設定、チーム運用ルールの順序関係を整理する
 
 ### Agent Skill documentation updates
 
-- [ ] `docs/miku-soft-40-agentskills-design-v20260425.md` に execution backend policy を反映する
+- [x] `docs/miku-soft-40-agentskills-design-v20260429.md` に execution backend policy を反映する
   - Agent Skill が workflow layer として残り、実行面は CLI backend / MCP backend / handoff backend を選べることを追記する
   - 既定は `cli-preferred` だが、環境 policy が上位であることを明記する
   - `cli-only` / `mcp-only` の strict policy では別 backend へ自動 fallback しないことを明記する
   - MCP backend は `miku-soft-50` の MCP server layer を利用する形であり、Agent Skill が MCP server の実装責務を持たないことを明記する
-- [ ] `skills/mikuproject/SKILL.md` の Runtime Discipline を backend policy 前提に更新する
-- [ ] `skills/mikuproject/references/runtime/operations-map.md` に CLI backend と MCP backend の対応表を追加する
-- [ ] `skills/mikuproject/references/workflow/active-workflow-rules.md` に backend policy をまたぐ fallback 禁止ルールを追加する
-- [ ] `docs/agent-skill-design.md` に `Agent Skill over CLI backend` と `Agent Skill over MCP backend` の責務分担を追記する
-- [ ] `docs/quickstart.md` に `cli-preferred` 既定と `mcp-only` / `cli-only` の使い分けを追記する
-- [ ] `docs/development.md` に backend policy の保守方針と検証対象を追記する
+- [x] `skills/mikuproject/SKILL.md` の Runtime Discipline を backend policy 前提に更新する
+- [x] `skills/mikuproject/references/runtime/operations-map.md` に CLI backend と MCP backend の対応表を追加する
+- [x] `skills/mikuproject/references/workflow/active-workflow-rules.md` に backend policy をまたぐ fallback 禁止ルールを追加する
+- [x] `docs/agent-skill-design.md` に `Agent Skill over CLI backend` と `Agent Skill over MCP backend` の責務分担を追記する
+- [x] `docs/quickstart.md` に `cli-preferred` 既定と `mcp-only` / `cli-only` の使い分けを追記する
+- [x] `docs/development.md` に backend policy の保守方針と検証対象を追記する
 
 ### MCP backend alignment
 
-- [ ] `workplace/mikuproject-mcp-devel` の MCP tool 名と Agent Skill operation 名の対応を確認する
-- [ ] MCP backend で使う主要 tool を Phase A / Phase B / Phase C に分ける
-- [ ] MCP backend 利用時の state 境界を `mikuproject_workbook_json`、resource URI、server-managed path の関係で整理する
-- [ ] MCP backend 利用時に `mikuproject://state/current` などの resource URI をどこまで Agent Skill 文書に出すか決める
-- [ ] direct CLI の file path 中心の結果と MCP の resource / operationId 中心の結果を同じ artifact role で説明できるようにする
+- [x] `workplace/mikuproject-mcp-devel` の MCP tool 名と Agent Skill operation 名の対応を確認する
+- [x] MCP backend で使う主要 tool を Phase A / Phase B / Phase C に分ける
+- [x] MCP backend 利用時の state 境界を `mikuproject_workbook_json`、resource URI、server-managed path の関係で整理する
+- [x] MCP backend 利用時に `mikuproject://state/current` などの resource URI をどこまで Agent Skill 文書に出すか決める
+- [x] direct CLI の file path 中心の結果と MCP の resource / operationId 中心の結果を同じ artifact role で説明できるようにする
 
 ### Implementation candidates
 
-- [ ] backend policy を会話上の明示指示として解釈するルールを作る
-- [ ] backend policy を設定ファイルで固定できるか検討する
-- [ ] MCP tools が利用可能な環境では、CLI コマンド例だけでなく MCP tool 名も参照できるようにする
-- [ ] `mcp-only` のときに CLI runtime artifact を探索しないことを明文化する
-- [ ] `cli-only` のときに MCP tool 探索へ進まないことを明文化する
-- [ ] fallback した場合は、どの backend からどの backend へ移ったかを concise diagnostics として返す
+- [x] backend policy を会話上の明示指示として解釈するルールを作る
+- [x] backend policy を設定ファイルで固定できるか検討する
+- [x] MCP tools が利用可能な環境では、CLI コマンド例だけでなく MCP tool 名も参照できるようにする
+- [x] `mcp-only` のときに CLI runtime artifact を探索しないことを明文化する
+- [x] `cli-only` のときに MCP tool 探索へ進まないことを明文化する
+- [x] fallback した場合は、どの backend からどの backend へ移ったかを concise diagnostics として返す
+- [x] skill-local 設定ファイル `skills/mikuproject/config/backend-policy.json` を追加する
+- [x] 設定ファイルをユーザー明示指示と実行環境 policy より下位に置くことを文書化する
+
+### Next implementation handoff
+
+次セッションでの推奨順:
+
+1. まず今回の文書同期差分を確認して commit する
+2. 設定ファイル固定は、会話上の明示指示ルールが固まってから検討する
+3. smoke test は、実際の backend selector 実装または検証可能なルール表現ができてから追加する
+
+現時点の前提:
+
+- Agent Skill は workflow layer として残す
+- 既定 policy は `cli-preferred`
+- `cli-only` / `mcp-only` / `handoff-only` は strict policy として扱う
+- MCP backend の参照 contract は `workplace/mikuproject-mcp-devel` の `mikuproject-mcp`
+- MCP tool 名は `mikuproject.ai_spec` のようなドット区切り
+- MCP server product / repo / adapter 名は `mikuproject-mcp`
+- MCP client configuration の server key は短く `mikuproject` でよい
+- custom `outputPath` の成果物には固定 `mikuproject://` resource URI を付けない
+- 会話上の明示 policy は exact value (`cli-only` / `cli-preferred` / `mcp-only` / `mcp-preferred` / `handoff-only`) を含む場合に解釈する
+
+検証済み:
+
+- 2026-04-29: `workplace/mikuproject-mcp-devel` で `npm install` 後に `npm run build && npm run test` が通過した
+- 2026-04-29: root の `npm test` が通過した
+- 2026-04-29: `skills/mikuproject/config/backend-policy.json` を追加し、bundle 同梱と policy contract を `tests/mikuproject-backend-policy-config.test.js` で確認するようにした
+
+`mikuproject-mcp` 側への申し送り:
+
+- 実体 repo が別ディレクトリにあるため、この repo の `workplace/mikuproject-mcp-devel` でのテスト修正は本体には未反映
+- issue 候補: `packages/node/src/test/serverSmoke.test.ts` の workspace root assertion が checkout 名 `mikuproject-mcp` 固定になっており、`mikuproject-mcp-devel` では落ちる
+- 推奨修正例: `assert.match(workspace.root, /mikuproject-mcp(?:-devel)?\/workplace$/);`
 
 ### Tests and smoke checks
 

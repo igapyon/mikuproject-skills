@@ -33,6 +33,43 @@
 4. `npm test`
 5. Codex との会話で `mikuproject` skill を使う
 
+## Execution backend policy
+
+通常は `cli-preferred` として扱います。
+
+これは、まず同梱 CLI backend を使い、CLI が使えない場合だけ、許可されていれば MCP backend へ fallback する方針です。
+
+skill bundle には `skills/mikuproject/config/backend-policy.json` が含まれます。
+このファイルは skill 側の既定 policy と許可値を記録するためのものです。
+ユーザーの明示指示と実行環境 policy が優先で、設定ファイルはそれらより下位です。
+
+主な使い分け:
+
+- `cli-preferred`: 既定。ローカル CLI 実行が許可されている通常環境向け
+- `cli-only`: CLI 実行だけを許可し、MCP fallback を禁止したい環境向け
+- `mcp-only`: CLI 実行を禁止し、承認済み MCP server だけを使いたい環境向け
+- `mcp-preferred`: MCP を先に使い、許可されている場合だけ CLI へ fallback したい環境向け
+- `handoff-only`: CLI も MCP も実行せず、spec / JSON / 手順だけを受け渡したい環境向け
+
+`cli-only` と `mcp-only` は strict policy です。
+選んだ backend が使えない場合、別 backend へ自動 fallback せず、実行経路エラーとして扱います。
+
+MCP backend を使う場合の server product 名は `mikuproject-mcp` です。
+MCP client 設定上の server key は短く `mikuproject` としてよいですが、repo / package / server adapter の名称は `mikuproject-mcp` として扱います。
+
+現行 `mikuproject-mcp` の tool 名は `mikuproject.ai_spec`、`mikuproject.state_from_draft`、`mikuproject.state_apply_patch` のようなドット区切りです。
+resource URI は `mikuproject://state/current`、`mikuproject://summary/{operationId}` などを使います。
+
+会話で明示する場合は、依頼に含めます。
+
+```text
+mikuproject、mcp-only でこの workbook を要約して
+```
+
+```text
+mikuproject、cli-only で WBS XLSX を出力して
+```
+
 ## 事前準備
 
 ### 1. workspace を揃える

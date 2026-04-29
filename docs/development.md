@@ -99,6 +99,97 @@ npm run update:runtime
 MIKUPROJECT_REF=main MIKUPROJECT_JAVA_REF=main npm run update:runtime
 ```
 
+## Execution backend policy の保守方針
+
+`mikuproject-skills` は Agent Skill workflow layer として保守します。
+実行面は backend policy によって CLI backend、MCP backend、handoff backend を選べるようにします。
+
+既定値:
+
+- 明示 policy がない場合は `cli-preferred`
+
+skill-local 設定:
+
+- `skills/mikuproject/config/backend-policy.json`
+- bundle に同梱し、既定 policy、許可 policy、strict policy、fallback 可否を機械可読に記録する
+- 優先順位は `user-request`、`environment-policy`、`skill-config`、`repository-default`
+- ユーザー明示指示や実行環境 policy と衝突する場合、設定ファイル側を優先しない
+
+policy 値:
+
+- `cli-only`: CLI backend だけを使い、MCP fallback しない
+- `cli-preferred`: CLI backend を先に使い、許可されている場合だけ MCP fallback する
+- `mcp-only`: MCP backend だけを使い、CLI fallback しない
+- `mcp-preferred`: MCP backend を先に使い、許可されている場合だけ CLI fallback する
+- `handoff-only`: backend 実行をせず、visible handoff だけを返す
+
+保守時の注意:
+
+- `cli-only` と `mcp-only` は strict policy として扱う
+- strict policy では別 backend の探索や自動 fallback を追加しない
+- `handoff-only` では CLI command も MCP tool も呼ばない
+- fallback を実装または変更した場合は、source backend、target backend、理由を diagnostics に残す
+- MCP backend の tool / resource contract は MCP server layer 側に置き、Agent Skill 側で再定義しない
+- CLI backend と MCP backend で artifact role と operation vocabulary を変えない
+
+検証対象:
+
+- `cli-only` で MCP fallback しないこと
+- `mcp-only` で CLI fallback しないこと
+- `cli-preferred` で CLI が使えない場合、許可された MCP fallback だけが起きること
+- `mcp-preferred` で MCP が使えない場合、許可された CLI fallback だけが起きること
+- `handoff-only` で backend 実行が起きないこと
+- import / export / report 系でも同じ backend policy が適用されること
+- fallback diagnostics が簡潔に返ること
+
+## 現行 MCP backend 参照
+
+MCP backend の参照実装は `workplace/mikuproject-mcp-devel` の
+`mikuproject-mcp` です。
+
+`mikuproject-mcp` 側で確認する contract:
+
+- `contract/runtime-cli-mapping.md`
+- `contract/resources/resource-uris.md`
+- `contract/results/artifact-roles.md`
+- `contract/tools/*.schema.json`
+
+現行 tool 名は upstream CLI command tree から導出されたドット区切りです。
+
+例:
+
+- `mikuproject.ai_spec`
+- `mikuproject.ai_detect_kind`
+- `mikuproject.state_from_draft`
+- `mikuproject.ai_export_project_overview`
+- `mikuproject.ai_export_task_edit`
+- `mikuproject.ai_export_phase_detail`
+- `mikuproject.ai_validate_patch`
+- `mikuproject.state_apply_patch`
+- `mikuproject.state_diff`
+- `mikuproject.state_summarize`
+- `mikuproject.export_workbook_json`
+- `mikuproject.export_xml`
+- `mikuproject.export_xlsx`
+- `mikuproject.import_xlsx`
+- `mikuproject.report_wbs_markdown`
+- `mikuproject.report_mermaid`
+
+Agent Skill 側の docs で MCP tool 名を書く場合は、このドット区切り名を使います。
+underscore-only の `mikuproject_ai_spec` のような名前に置き換えません。
+
+現行 resource URI の代表例:
+
+- `mikuproject://spec/ai-json`
+- `mikuproject://state/current`
+- `mikuproject://state/{name}`
+- `mikuproject://export/workbook-json`
+- `mikuproject://projection/{name}`
+- `mikuproject://report/wbs-markdown`
+- `mikuproject://report/mermaid`
+- `mikuproject://summary/{operationId}`
+- `mikuproject://diagnostics/{operationId}`
+
 ## テスト
 
 root で `vitest` を有効化しています。

@@ -40,7 +40,35 @@ Use these before falling back to direct file reads or UI-oriented flows.
 
 For explicit `mikuproject` import/export or report requests, first check the bundled `mikuproject` runtime artifacts before broad workspace exploration or generic tool discovery.
 
-Use this order:
+Unless the user, environment, or skill configuration states another execution backend policy, use `cli-preferred`.
+The skill-local configuration file is `skills/mikuproject/config/backend-policy.json`.
+It records the repository default and allowed policy values for installed bundles.
+Treat it as lower priority than explicit user instructions and environment policy.
+
+Backend policy values:
+
+- `cli-only`: use only the bundled CLI backend; do not inspect or call MCP tools as fallback
+- `cli-preferred`: use the bundled CLI backend first; use MCP only when CLI is unavailable or unsuitable and MCP fallback is allowed
+- `mcp-only`: use only the MCP backend; do not inspect or run CLI artifacts as fallback
+- `mcp-preferred`: use MCP first; use CLI only when MCP is unavailable or unsuitable and CLI fallback is allowed
+- `handoff-only`: do not execute backend operations; return visible spec, JSON, artifact instructions, or handoff steps
+
+Interpret an explicit backend policy in the user's current request when it uses
+one of the exact policy values above, with or without simple Japanese particles
+or wording such as `で`, `として`, `固定`, `only`, `preferred`, or `fallbackなし`.
+Examples:
+
+- `mikuproject、mcp-only で要約して`
+- `mikuproject cli-only 固定で WBS XLSX を出して`
+- `mikuproject handoff-only として spec を出して`
+
+The latest explicit user policy in the active request wins over the skill
+configuration default. Do not infer a strict policy from backend names alone; `MCP でも使える?`
+is a capability question, not `mcp-only`. If multiple policy values appear in
+the same request, stop and ask which policy to use unless one is clearly being
+negated.
+
+For `cli-only` and `cli-preferred`, use this CLI runtime order:
 
 1. read this `SKILL.md`
 2. check `skills/mikuproject/runtime/mikuproject.jar` and `skills/mikuproject/runtime/mikuproject.mjs` first
@@ -53,6 +81,10 @@ For this repository:
 - use `skills/mikuproject/runtime/mikuproject.mjs` when the Java runtime is missing or does not support the requested operation
 - do not search broadly through the workspace before checking the bundled runtime artifacts
 - do not conclude that runtime dependencies are missing until the bundled skill-local runtime path has also been checked when applicable
+- in `mcp-only`, do not probe CLI runtime artifacts just to see whether CLI fallback is possible
+- in `cli-only`, do not probe MCP tools just to see whether MCP fallback is possible
+- in `handoff-only`, do not run CLI commands or MCP tools
+- when allowed fallback happens, report the source backend, target backend, and concise reason
 
 ## Error Handling
 
