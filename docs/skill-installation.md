@@ -1,6 +1,6 @@
 # Mikuproject Skill Installation
 
-この文書は、配布された `mikuproject-skills-YYYYMMDD.zip` をインストール先の環境で使えるようにする手順です。
+この文書は、配布された `igapyon-mikuproject-skills-<version>.zip` をインストール先の環境で使えるようにする手順です。
 
 開発元リポジトリでの build 手順ではなく、受け取った bundle をどう配置するかに絞って説明します。
 
@@ -14,7 +14,7 @@
 
 この手順は、次のような人向けです。
 
-- `mikuproject-skills-YYYYMMDD.zip` を受け取った
+- `igapyon-mikuproject-skills-<version>.zip` を受け取った
 - インストール先の環境で `mikuproject` skill を使いたい
 - 配布元リポジトリの `npm run build` は実行しない
 
@@ -22,7 +22,7 @@
 
 受け取る想定の配布物は次です。
 
-- `mikuproject-skills-YYYYMMDD.zip`
+- `igapyon-mikuproject-skills-<version>.zip`
 
 展開すると、次のような構成になります。
 
@@ -38,7 +38,7 @@ skills/
 
 やることは単純です。
 
-1. `mikuproject-skills-YYYYMMDD.zip` を展開する
+1. `igapyon-mikuproject-skills-<version>.zip` を展開する
 2. 展開してできた `skills/` を skill home の直下へコピーする
 3. 実行環境を再起動または再読込する
 4. 利用可能 skill 一覧に `mikuproject` が出ることを確認する
@@ -56,9 +56,9 @@ skills/
 
 ## 手順
 
-### 1. `mikuproject-skills-YYYYMMDD.zip` を展開する
+### 1. `igapyon-mikuproject-skills-<version>.zip` を展開する
 
-まず、受け取った `mikuproject-skills-YYYYMMDD.zip` を任意の作業用フォルダに展開します。
+まず、受け取った `igapyon-mikuproject-skills-<version>.zip` を任意の作業用フォルダに展開します。
 
 展開後は `skills/` ディレクトリが見えるはずです。
 
