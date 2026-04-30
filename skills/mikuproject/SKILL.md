@@ -40,10 +40,9 @@ Use these before falling back to direct file reads or UI-oriented flows.
 
 For explicit `mikuproject` import/export or report requests, first check the bundled `mikuproject` runtime artifacts before broad workspace exploration or generic tool discovery.
 
-Unless the user, environment, or skill configuration states another execution backend policy, use `cli-preferred`.
-The skill-local configuration file is `skills/mikuproject/config/backend-policy.json`.
-It records the repository default and allowed policy values for installed bundles.
-Treat it as lower priority than explicit user instructions and environment policy.
+Unless the user or environment states another execution backend policy, use `cli-preferred`.
+Treat `SKILL.md` and files under `references/` as the normative agent-facing instructions.
+Any skill-local configuration files are machine-readable mirrors for tooling and are lower priority than explicit user instructions, environment policy, and these Markdown instructions.
 
 Backend policy values:
 

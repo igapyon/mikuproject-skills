@@ -20,9 +20,9 @@ Use this reference when the skill is already active and you need follow-up handl
 
 ## Backend Policy Discipline
 
-- default to `cli-preferred` when no user, environment, or skill configuration policy says otherwise
-- use `skills/mikuproject/config/backend-policy.json` as the skill-local policy configuration in installed bundles
-- treat skill configuration as lower priority than explicit user instructions and environment policy
+- default to `cli-preferred` when no user or environment policy says otherwise
+- treat `SKILL.md` and files under `references/` as the normative agent-facing instructions
+- treat skill-local configuration files as machine-readable mirrors for tooling, lower priority than explicit user instructions, environment policy, and the Markdown instructions
 - treat exact policy values in the current user request as an explicit backend policy: `cli-only`, `cli-preferred`, `mcp-only`, `mcp-preferred`, or `handoff-only`
 - accept simple surrounding wording such as `で`, `として`, `固定`, `only`, `preferred`, or `fallbackなし` when the policy value itself is exact
 - the latest explicit user policy in the active request wins over the repository default
