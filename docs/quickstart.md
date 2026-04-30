@@ -114,7 +114,7 @@ npm run build:bundle:zip
 生成先:
 
 ```text
-bundle/mikuproject-skills-YYYYMMDD.zip
+bundle/igapyon-mikuproject-skills-<version>.zip
 ```
 
 詳しくは [skill-installation.md](./skill-installation.md) を参照してください。

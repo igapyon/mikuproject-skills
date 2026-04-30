@@ -11,13 +11,8 @@ const repoRoot = path.resolve(__dirname, "..");
 const bundleParentRoot = path.resolve(repoRoot, "bundle");
 const bundleDirName = "mikuproject-skills";
 const bundleRoot = path.resolve(bundleParentRoot, bundleDirName);
-const buildDate = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Tokyo",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit"
-}).format(new Date()).replaceAll("-", "");
-const zipFileName = `mikuproject-skills-${buildDate}.zip`;
+const packageJson = JSON.parse(fs.readFileSync(path.resolve(repoRoot, "package.json"), "utf8"));
+const zipFileName = `igapyon-${packageJson.name}-${packageJson.version}.zip`;
 const zipPath = path.resolve(bundleParentRoot, zipFileName);
 
 main();
