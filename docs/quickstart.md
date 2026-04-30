@@ -8,6 +8,8 @@
 - `draft`
 - `patch`
 - `workbook`
+- `project-overview` / `task-edit` / `phase-detail`
+- `validate` / `apply` / `diff`
 - `mikuproject` CLI の `workbook-json` / `xml` / `xlsx`
 - `mikuproject` CLI の `wbs-xlsx` / `daily-svg` / `weekly-svg` / `monthly-calendar-svg` / `wbs-markdown` / `mermaid`
 
@@ -31,6 +33,43 @@
 4. `npm test`
 5. Codex との会話で `mikuproject` skill を使う
 
+## Execution backend policy
+
+通常は `cli-preferred` として扱います。
+
+これは、まず同梱 CLI backend を使い、CLI が使えない場合だけ、許可されていれば MCP backend へ fallback する方針です。
+
+skill bundle には `skills/mikuproject/config/backend-policy.json` が含まれます。
+このファイルは skill 側の既定 policy と許可値を記録するためのものです。
+ユーザーの明示指示と実行環境 policy が優先で、設定ファイルはそれらより下位です。
+
+主な使い分け:
+
+- `cli-preferred`: 既定。ローカル CLI 実行が許可されている通常環境向け
+- `cli-only`: CLI 実行だけを許可し、MCP fallback を禁止したい環境向け
+- `mcp-only`: CLI 実行を禁止し、承認済み MCP server だけを使いたい環境向け
+- `mcp-preferred`: MCP を先に使い、許可されている場合だけ CLI へ fallback したい環境向け
+- `handoff-only`: CLI も MCP も実行せず、spec / JSON / 手順だけを受け渡したい環境向け
+
+`cli-only` と `mcp-only` は strict policy です。
+選んだ backend が使えない場合、別 backend へ自動 fallback せず、実行経路エラーとして扱います。
+
+MCP backend を使う場合の server product 名は `mikuproject-mcp` です。
+MCP client 設定上の server key は短く `mikuproject` としてよいですが、repo / package / server adapter の名称は `mikuproject-mcp` として扱います。
+
+現行 `mikuproject-mcp` の tool 名は `mikuproject_ai_spec`、`mikuproject_state_from_draft`、`mikuproject_state_apply_patch` のようなアンダースコア区切りです。
+resource URI は `mikuproject://state/current`、`mikuproject://summary/{operationId}` などを使います。
+
+会話で明示する場合は、依頼に含めます。
+
+```text
+mikuproject、mcp-only でこの workbook を要約して
+```
+
+```text
+mikuproject、cli-only で WBS XLSX を出力して
+```
+
 ## 事前準備
 
 ### 1. workspace を揃える
@@ -40,7 +79,8 @@
 必要なのは次です。
 
 - `skills/mikuproject`
-- `vendor/mikuproject`
+- `skills/mikuproject/runtime/mikuproject.jar`
+- `skills/mikuproject/runtime/mikuproject.mjs`
 
 `skills/` だけでは不足します。
 
@@ -59,7 +99,8 @@ bundle/mikuproject-skills/
   skills/
     mikuproject/
       runtime/
-        mikuproject-cli-bundle/
+        mikuproject.jar
+        mikuproject.mjs
 ```
 
 その中身を skill home にコピーします。
@@ -73,7 +114,7 @@ npm run build:bundle:zip
 生成先:
 
 ```text
-bundle/mikuproject-skills-YYYYMMDD.zip
+bundle/igapyon-mikuproject-skills-<version>.zip
 ```
 
 詳しくは [skill-installation.md](./skill-installation.md) を参照してください。
@@ -218,8 +259,11 @@ spec を出して
 
 期待すること:
 
+- エージェントが必要に応じて `project_overview_view` / `task_edit_view` / `phase_detail_view` を内部で使う
 - エージェントが内部で `Patch JSON` を作る
+- それを `mikuproject ai validate-patch` で検査する
 - それを `mikuproject` に内部で適用する
+- 必要に応じて `mikuproject state diff` で変更点を確認する
 - ユーザーには更新後の内容だけを返す
 
 外部で作った `Patch JSON` を適用するときは、次のように依頼します。
@@ -274,12 +318,19 @@ Excelガントが欲しい
 
 ## `mikuproject` CLI でできること
 
-bundle 配布物では `skills/mikuproject/runtime/mikuproject-cli-bundle` 側の self-contained CLI bundle が使えます。
-開発元リポジトリでは `vendor/mikuproject` 側にあります。
+bundle 配布物では `skills/mikuproject` 配下に runtime artifact が入ります。
+通常の参照元は bundle 内の `skills/mikuproject/runtime/mikuproject.jar` と
+`skills/mikuproject/runtime/mikuproject.mjs` です。
 
 ```text
 mikuproject ai spec
+mikuproject ai export project-overview
+mikuproject ai export task-edit
+mikuproject ai export phase-detail
+mikuproject ai validate-patch
 mikuproject state from-draft
+mikuproject state summarize
+mikuproject state diff
 mikuproject state apply-patch
 mikuproject export workbook-json
 mikuproject export xml
@@ -302,8 +353,8 @@ mikuproject report mermaid
 つまり:
 
 1. `spec` や workbook は通常は画面に出さない
-2. エージェントが内部で `project_draft_view` や `Patch JSON` を作る
-3. その JSON を `mikuproject` 側に戻す
+2. 新規作成では `project_draft_view` を、既存修正では局所 projection と `Patch JSON` を内部で使う
+3. 既存修正では `project-overview -> task-edit / phase-detail -> validate -> apply -> diff` を優先する
 4. 必要な最終結果だけを画面に出す
 
 実行環境がこれに対応できない場合だけ、handoff 型にフォールバックします。

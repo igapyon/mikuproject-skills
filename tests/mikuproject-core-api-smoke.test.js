@@ -1,121 +1,133 @@
-// @vitest-environment jsdom
-
-import { readFileSync } from "node:fs";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import { loadMikuprojectCoreApi } from "../vendor/mikuproject/scripts/lib/core-api-loader.mjs";
-
 const ROOT = process.cwd();
-const dependencyXml = readFileSync(path.resolve(ROOT, "vendor/mikuproject/testdata/dependency.xml"), "utf8");
+const nodeRuntimePath = path.resolve(ROOT, "skills/mikuproject/runtime/mikuproject.mjs");
+const javaRuntimePath = path.resolve(ROOT, "skills/mikuproject/runtime/mikuproject.jar");
 
-function bootModules() {
-  return loadMikuprojectCoreApi({
-    rootDir: path.resolve(ROOT, "vendor/mikuproject")
-  });
-}
-
-describe("mikuproject core api smoke", () => {
-  let loaded = null;
+describe("mikuproject runtime artifact smoke", () => {
+  const tempDirs = [];
 
   afterEach(() => {
-    loaded?.dispose();
-    loaded = null;
+    while (tempDirs.length > 0) {
+      fs.rmSync(tempDirs.pop(), { recursive: true, force: true });
+    }
   });
 
-  it("supports spec, draft, patch, workbook, xlsx, and report flows", () => {
-    loaded = bootModules();
-    const { api } = loaded;
+  it("supports spec, draft import, state summary, report bundle, and Java AI exports", () => {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "mikuproject-runtime-test-"));
+    tempDirs.push(tempRoot);
 
-    const spec = api.getAiJsonSpec();
-    expect(spec.id).toBe("mikuproject-ai-json-spec");
-    expect(spec.text).toContain("# mikuproject AI JSON Prompt / Spec");
+    const draftPath = path.resolve(tempRoot, "draft.editjson");
+    const workbookPath = path.resolve(tempRoot, "workbook.json");
+    const reportPath = path.resolve(tempRoot, "report-bundle.zip");
+    fs.writeFileSync(draftPath, `${JSON.stringify(buildDraft(), null, 2)}\n`, "utf8");
 
-    const draftResult = api.importAiJsonDocument({
-      view_type: "project_draft_view",
-      project: {
-        name: "Smoke Draft",
-        planned_start: "2026-04-01"
-      },
-      tasks: [
-        {
-          uid: "draft-1",
-          name: "開始",
-          parent_uid: null,
-          position: 0,
-          is_milestone: true,
-          planned_start: "2026-04-01",
-          planned_finish: "2026-04-01"
-        }
-      ],
-      resources: [],
-      assignments: []
+    const nodeSpec = execFileSync("node", [nodeRuntimePath, "ai", "spec"], {
+      cwd: tempRoot,
+      encoding: "utf8"
     });
-    expect(draftResult.kind).toBe("project_draft_view");
-    expect(draftResult.mode).toBe("replace");
+    expect(nodeSpec).toContain("# mikuproject AI JSON Prompt / Spec");
 
-    const workbook = api.workbookJson.exportDocument(draftResult.model);
-    expect(workbook.format).toBe("mikuproject_workbook_json");
-
-    const baseModel = api.msProject.importFromXml(dependencyXml);
-    const patchResult = api.importAiJsonDocument({
-      operations: [
-        {
-          op: "update_project",
-          fields: {
-            name: "Smoke Patch"
-          }
-        }
-      ]
-    }, { baseModel });
-    expect(patchResult.kind).toBe("patch_json");
-    expect(patchResult.mode).toBe("patch");
-    expect(patchResult.model.project.name).toBe("Smoke Patch");
-
-    const xlsxWorkbook = api.xlsx.exportWorkbook(baseModel);
-    xlsxWorkbook.sheets
-      .find((sheet) => sheet.name === "Project")
-      .rows.find((row) => row.cells[0]?.value === "Name")
-      .cells[1].value = "Smoke Xlsx";
-
-    const xlsxBytes = api.xlsx.encodeWorkbook(xlsxWorkbook);
-    const xlsxReplace = api.importExternal({
-      source: { format: "xlsx", bytes: xlsxBytes },
-      mode: "replace"
+    execFileSync("node", [
+      nodeRuntimePath,
+      "state",
+      "from-draft",
+      "--in",
+      draftPath,
+      "--out",
+      workbookPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
     });
-    const xlsxMerge = api.importExternal({
-      source: { format: "xlsx", bytes: xlsxBytes },
-      mode: "merge",
-      baseModel
+    expect(fs.existsSync(workbookPath)).toBe(true);
+
+    const summary = execFileSync("node", [
+      nodeRuntimePath,
+      "state",
+      "summarize",
+      "--in",
+      workbookPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
     });
+    expect(summary).toContain("Runtime Artifact Smoke");
 
-    expect(xlsxBytes).toBeInstanceOf(Uint8Array);
-    expect(xlsxReplace.kind).toBe("xlsx");
-    expect(xlsxReplace.mode).toBe("replace");
-    expect(xlsxReplace.model.project.name).toBe("Smoke Xlsx");
-    expect(xlsxMerge.kind).toBe("xlsx");
-    expect(xlsxMerge.mode).toBe("merge");
-    expect(Array.isArray(xlsxMerge.changes)).toBe(true);
-
-    const wbsWorkbook = api.report.wbsXlsx.exportWorkbook(baseModel, {
-      displayDaysBeforeBaseDate: 1,
-      displayDaysAfterBaseDate: 2
+    execFileSync("node", [
+      nodeRuntimePath,
+      "report",
+      "all",
+      "--in",
+      workbookPath,
+      "--out",
+      reportPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
     });
-    const wbsBytes = api.report.wbsXlsx.exportBytes(baseModel);
-    const dailySvg = api.report.svg.exportDaily(baseModel, { labelMode: "list" });
-    const weeklySvg = api.report.svg.exportWeekly(baseModel);
-    const monthlyCalendar = api.report.svg.exportMonthlyCalendar(baseModel);
-    const wbsMarkdown = api.report.wbsMarkdown.export(baseModel);
-    const mermaidText = api.report.mermaid.exportGantt(baseModel);
+    expect(fs.statSync(reportPath).size).toBeGreaterThan(0);
 
-    expect(wbsWorkbook.sheets.length).toBeGreaterThan(0);
-    expect(wbsBytes).toBeInstanceOf(Uint8Array);
-    expect(dailySvg).toContain("<svg");
-    expect(weeklySvg).toContain("<svg");
-    expect(monthlyCalendar.entries.length).toBeGreaterThan(0);
-    expect(monthlyCalendar.zipBytes).toBeInstanceOf(Uint8Array);
-    expect(wbsMarkdown).toContain("# WBS テーブル");
-    expect(mermaidText).toContain("gantt");
+    const javaSpec = execFileSync("java", ["-jar", javaRuntimePath, "ai", "spec"], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    expect(javaSpec).toContain("# mikuproject AI JSON Prompt / Spec");
+
+    const javaBundle = execFileSync("java", [
+      "-jar",
+      javaRuntimePath,
+      "ai",
+      "export",
+      "bundle",
+      "--in",
+      workbookPath
+    ], {
+      cwd: tempRoot,
+      encoding: "utf8"
+    });
+    const parsedJavaBundle = JSON.parse(javaBundle);
+    expect(parsedJavaBundle.view_type).toBe("ai_projection_bundle");
+    expect(parsedJavaBundle.project_overview_view.project.name).toBe("Runtime Artifact Smoke");
+    expect(Array.isArray(parsedJavaBundle.phase_detail_views_full)).toBe(true);
+    expect(Array.isArray(parsedJavaBundle.task_edit_views_full)).toBe(true);
   });
 });
+
+function buildDraft() {
+  return {
+    view_type: "project_draft_view",
+    project: {
+      name: "Runtime Artifact Smoke",
+      planned_start: "2026-04-01",
+      planned_finish: "2026-04-03"
+    },
+    tasks: [
+      {
+        uid: "draft-1",
+        name: "Kickoff",
+        parent_uid: null,
+        position: 0,
+        is_milestone: true,
+        planned_start: "2026-04-01",
+        planned_finish: "2026-04-01"
+      },
+      {
+        uid: "draft-2",
+        name: "Implementation",
+        parent_uid: null,
+        position: 1,
+        planned_start: "2026-04-02",
+        planned_finish: "2026-04-03",
+        predecessor_uids: ["draft-1"]
+      }
+    ],
+    resources: [],
+    assignments: []
+  };
+}

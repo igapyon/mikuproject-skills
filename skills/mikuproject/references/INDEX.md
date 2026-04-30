@@ -24,6 +24,12 @@ Use this index when you need detailed guidance beyond the core rules in `SKILL.m
 - [workflow/output-location-rules.md](workflow/output-location-rules.md)
   - default output paths
   - file naming
+- [workflow/wbs-review.md](workflow/wbs-review.md)
+  - existing WBS review workflow
+  - review-to-patch flow
+- [workflow/schedule-adjustment.md](workflow/schedule-adjustment.md)
+  - schedule compression and task split workflow
+  - schedule adjustment patch flow
 
 ## I/O
 
@@ -46,3 +52,14 @@ Use this index when you need detailed guidance beyond the core rules in `SKILL.m
 
 - [examples/file-workflow-examples.md](examples/file-workflow-examples.md)
   - short `xml/xlsx/workbook` import/export examples
+
+## Prompts
+
+- [prompts/new-wbs-draft.md](prompts/new-wbs-draft.md)
+  - new `project_draft_view` WBS draft prompt
+- [prompts/existing-wbs-review.md](prompts/existing-wbs-review.md)
+  - existing WBS review prompt for projections
+- [prompts/schedule-compression.md](prompts/schedule-compression.md)
+  - schedule tightening prompt for existing WBS projections
+- [prompts/patch-request.md](prompts/patch-request.md)
+  - focused `Patch JSON` request prompt

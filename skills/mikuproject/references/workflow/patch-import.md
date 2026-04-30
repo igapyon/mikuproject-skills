@@ -5,13 +5,16 @@ Use this reference when the user provides AI output that should be treated as `P
 ## Base State Requirement
 
 `Patch JSON` cannot be applied by itself.
-Require an existing `mikuproject_workbook_json` and rebuild a base `ProjectModel` from it first.
+Require an existing `mikuproject_workbook_json` as the base state.
 
-Use:
+Show the Java runtime path first:
 
-- `globalThis.__mikuprojectCoreApi.workbookJson.importAsProjectModel(documentLike)`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai validate-patch --state workbook.json --in patch.editjson`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state apply-patch --state workbook.json --in patch.editjson --out workbook.next.json`
 
-to create the base model from the current workbook state.
+Node.js runtime example:
+
+- `node skills/mikuproject/runtime/mikuproject.mjs state apply-patch --state workbook.json --in patch.editjson --out workbook.next.json`
 
 ## Acceptance Rule
 
@@ -20,13 +23,9 @@ Accept either:
 - raw JSON text
 - a full LLM response that ends with a `json` fenced block
 
-Prefer:
+For validation through the Node.js runtime:
 
-- `globalThis.__mikuprojectCoreApi.importAiJsonText(sourceText, { baseModel })`
-
-or, if the document is already parsed:
-
-- `globalThis.__mikuprojectCoreApi.importAiJsonDocument(documentLike, { baseModel })`
+- `node skills/mikuproject/runtime/mikuproject.mjs ai validate-patch --state workbook.json --in patch.editjson`
 
 ## Required Kind
 
@@ -38,18 +37,17 @@ If the detected kind is:
 - `workbook_json`: reject it and treat it as a workbook flow
 - `undefined`: return a hard error
 
-If `baseModel` is missing, return a hard error.
+If the base workbook state is missing, return a hard error.
 
 ## Processing Flow
 
 1. Require current workbook state
-2. Import workbook JSON as a base `ProjectModel`
+2. Keep the current workbook state as `workbook.json`
 3. Parse source text and detect kind
-4. Apply the patch through the core API with `baseModel`
-5. Confirm the result mode is `patch`
-6. Export the resulting model with `__mikuprojectCoreApi.workbookJson.exportDocument()`
-7. keep the updated workbook JSON in internal state when possible
-8. only return raw workbook JSON when the user explicitly wants the raw state, or when the host runtime requires fallback display
+4. Validate the patch with the runtime CLI when useful
+5. Apply the patch through the runtime CLI
+6. Keep the updated workbook JSON in internal state when possible
+7. Only return raw workbook JSON when the user explicitly wants the raw state, or when the host runtime requires fallback display
 
 ## Dependency Operations
 

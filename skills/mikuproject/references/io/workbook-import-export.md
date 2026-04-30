@@ -4,14 +4,15 @@ Use this reference when the user wants file-style import/export around `mikuproj
 
 This is different from the conversational handoff use case because the focus here is primary file workflow.
 
-## Upstream API
+## Runtime Commands
 
-Prefer these functions:
+Prefer the bundled runtime CLI commands:
 
-- `__mikuprojectCoreApi.workbookJson.exportDocument(model)`
-- `__mikuprojectCoreApi.workbookJson.importAsProjectModel(documentLike)`
-- `__mikuprojectCoreApi.workbookJson.importIntoProjectModel(documentLike, baseModel)`
-- `__mikuprojectCoreApi.workbookJson.validateDocument(documentLike)`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state validate --in workbook.json`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state import --in workbook.json --out workbook.normalized.json`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state merge --state workbook.json --in workbook.patch.json --out workbook.next.json`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar export workbook-json --in workbook.json --out workbook.normalized.json`
+- `node skills/mikuproject/runtime/mikuproject.mjs export workbook-json --in workbook.json --out workbook.normalized.json`
 
 ## `workbook-import`
 
@@ -23,8 +24,8 @@ Processing order:
 
 1. accept workbook JSON
 2. validate it when useful
-3. import it with `workbookJson.importAsProjectModel`
-4. export it again with `workbookJson.exportDocument`
+3. import it with the runtime CLI
+4. export or keep the normalized workbook JSON
 5. return the normalized `mikuproject_workbook_json`
 
 Response shape:
@@ -43,8 +44,8 @@ Processing order:
 
 1. require the current workbook state
 2. rebuild `baseModel` from the current state
-3. call `workbookJson.importIntoProjectModel(documentLike, baseModel)`
-4. export the resulting model with `workbookJson.exportDocument`
+3. call the runtime merge command
+4. export or keep the updated workbook JSON
 5. return the updated `mikuproject_workbook_json`
 
 Response shape:
@@ -63,8 +64,7 @@ Purpose:
 Processing order:
 
 1. require the current state
-2. if needed, rebuild `ProjectModel`
-3. export it with `workbookJson.exportDocument`
+2. normalize it with the runtime CLI when needed
 4. return the resulting `mikuproject_workbook_json`
 
 Response shape:

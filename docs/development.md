@@ -10,19 +10,68 @@
 - skill 配置手順: [skill-installation.md](./skill-installation.md)
 - ファイル入出力: [file-import-export.md](./file-import-export.md)
 - レポート出力: [report-export.md](./report-export.md)
+- MCP backend 利用設定: [mcp-backend-setup.md](./mcp-backend-setup.md)
+- backend switching 手動テスト: [backend-switching-manual-test.md](./backend-switching-manual-test.md)
+- miku software 共通 overview: [miku-soft-00-overview-design-v20260427.md](./miku-soft-00-overview-design-v20260427.md)
+- upstream MCP tool surface 連絡メモ: [upstream-mikuproject-mcp-tool-surface-note.md](./upstream-mikuproject-mcp-tool-surface-note.md)
+- upstream Java CLI 変更依頼（完了）: [upstream-mikuproject-java-cli-request.md](./upstream-mikuproject-java-cli-request.md)
+- upstream Java `ai export bundle` 追加依頼（完了）: [upstream-mikuproject-java-ai-export-bundle-request.md](./upstream-mikuproject-java-ai-export-bundle-request.md)
+- miku MCP server 共通設計: [miku-soft-50-mcp-design-v20260426.md](./miku-soft-50-mcp-design-v20260426.md)
 - 実装 TODO: [../TODO.md](../TODO.md)
 
-## subtree 運用
+## upstream runtime artifact 運用
 
-`mikuproject` は `vendor/mikuproject/` に `git subtree` で取り込んでいます。
+`mikuproject-skills` は、通常の skill 実行時に upstream source tree を直接使わず、
+`skills/mikuproject/runtime/` に置いた runtime artifact を使います。
 
-運用方針:
+現在の必須 runtime artifact:
 
-- `vendor/mikuproject/` は、できるだけ upstream をそのまま受信する場所として扱う
-- このリポジトリ固有の都合で `vendor/mikuproject/` のソースを常用的に書き換えない
-- skill 側や bundle 側の都合は、まず `skills/` や root 側の文書・補助コードで吸収する
-- `subtree pull` で競合した場合は、原則として upstream 側を優先して解消する
-- `vendor/mikuproject/` に local 修正を入れる場合は、次回同期で競合しやすくなることを理解したうえで、例外として扱う
+- `skills/mikuproject/runtime/mikuproject.jar`
+- `skills/mikuproject/runtime/mikuproject-sources.jar`
+- `skills/mikuproject/runtime/mikuproject.mjs`
+- `skills/mikuproject/runtime/mikuproject-sources.tgz`
+
+更新時は upstream 側で artifact を生成して、該当する runtime artifact を差し替えます。
+Java runtime 更新時は `mikuproject.jar` と `mikuproject-sources.jar` を差し替えます。
+Node.js runtime 更新時は `mikuproject.mjs` と `mikuproject-sources.tgz` を差し替えます。
+upstream source tree をこのリポジトリに同期する運用は通常不要です。
+
+このリポジトリで一時的に upstream を取得して artifact を更新する場合は、
+repo 直下の `workplace/` を使います。`workplace/` はローカル作業用であり、
+通常の内容は Git 管理しません。
+
+## バージョン更新
+
+`mikuproject-skills` の package version は `package.json` と
+`package-lock.json` で管理します。
+
+更新には `npm version` を使います。
+Git tag は別途作成するため、通常は `--no-git-tag-version` を付けます。
+
+例:
+
+```bash
+npm version 0.8.1 --no-git-tag-version
+```
+
+`package.json` と `package-lock.json` では npm の SemVer として `0.8.1`
+のように記録します。Git tag やリリース名として `v0.8.1` を使う場合でも、
+package version には先頭の `v` を付けません。
+
+更新後は次で root package version が揃っていることを確認します。
+
+```bash
+node -e 'const p=require("./package.json"); const l=require("./package-lock.json"); console.log({package:p.version, lock:l.version, root:l.packages[""].version})'
+```
+
+同梱 CLI runtime の version は `mikuproject-skills` の package version とは別です。
+runtime artifact を差し替えた場合、または release note で runtime version を書く場合は、
+次で確認します。
+
+```bash
+java -jar skills/mikuproject/runtime/mikuproject.jar --version
+node skills/mikuproject/runtime/mikuproject.mjs --version
+```
 
 ## 生成物の配置方針
 
@@ -54,17 +103,146 @@ mikuproject/
 - `202604082215-weekly.svg`
 - `202604082215-patch.json`
 
-取得:
+推奨更新手順:
 
 ```bash
-git fetch https://github.com/igapyon/mikuproject.git devel
+npm run update:runtime
 ```
 
-同期:
+フルビルドや runtime artifact 更新を行う前には、`workplace/upstream/` 以下の
+`mikuproject` と `mikuproject-java` について、最新 clone または pull が必要かを確認します。
+未取得または古い可能性がある場合は、先に upstream を更新してから artifact 生成と bundle build を行います。
+
+このコマンドは次を行います。
+
+- `workplace/upstream/mikuproject` に `mikuproject` を clone または更新する
+- `workplace/upstream/mikuproject-java` に `mikuproject-java` を clone または更新する
+- Node.js 側で `bundle/mikuproject.mjs` を生成する
+- Node.js 側で `bundle/mikuproject-sources.tgz` を生成する
+- Java 側で `target/mikuproject.jar` を生成する
+- Java 側で `target/mikuproject-sources.jar` を生成する
+- 生成物を `skills/mikuproject/runtime/` にコピーする
+- コピー後の `mikuproject.jar` と `mikuproject.mjs` を smoke test する
+
+既定の取得元と ref:
+
+- `mikuproject`: `https://github.com/igapyon/mikuproject.git` の `devel`
+- `mikuproject-java`: `https://github.com/igapyon/mikuproject-java.git` の `devel`
+
+必要に応じて環境変数で変更できます。
 
 ```bash
-git subtree pull --prefix=vendor/mikuproject https://github.com/igapyon/mikuproject.git devel
+MIKUPROJECT_REF=main MIKUPROJECT_JAVA_REF=main npm run update:runtime
 ```
+
+## Execution backend policy の保守方針
+
+`mikuproject-skills` は Agent Skill workflow layer として保守します。
+実行面は backend policy によって CLI backend、MCP backend、handoff backend を選べるようにします。
+
+既定値:
+
+- 明示 policy がない場合は `cli-preferred`
+
+skill-local 設定:
+
+- `skills/mikuproject/config/backend-policy.json`
+- bundle に同梱し、既定 policy、許可 policy、strict policy、fallback 可否を機械可読に記録する
+- 優先順位は `user-request`、`environment-policy`、`skill-config`、`repository-default`
+- ユーザー明示指示や実行環境 policy と衝突する場合、設定ファイル側を優先しない
+
+policy selector:
+
+- `skills/mikuproject/lib/backend-policy.mjs`
+- CLI や MCP を実行せず、policy と operation capability から実行 backend の候補を決める純粋 helper として扱う
+- 実際の backend runner が追加される場合も、この helper の strict policy / fallback contract を崩さない
+
+backend operation registry:
+
+- `skills/mikuproject/lib/backend-operations.mjs`
+- Agent Skill operation から CLI invocation と MCP tool 名を引くための小さな registry として扱う
+- CLI invocation builder は command / args を返すだけで、CLI process は実行しない
+- MCP tool 名が `null` の operation は、現行 MCP backend では未対応として扱う
+
+policy 値:
+
+- `cli-only`: CLI backend だけを使い、MCP fallback しない
+- `cli-preferred`: CLI backend を先に使い、許可されている場合だけ MCP fallback する
+- `mcp-only`: MCP backend だけを使い、CLI fallback しない
+- `mcp-preferred`: MCP backend を先に使い、許可されている場合だけ CLI fallback する
+- `handoff-only`: backend 実行をせず、visible handoff だけを返す
+
+保守時の注意:
+
+- `cli-only` と `mcp-only` は strict policy として扱う
+- strict policy では別 backend の探索や自動 fallback を追加しない
+- `handoff-only` では CLI command も MCP tool も呼ばない
+- fallback を実装または変更した場合は、source backend、target backend、理由を diagnostics に残す
+- MCP backend の tool / resource contract は MCP server layer 側に置き、Agent Skill 側で再定義しない
+- CLI backend と MCP backend で artifact role と operation vocabulary を変えない
+
+検証対象:
+
+- `cli-only` で MCP fallback しないこと
+- `mcp-only` で CLI fallback しないこと
+- `cli-preferred` で CLI が使えない場合、許可された MCP fallback だけが起きること
+- `mcp-preferred` で MCP が使えない場合、許可された CLI fallback だけが起きること
+- `handoff-only` で backend 実行が起きないこと
+- import / export / report 系でも同じ backend policy が適用されること
+- fallback diagnostics が簡潔に返ること
+
+## 現行 MCP backend 参照
+
+MCP backend の参照実装は `workplace/mikuproject-mcp-devel` の
+`mikuproject-mcp` です。
+
+`mikuproject-mcp` 側で確認する contract:
+
+- `contract/runtime-cli-mapping.md`
+- `contract/resources/resource-uris.md`
+- `contract/results/artifact-roles.md`
+- `contract/tools/*.schema.json`
+
+現行 tool 名は upstream CLI command tree から導出されたアンダースコア区切りです。
+
+例:
+
+- `mikuproject_ai_spec`
+- `mikuproject_ai_detect_kind`
+- `mikuproject_state_from_draft`
+- `mikuproject_ai_export_project_overview`
+- `mikuproject_ai_export_task_edit`
+- `mikuproject_ai_export_phase_detail`
+- `mikuproject_ai_validate_patch`
+- `mikuproject_state_apply_patch`
+- `mikuproject_state_diff`
+- `mikuproject_state_summarize`
+- `mikuproject_export_workbook_json`
+- `mikuproject_export_xml`
+- `mikuproject_export_xlsx`
+- `mikuproject_import_xlsx`
+- `mikuproject_report_wbs_markdown`
+- `mikuproject_report_mermaid`
+- `mikuproject_report_wbs_xlsx`
+- `mikuproject_report_daily_svg`
+- `mikuproject_report_weekly_svg`
+- `mikuproject_report_monthly_calendar_svg`
+- `mikuproject_report_all`
+
+Agent Skill 側の docs で MCP tool 名を書く場合は、このアンダースコア区切り名を使います。
+旧ドット区切り名に戻しません。
+
+現行 resource URI の代表例:
+
+- `mikuproject://spec/ai-json`
+- `mikuproject://state/current`
+- `mikuproject://state/{name}`
+- `mikuproject://export/workbook-json`
+- `mikuproject://projection/{name}`
+- `mikuproject://report/wbs-markdown`
+- `mikuproject://report/mermaid`
+- `mikuproject://summary/{operationId}`
+- `mikuproject://diagnostics/{operationId}`
 
 ## テスト
 
@@ -79,31 +257,25 @@ npm test
 
 - `tests/**/*.test.js`
 
-upstream 側 test は必要時だけ明示的に実行します。
-
-```bash
-npm run test:upstream
-```
-
-ただし運用上は、`vendor/mikuproject/` 全体をこのリポジトリ側で常に検証対象にすることを主目的とはしません。
+upstream 側 test は upstream 各リポジトリで実行します。
+このリポジトリでは、受け取った runtime artifact の存在と CLI contract を smoke test で確認します。
 
 - このリポジトリで重視するのは、skill 側の動作確認と最低限の smoke test
 - upstream `mikuproject` 自体の詳細な検証は、まず upstream 側で行われる前提とする
-- `vendor/mikuproject/tests/**/*.test.js` を毎回必須で回すかどうかは、変更範囲に応じて判断する
-- `vendor/mikuproject/` を単に同期しただけの場合は、upstream 全体テストをこのリポジトリで必須にしない
+- runtime artifact を差し替えた場合は `npm test` と `npm run build:bundle` を実行する
 
-## 既知メモ: CLI 速度
+## 既知メモ: upstream CLI 速度
 
-現状の `mikuproject-cli-bundle` は、軽い処理でも CLI を毎回起動する固定費が目立ちます。
+upstream 側の CLI runtime artifact は、軽い処理でも CLI を毎回起動する固定費が目立つことがあります。
 
 - 簡易計測では、CLI 1 回あたりがおおむね 1 秒前後
 - 同じ条件の in-process 計測では、個別の import / patch / export 自体は数 ms から数十 ms 程度
 
 そのため、現時点では「JSON 処理そのもの」よりも、「CLI を毎回 spawn する構造」のほうが支配的に遅い可能性が高いです。
-ただし、現時点ではこの速度改善対応をこのリポジトリの作業対象には含めません。
+ただし、この repo の skill bundle は runtime artifact 同梱を基本とし、この速度改善対応自体は作業対象に含めません。
 
 ## 現在の MVP の前提
 
 - skill は `skills/mikuproject` にある
 - 会話境界の state は `mikuproject_workbook_json`
-- upstream の stable API と unified core API を前提にしている
+- upstream の Java CLI runtime artifact と Node.js CLI runtime artifact を前提にしている

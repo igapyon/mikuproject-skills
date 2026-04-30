@@ -29,55 +29,47 @@
 - report 出力は通常 export 先であり、会話境界の state そのものではありません
 - 複数成果物が欲しい場合は `report all` を優先できます
 
-## 利用できる upstream API
+## 利用できる upstream runtime
 
-主要な入口は `globalThis.__mikuprojectCoreApi.report` です。
+主要な入口は `skills/mikuproject/runtime/` の CLI runtime artifact です。
+生成AI向けの例では、Java runtime の例を先に示し、続けて Node.js runtime の例を示します。
 
-- `report.all.export`
-- `report.wbsXlsx.exportWorkbook`
-- `report.wbsXlsx.exportBytes`
-- `report.svg.exportDaily`
-- `report.svg.exportWeekly`
-- `report.svg.exportMonthlyCalendar`
-- `report.wbsMarkdown.export`
-- `report.mermaid.exportGantt`
+- Java runtime: `report all`, `report dir`, `report wbs-xlsx`, `report daily-svg`, `report weekly-svg`, `report monthly-calendar-svg`, `report wbs-markdown`, `report mermaid`
+- Node.js runtime: `report all`, `report wbs-xlsx`, `report daily-svg`, `report weekly-svg`, `report monthly-calendar-svg`, `report wbs-markdown`, `report mermaid`
 
 ## `WBS XLSX`
 
-- `report.wbsXlsx.exportWorkbook` で workbook-like object を生成できます
-- `report.wbsXlsx.exportBytes` で `.xlsx` bytes を直接得られます
+- runtime CLI で `WBS XLSX` artifact を生成します
 - 祝日や表示期間に関する option を指定できます
 
 ## `SVG`
 
 ### Daily SVG
 
-- `report.svg.exportDaily` で daily SVG 文字列を生成します
+- runtime CLI で daily SVG 文字列または file artifact を生成します
 
 ### Weekly SVG
 
-- `report.svg.exportWeekly` で weekly SVG 文字列を生成します
+- runtime CLI で weekly SVG 文字列または file artifact を生成します
 
 ### Monthly Calendar SVG
 
-- `report.svg.exportMonthlyCalendar` は次を返します
-  - `entries`: 月別 SVG の配列
-  - `zipBytes`: 月別 SVG 一式の ZIP
+- runtime CLI は月別 SVG 一式を ZIP などの file artifact として生成します
 
 ## `WBS Markdown`
 
-- `report.wbsMarkdown.export` で Markdown 文字列を生成します
+- runtime CLI で Markdown 文字列または file artifact を生成します
 - `WBS XLSX` と近い表示オプションを使えます
 
 ## `Mermaid`
 
-- `report.mermaid.exportGantt` で Mermaid gantt text を生成します
+- runtime CLI で Mermaid gantt text を生成します
 - fenced Markdown ではなく、Mermaid 本文を返す前提です
 
 ## report bundle
 
-- `report.all.export` は report 一式をまとめて返します
-- 返り値には `entries` と `zipBytes` が含まれます
+- `report all` は report 一式をまとめて返します
+- 返り値は ZIP file artifact として扱います
 - 少なくとも `wbs.xlsx`、`wbs.md`、`mermaid.mmd`、`daily.svg`、`weekly.svg`、月次 SVG 群を含められます
 
 ## 代表的な操作

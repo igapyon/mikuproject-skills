@@ -18,10 +18,36 @@ Use this reference when the skill is already active and you need follow-up handl
 - do not ask the user to manually pass generated JSON back into the same active skill flow
 - do not answer a WBS request with only a plain Markdown table when `mikuproject` can handle it cleanly
 
+## Backend Policy Discipline
+
+- default to `cli-preferred` when no user or environment policy says otherwise
+- treat `SKILL.md` and files under `references/` as the normative agent-facing instructions
+- treat skill-local configuration files as machine-readable mirrors for tooling, lower priority than explicit user instructions, environment policy, and the Markdown instructions
+- treat exact policy values in the current user request as an explicit backend policy: `cli-only`, `cli-preferred`, `mcp-only`, `mcp-preferred`, or `handoff-only`
+- accept simple surrounding wording such as `で`, `として`, `固定`, `only`, `preferred`, or `fallbackなし` when the policy value itself is exact
+- the latest explicit user policy in the active request wins over the repository default
+- do not infer a strict policy from backend names alone; `MCP でも使える?` is a capability question, not `mcp-only`
+- if multiple policy values appear in the same request and one is not clearly negated, ask which policy to use before executing
+- under `cli-only`, do not inspect or call MCP tools as an automatic fallback
+- under `mcp-only`, do not inspect or run CLI runtime artifacts as an automatic fallback
+- under `handoff-only`, do not run CLI commands or MCP tools
+- under `cli-preferred` or `mcp-preferred`, fallback only when the active policy and environment allow it
+- if fallback happens, report which backend failed, which backend was used, and the concise reason
+- if a strict backend policy blocks the only available implementation, stop with a hard execution-path error instead of silently switching backend
+- do not use backend fallback to change artifact roles, operation names, or the workbook-oriented flow
+
 ## Draft vs Patch
 
 - new WBS drafting: `project_draft_view`
 - existing plan revision: `Patch JSON`
+
+For existing plan revision, prefer this internal flow:
+
+- `project_overview_view` for entry
+- `task_edit_view` or `phase_detail_view` for local context
+- `Patch JSON` for the proposed change
+- validate before apply
+- diff after apply when change review matters
 
 When the user is starting a new WBS from rough requirements, do not switch to:
 

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "default_policy": "cli-preferred",
+  "allowed_policies": [
+    "cli-only",
+    "cli-preferred",
+    "mcp-only",
+    "mcp-preferred",
+    "handoff-only"
+  ],
+  "strict_policies": [
+    "cli-only",
+    "mcp-only",
+    "handoff-only"
+  ],
+  "precedence": [
+    "user-request",
+    "environment-policy",
+    "skill-config",
+    "repository-default"
+  ],
+  "fallback_allowed": {
+    "cli-only": false,
+    "cli-preferred": true,
+    "mcp-only": false,
+    "mcp-preferred": true,
+    "handoff-only": false
+  }
+}

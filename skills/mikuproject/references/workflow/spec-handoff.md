@@ -5,12 +5,12 @@ or when the host runtime cannot keep the spec internal.
 
 ## Retrieval Rule
 
-Prefer upstream API retrieval:
+Prefer upstream runtime retrieval:
 
-- `globalThis.__mikuprojectAiJsonSpec.getAiJsonSpecText()`
-- `globalThis.__mikuprojectAiJsonSpec.getAiJsonSpec()`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar ai spec`
+- `node skills/mikuproject/runtime/mikuproject.mjs ai spec`
 
-Use the markdown file directly only if the stable API is unavailable.
+Use bundled markdown or source-tree files directly only if the runtime artifacts are unavailable.
 
 ## Preferred Behavior
 
@@ -45,6 +45,15 @@ Use this after the spec text:
 Use this after handing off `mikuproject_workbook_json`:
 
 `次に与える mikuproject_workbook_json を受け取り、変更提案を Patch JSON 形式で返してください。`
+
+Use this only when workbook handoff is actually needed.
+For ordinary existing-WBS revision, prefer local projection handoff first.
+
+### For projection-based iterative editing
+
+Use this after handing off `project_overview_view`, `task_edit_view`, or `phase_detail_view`:
+
+`次に与える局所 projection JSON を受け取り、変更提案を Patch JSON 形式で返してください。`
 
 ### For patch-only correction
 

@@ -1,4 +1,6 @@
 node_modules/
 coverage/
 .DS_Store
+.vscode/mcp.json
 bundle/
+workplace/

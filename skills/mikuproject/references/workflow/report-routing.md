@@ -49,7 +49,8 @@ If the user asks for `SVG` without a clear time scale, ask briefly or make the s
 
 - require a current project state before running report exports
 - rebuild `ProjectModel` from `mikuproject_workbook_json` when needed
-- prefer `__mikuprojectCoreApi.report.*`
+- prefer the bundled runtime CLI report commands
+- treat the main artifact as stdout/file output and diagnostics as stderr side output
 - `WBS XLSX` is a report export and is not the same as structural workbook `XLSX`
 - name `WBS XLSX` artifacts with `wbs` in the filename; name structural workbook `XLSX` artifacts with `workbook`
 - `Mermaid` should be returned as gantt text unless the user asks for fenced Markdown

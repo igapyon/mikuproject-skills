@@ -9,13 +9,13 @@ Accept either:
 - raw JSON text
 - a full LLM response that ends with a `json` fenced block
 
-Prefer:
+Show the Java runtime path first:
 
-- `globalThis.__mikuprojectCoreApi.importAiJsonText(sourceText)`
+- `java -jar skills/mikuproject/runtime/mikuproject.jar state from-draft --in draft.editjson --out workbook.json`
 
-or, if the document is already parsed:
+Node.js runtime example:
 
-- `globalThis.__mikuprojectCoreApi.importAiJsonDocument(documentLike)`
+- `node skills/mikuproject/runtime/mikuproject.mjs state from-draft --in draft.editjson --out workbook.json`
 
 ## Required Kind
 
@@ -30,12 +30,10 @@ If the detected kind is:
 ## Processing Flow
 
 1. Parse source text and detect kind
-2. Import with the core API
+2. Import with the runtime CLI
 3. Confirm the result mode is `replace`
-4. Take the returned `ProjectModel`
-5. Export it with `__mikuprojectCoreApi.workbookJson.exportDocument()`
-6. keep the workbook JSON in internal state when possible
-7. only return raw workbook JSON when the user explicitly wants the raw state, or when the host runtime requires fallback display
+4. Keep the resulting workbook JSON in internal state when possible
+5. Only return raw workbook JSON when the user explicitly wants the raw state, or when the host runtime requires fallback display
 
 ## Dependency Encoding
 
