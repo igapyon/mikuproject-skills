@@ -6,9 +6,9 @@ Use this reference when the user wants to move between `MS Project XML` and the 
 
 Prefer the bundled runtime CLI commands:
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar validate xml --in project.xml`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export xml --in workbook.json --out project.xml`
-- `node skills/mikuproject/runtime/mikuproject.mjs export xml --in workbook.json --out project.xml`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar validate xml --in project.xml`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar export xml --in workbook.json --out project.xml`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs export xml --in workbook.json --out project.xml`
 
 ## `xml-import`
 

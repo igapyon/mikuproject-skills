@@ -26,14 +26,14 @@
 
 現在の必須 runtime artifact:
 
-- `skills/mikuproject/runtime/mikuproject.jar`
-- `skills/mikuproject/runtime/mikuproject-sources.jar`
-- `skills/mikuproject/runtime/mikuproject.mjs`
-- `skills/mikuproject/runtime/mikuproject-sources.tgz`
+- `skills/mikuproject/runtime/mikuproject-<version>.jar`
+- `skills/mikuproject/runtime/mikuproject-sources-<version>.jar`
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs`
+- `skills/mikuproject/runtime/mikuproject-sources-<version>.tgz`
 
 更新時は upstream 側で artifact を生成して、該当する runtime artifact を差し替えます。
-Java runtime 更新時は `mikuproject.jar` と `mikuproject-sources.jar` を差し替えます。
-Node.js runtime 更新時は `mikuproject.mjs` と `mikuproject-sources.tgz` を差し替えます。
+Java runtime 更新時は `mikuproject-<version>.jar` と `mikuproject-sources-<version>.jar` を差し替えます。
+Node.js runtime 更新時は `mikuproject-<version>.mjs` と `mikuproject-sources-<version>.tgz` を差し替えます。
 upstream source tree をこのリポジトリに同期する運用は通常不要です。
 
 このリポジトリで一時的に upstream を取得して artifact を更新する場合は、
@@ -69,8 +69,8 @@ runtime artifact を差し替えた場合、または release note で runtime v
 次で確認します。
 
 ```bash
-java -jar skills/mikuproject/runtime/mikuproject.jar --version
-node skills/mikuproject/runtime/mikuproject.mjs --version
+java -jar skills/mikuproject/runtime/mikuproject-<version>.jar --version
+node skills/mikuproject/runtime/mikuproject-<version>.mjs --version
 ```
 
 ## 生成物の配置方針
@@ -121,8 +121,8 @@ npm run update:runtime
 - Node.js 側で `bundle/mikuproject-sources.tgz` を生成する
 - Java 側で `target/mikuproject.jar` を生成する
 - Java 側で `target/mikuproject-sources.jar` を生成する
-- 生成物を `skills/mikuproject/runtime/` にコピーする
-- コピー後の `mikuproject.jar` と `mikuproject.mjs` を smoke test する
+- 生成物を version 付き名で `skills/mikuproject/runtime/` にコピーする
+- コピー後の `mikuproject-<version>.jar` と `mikuproject-<version>.mjs` を smoke test する
 
 既定の取得元と ref:
 
@@ -133,6 +133,14 @@ npm run update:runtime
 
 ```bash
 MIKUPROJECT_REF=main MIKUPROJECT_JAVA_REF=main npm run update:runtime
+```
+
+runtime artifact のファイル名 version は、既定では Node.js runtime の
+`--version` 出力から決めます。配布番号など別の version 付き名にしたい場合は
+`MIKUPROJECT_RUNTIME_VERSION` を指定します。
+
+```bash
+MIKUPROJECT_RUNTIME_VERSION=0.8.3.3 npm run update:runtime
 ```
 
 ## Execution backend policy の保守方針

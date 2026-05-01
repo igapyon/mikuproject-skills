@@ -97,29 +97,31 @@ MVP では、Agent Skill の会話境界における状態保持形式は
 
 MVP では、次の upstream runtime artifact を主要入口とする。
 
-- `skills/mikuproject/runtime/mikuproject.jar`
-- `skills/mikuproject/runtime/mikuproject.mjs`
+- `skills/mikuproject/runtime/mikuproject-<version>.jar`
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs`
+
+`<version>` は placeholder であり、実行時は `runtime/` 内の version 付き artifact を解決して使う。
 
 主に使う想定のコマンドは、生成AIに渡す例示で Java runtime が先に見えるように並べる。
 その後に Node.js runtime の例を示す。
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar ai spec`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar state from-draft`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar ai export project-overview`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar ai export task-edit`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar ai export phase-detail`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar ai validate-patch`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar state apply-patch`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export workbook-json`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar report all`
-- `node skills/mikuproject/runtime/mikuproject.mjs ai spec`
-- `node skills/mikuproject/runtime/mikuproject.mjs state from-draft`
-- `node skills/mikuproject/runtime/mikuproject.mjs ai export project-overview`
-- `node skills/mikuproject/runtime/mikuproject.mjs ai export task-edit`
-- `node skills/mikuproject/runtime/mikuproject.mjs ai export phase-detail`
-- `node skills/mikuproject/runtime/mikuproject.mjs ai validate-patch`
-- `node skills/mikuproject/runtime/mikuproject.mjs state apply-patch`
-- `node skills/mikuproject/runtime/mikuproject.mjs state diff`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar ai spec`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar state from-draft`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar ai export project-overview`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar ai export task-edit`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar ai export phase-detail`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar ai validate-patch`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar state apply-patch`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar export workbook-json`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar report all`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs ai spec`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs state from-draft`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs ai export project-overview`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs ai export task-edit`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs ai export phase-detail`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs ai validate-patch`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs state apply-patch`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs state diff`
 
 ## Execution Backend Policy
 

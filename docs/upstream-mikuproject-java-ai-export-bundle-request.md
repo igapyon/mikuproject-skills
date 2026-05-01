@@ -7,7 +7,7 @@ Status: fulfilled by upstream `mikuproject-java` commit `7c8fcf4`.
 
 確認済み:
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar --help` に `ai export bundle` が出る
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar --help` に `ai export bundle` が出る
 - `ai export bundle --in workbook.json` が `ai_projection_bundle` を返す
 - `--diagnostics text|json` が help に出る
 - `mikuproject-skills` 側 smoke test に Java `ai export bundle` の確認を追加済み
@@ -20,13 +20,13 @@ Status: fulfilled by upstream `mikuproject-java` commit `7c8fcf4`.
 Node.js runtime:
 
 ```bash
-node skills/mikuproject/runtime/mikuproject.mjs ai export bundle --in workbook.json --out bundle.editjson
+node skills/mikuproject/runtime/mikuproject-<version>.mjs ai export bundle --in workbook.json --out bundle.editjson
 ```
 
 依頼時点の Java runtime:
 
 ```bash
-java -jar skills/mikuproject/runtime/mikuproject.jar --help
+java -jar skills/mikuproject/runtime/mikuproject-<version>.jar --help
 ```
 
 `ai export project-overview`、`ai export task-edit`、`ai export phase-detail` はありますが、
@@ -116,8 +116,8 @@ Node.js runtime と同じ形を期待します。
 
 `mikuproject-java` 側で artifact を作成した後、`mikuproject-skills` 側では次を確認します。
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar --help` に `ai export bundle` が出る
-- `java -jar skills/mikuproject/runtime/mikuproject.jar ai export bundle --in workbook.json --out bundle.editjson` が実行できる
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar --help` に `ai export bundle` が出る
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar ai export bundle --in workbook.json --out bundle.editjson` が実行できる
 - 出力 JSON の `view_type` が `ai_projection_bundle` である
 - 出力 JSON に `project_overview_view` が含まれる
 - 出力 JSON に `phase_detail_views_full` が配列として含まれる
@@ -129,5 +129,5 @@ Node.js runtime と同じ形を期待します。
 
 - 先行依頼: `docs/upstream-mikuproject-java-cli-request.md`
 - 対応表: `skills/mikuproject/references/runtime/operations-map.md`
-- Node.js runtime help: `node skills/mikuproject/runtime/mikuproject.mjs --help`
-- Java runtime help: `java -jar skills/mikuproject/runtime/mikuproject.jar --help`
+- Node.js runtime help: `node skills/mikuproject/runtime/mikuproject-<version>.mjs --help`
+- Java runtime help: `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar --help`

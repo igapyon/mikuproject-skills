@@ -30,9 +30,12 @@
 skills/
   mikuproject/
     runtime/
-      mikuproject.jar
-      mikuproject.mjs
+      mikuproject-<version>.jar
+      mikuproject-<version>.mjs
 ```
+
+ここでの `<version>` は runtime artifact の version です。
+zip ファイル名の skill package version と一致するとは限りません。
 
 ## 先に結論
 
@@ -50,8 +53,8 @@ skills/
   skills/
     mikuproject/
       runtime/
-        mikuproject.jar
-        mikuproject.mjs
+        mikuproject-<version>.jar
+        mikuproject-<version>.mjs
 ```
 
 ## 手順
@@ -70,8 +73,10 @@ skills/
 必要なのは次です。
 
 - `skills/mikuproject`
-- `skills/mikuproject/runtime/mikuproject.jar`
-- `skills/mikuproject/runtime/mikuproject.mjs`
+- `skills/mikuproject/runtime/mikuproject-<version>.jar`
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs`
+
+`<version>` は実際に同梱されている runtime artifact の version に読み替えます。
 
 最終的な構成は次です。
 
@@ -80,8 +85,8 @@ skills/
   skills/
     mikuproject/
       runtime/
-        mikuproject.jar
-        mikuproject.mjs
+        mikuproject-<version>.jar
+        mikuproject-<version>.mjs
 ```
 
 この文書では、この `<skill-home>` をインストール先の配置ルートと呼びます。
@@ -93,8 +98,8 @@ skills/
 重要なのは次です。
 
 - 展開した `skills/mikuproject` を `<skill-home>/skills/mikuproject` に入れる
-- `skills/mikuproject/runtime/mikuproject.jar` も一緒に入ることを保つ
-- `skills/mikuproject/runtime/mikuproject.mjs` も一緒に入ることを保つ
+- `skills/mikuproject/runtime/mikuproject-<version>.jar` も一緒に入ることを保つ
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs` も一緒に入ることを保つ
 
 この bundle では、展開した `skills/` をそのまま `<skill-home>/` へコピーすれば足ります。
 
@@ -114,8 +119,8 @@ skill 一覧は起動時に読まれることがあります。
 ここで `mikuproject` が出ない場合は、まず次を確認します。
 
 - コピー先が skill home 直下になっているか
-- `skills/mikuproject/runtime/mikuproject.jar` があるか
-- `skills/mikuproject/runtime/mikuproject.mjs` があるか
+- `skills/mikuproject/runtime/mikuproject-<version>.jar` があるか
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs` があるか
 - 実行環境を再起動または再読込したか
 
 ## よくある間違い
@@ -145,8 +150,8 @@ skill 一覧は起動時に読まれることがあります。
   skills/
     mikuproject/
       runtime/
-        mikuproject.jar
-        mikuproject.mjs
+        mikuproject-<version>.jar
+        mikuproject-<version>.mjs
 ```
 
 ## インストール後の最初の試し方

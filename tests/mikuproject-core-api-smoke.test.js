@@ -5,9 +5,12 @@ import { execFileSync } from "node:child_process";
 
 import { afterEach, describe, expect, it } from "vitest";
 
+import { resolveRuntimeArtifactPath } from "../skills/mikuproject/lib/runtime-artifacts.mjs";
+
 const ROOT = process.cwd();
-const nodeRuntimePath = path.resolve(ROOT, "skills/mikuproject/runtime/mikuproject.mjs");
-const javaRuntimePath = path.resolve(ROOT, "skills/mikuproject/runtime/mikuproject.jar");
+const runtimeRoot = path.resolve(ROOT, "skills/mikuproject/runtime");
+const nodeRuntimePath = resolveRuntimeArtifactPath({ kind: "node", runtimeRoot });
+const javaRuntimePath = resolveRuntimeArtifactPath({ kind: "java", runtimeRoot });
 
 describe("mikuproject runtime artifact smoke", () => {
   const tempDirs = [];

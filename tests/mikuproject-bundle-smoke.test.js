@@ -5,24 +5,10 @@ import { execFileSync } from "node:child_process";
 
 import { afterEach, describe, expect, it } from "vitest";
 
+import { resolveRuntimeArtifactPath } from "../skills/mikuproject/lib/runtime-artifacts.mjs";
+
 const ROOT = process.cwd();
 const buildScriptPath = path.resolve(ROOT, "scripts/build-skill-bundle.mjs");
-const builtNodeRuntimePath = path.resolve(
-  ROOT,
-  "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject.mjs"
-);
-const builtJavaRuntimePath = path.resolve(
-  ROOT,
-  "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject.jar"
-);
-const builtJavaSourcesPath = path.resolve(
-  ROOT,
-  "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject-sources.jar"
-);
-const builtNodeSourcesPath = path.resolve(
-  ROOT,
-  "bundle/mikuproject-skills/skills/mikuproject/runtime/mikuproject-sources.tgz"
-);
 const sourcePolicyConfigPath = path.resolve(
   ROOT,
   "skills/mikuproject/config/backend-policy.json"
@@ -47,6 +33,27 @@ describe("mikuproject bundle smoke", () => {
       encoding: "utf8"
     });
 
+    const builtRuntimeRoot = path.resolve(
+      ROOT,
+      "bundle/mikuproject-skills/skills/mikuproject/runtime"
+    );
+    const builtNodeRuntimePath = resolveRuntimeArtifactPath({
+      kind: "node",
+      runtimeRoot: builtRuntimeRoot
+    });
+    const builtJavaRuntimePath = resolveRuntimeArtifactPath({
+      kind: "java",
+      runtimeRoot: builtRuntimeRoot
+    });
+    const builtJavaSourcesPath = resolveRuntimeArtifactPath({
+      kind: "java-sources",
+      runtimeRoot: builtRuntimeRoot
+    });
+    const builtNodeSourcesPath = resolveRuntimeArtifactPath({
+      kind: "node-sources",
+      runtimeRoot: builtRuntimeRoot
+    });
+
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "mikuproject-bundle-test-"));
     tempDirs.push(tempRoot);
 
@@ -55,14 +62,15 @@ describe("mikuproject bundle smoke", () => {
       recursive: true
     });
 
-    const isolatedNodeRuntimePath = path.resolve(
-      isolatedSkillRoot,
-      "mikuproject/runtime/mikuproject.mjs"
-    );
-    const isolatedJavaRuntimePath = path.resolve(
-      isolatedSkillRoot,
-      "mikuproject/runtime/mikuproject.jar"
-    );
+    const isolatedRuntimeRoot = path.resolve(isolatedSkillRoot, "mikuproject/runtime");
+    const isolatedNodeRuntimePath = resolveRuntimeArtifactPath({
+      kind: "node",
+      runtimeRoot: isolatedRuntimeRoot
+    });
+    const isolatedJavaRuntimePath = resolveRuntimeArtifactPath({
+      kind: "java",
+      runtimeRoot: isolatedRuntimeRoot
+    });
 
     const nodeHelp = execFileSync("node", [isolatedNodeRuntimePath, "--help"], {
       cwd: tempRoot,

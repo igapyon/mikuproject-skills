@@ -1,5 +1,7 @@
-export const DEFAULT_JAVA_RUNTIME_PATH = "skills/mikuproject/runtime/mikuproject.jar";
-export const DEFAULT_NODE_RUNTIME_PATH = "skills/mikuproject/runtime/mikuproject.mjs";
+import { resolveRuntimeArtifactPath } from "./runtime-artifacts.mjs";
+
+export const DEFAULT_JAVA_RUNTIME_KIND = "java";
+export const DEFAULT_NODE_RUNTIME_KIND = "node";
 
 export const operationRegistry = {
   spec: {
@@ -75,8 +77,8 @@ export function buildCliInvocation({
   inputPath,
   outputPath,
   statePath,
-  javaRuntimePath = DEFAULT_JAVA_RUNTIME_PATH,
-  nodeRuntimePath = DEFAULT_NODE_RUNTIME_PATH
+  javaRuntimePath,
+  nodeRuntimePath
 } = {}) {
   const definition = operationRegistry[operation];
   if (!definition?.cliArgs) {
@@ -99,14 +101,21 @@ export function buildCliInvocation({
   if (runtime === "java") {
     return {
       command: "java",
-      args: ["-jar", javaRuntimePath, ...operationArgs]
+      args: [
+        "-jar",
+        javaRuntimePath ?? resolveRuntimeArtifactPath({ kind: DEFAULT_JAVA_RUNTIME_KIND }),
+        ...operationArgs
+      ]
     };
   }
 
   if (runtime === "node") {
     return {
       command: "node",
-      args: [nodeRuntimePath, ...operationArgs]
+      args: [
+        nodeRuntimePath ?? resolveRuntimeArtifactPath({ kind: DEFAULT_NODE_RUNTIME_KIND }),
+        ...operationArgs
+      ]
     };
   }
 

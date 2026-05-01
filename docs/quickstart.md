@@ -79,8 +79,11 @@ mikuproject、cli-only で WBS XLSX を出力して
 必要なのは次です。
 
 - `skills/mikuproject`
-- `skills/mikuproject/runtime/mikuproject.jar`
-- `skills/mikuproject/runtime/mikuproject.mjs`
+- `skills/mikuproject/runtime/mikuproject-<version>.jar`
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs`
+
+ここでの `<version>` は同梱 runtime の version です。
+実行時は `skills/mikuproject/runtime/` 内の version 付き artifact を解決して使います。
 
 `skills/` だけでは不足します。
 
@@ -99,8 +102,8 @@ bundle/mikuproject-skills/
   skills/
     mikuproject/
       runtime/
-        mikuproject.jar
-        mikuproject.mjs
+        mikuproject-<version>.jar
+        mikuproject-<version>.mjs
 ```
 
 その中身を skill home にコピーします。
@@ -319,8 +322,9 @@ Excelガントが欲しい
 ## `mikuproject` CLI でできること
 
 bundle 配布物では `skills/mikuproject` 配下に runtime artifact が入ります。
-通常の参照元は bundle 内の `skills/mikuproject/runtime/mikuproject.jar` と
-`skills/mikuproject/runtime/mikuproject.mjs` です。
+通常の参照元は bundle 内の `skills/mikuproject/runtime/mikuproject-<version>.jar` と
+`skills/mikuproject/runtime/mikuproject-<version>.mjs` です。
+`<version>` をそのまま入力するのではなく、同梱されている実ファイル名を使います。
 
 ```text
 mikuproject ai spec
