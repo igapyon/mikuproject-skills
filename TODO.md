@@ -117,6 +117,29 @@
 - [x] Skill の使い方を短くまとめる
 - [x] 今後の拡張候補を別枠で整理する
 
+### HTTP MCP / content-mode contract documentation
+
+- [x] `skills/mikuproject/references/runtime/operations-map.md` に HTTP MCP の content-mode 返却形を明記する
+  - `outputMode: "content"` の text output は top-level `text` ではなく `artifacts[].text` に入る
+  - `mikuproject_state_from_draft` の workbook JSON は `artifacts[].role === "workbook_state"` の `text`、または互換目的の `stdout` から読む
+  - Markdown / Mermaid / SVG などの report 出力は `report_output`、projection は `projection`、diagnostics は `diagnostics_log` の artifact role を優先して読む
+- [x] `docs/mcp-backend-setup.md` に VS Code HTTP MCP 設定例を追加する
+  - `type: "http"` と `url: "http://127.0.0.1:3000/mcp"` の例を stdio 例と並べる
+  - HTTP server は別プロセスで `mikuproject-mcp` の `dist/http.js` / `mikuproject-mcp-http` を起動する前提を明記する
+  - HTTP transport では host path 引数を使わず、`draftContent` / `workbookContent` / `stateContent` / `patchContent` / `inputBase64` と `outputMode` を使うことを明記する
+- [x] `docs/backend-switching-manual-test.md` に HTTP MCP 手動確認手順を追加する
+  - `initialize` / `tools/list` が HTTP 200 を返すことを確認する
+  - `mikuproject_state_from_draft` を `draftContent` + `outputMode: "content"` で呼び、`workbook_state` artifact を確認する
+  - 返却 payload の例を短く掲載し、`payload.text` を期待しないことを明記する
+- [x] `skills/mikuproject/lib/backend-operations.mjs` の MCP metadata を path-mode 専用から inline/content-mode も表現できる形へ更新する
+  - CLI `requires` と MCP `requires` を分ける
+  - MCP tool ごとに inline input fields、path input fields、text/binary output modes、primary artifact role を持たせる
+  - `draft` の primary artifact role は `workbook_state` とする
+- [x] MCP HTTP/content-mode の返却 contract を固定するテストを追加する
+  - `mikuproject_state_from_draft` の content-mode 結果から `workbook_state.text` を抽出できること
+  - `mikuproject_report_wbs_markdown` の content-mode 結果から `report_output.text` を抽出できること
+  - operation summary / diagnostics が inline artifacts として追加されても primary artifact 抽出が壊れないこと
+
 ## Cross-Cutting Note
 
 - [x] `mikuproject-skills` 側だけで無理に実装せず、upstream (`mikuproject`) 側の API 追加や公開面整理が妥当な場合は、その都度 `mikuproject` 側アクション候補として相談する

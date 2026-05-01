@@ -43,17 +43,23 @@ const phaseCTools = [
 ];
 
 describe("mikuproject MCP tool surface fixtures", () => {
-  it("points the VS Code MCP config at the 0.8.2 tarball when the local config exists", () => {
+  it("points the VS Code MCP config at a supported mikuproject transport when the local config exists", () => {
     if (!fs.existsSync(mcpConfigPath)) {
       return;
     }
 
     const config = JSON.parse(fs.readFileSync(mcpConfigPath, "utf8"));
-    const args = config.servers?.mikuproject?.args ?? [];
+    const server = config.servers?.mikuproject;
+    expect(server).toBeDefined();
 
-    expect(args).toContain(
-      "--package=${workspaceFolder}/workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz"
-    );
+    if (server.type === "http") {
+      expect(server.url).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/mcp$/);
+      return;
+    }
+
+    const args = server.args ?? [];
+    expect(server.type).toBe("stdio");
+    expect(args).toContain("--package=${workspaceFolder}/workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz");
     expect(args.join(" ")).not.toContain("mikuproject-mcp-0.8.0");
   });
 

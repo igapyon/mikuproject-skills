@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildCliInvocation,
+  extractMcpPrimaryArtifact,
+  extractMcpPrimaryArtifactText,
+  getMcpOperationMetadata,
+  getMcpPrimaryArtifactRole,
   getMcpToolName,
   operationCapabilities
 } from "../skills/mikuproject/lib/backend-operations.mjs";
@@ -97,5 +101,105 @@ describe("mikuproject backend operation registry", () => {
     expect(getMcpToolName("weekly-svg-export")).toBe("mikuproject_report_weekly_svg");
     expect(getMcpToolName("monthly-calendar-svg-export")).toBe("mikuproject_report_monthly_calendar_svg");
     expect(getMcpToolName("all-report-export")).toBe("mikuproject_report_all");
+  });
+
+  it("describes HTTP MCP content-mode fields and primary artifact roles", () => {
+    expect(getMcpOperationMetadata("draft")).toMatchObject({
+      tool: "mikuproject_state_from_draft",
+      inlineInputFields: ["draftContent"],
+      outputModes: ["path", "content"],
+      primaryArtifactRole: "workbook_state"
+    });
+    expect(getMcpOperationMetadata("wbs-markdown-export")).toMatchObject({
+      tool: "mikuproject_report_wbs_markdown",
+      inlineInputFields: ["workbookContent"],
+      outputModes: ["path", "content"],
+      primaryArtifactRole: "report_output"
+    });
+    expect(getMcpOperationMetadata("wbs-xlsx-export")).toMatchObject({
+      outputModes: ["path", "base64"],
+      primaryArtifactRole: "report_output"
+    });
+  });
+
+  it("extracts workbook content from the primary MCP artifact, not top-level text", () => {
+    const result = {
+      ok: true,
+      operation: "mikuproject_state_from_draft",
+      artifacts: [
+        {
+          role: "workbook_state",
+          text: "{\"format\":\"mikuproject_workbook_json\"}",
+          mimeType: "application/json"
+        },
+        {
+          role: "operation_summary",
+          text: "{\"ok\":true}",
+          mimeType: "application/json"
+        },
+        {
+          role: "diagnostics_log",
+          text: "{\"diagnostics\":[]}",
+          mimeType: "application/json"
+        }
+      ],
+      stdout: "{\"format\":\"legacy_stdout_fallback\"}"
+    };
+
+    expect(getMcpPrimaryArtifactRole("draft")).toBe("workbook_state");
+    expect(extractMcpPrimaryArtifact(result, "draft")).toEqual({
+      role: "workbook_state",
+      text: "{\"format\":\"mikuproject_workbook_json\"}",
+      mimeType: "application/json"
+    });
+    expect(extractMcpPrimaryArtifactText(result, "draft")).toBe(
+      "{\"format\":\"mikuproject_workbook_json\"}"
+    );
+    expect(result.text).toBeUndefined();
+  });
+
+  it("extracts report content by role even when operation artifacts are inlined", () => {
+    const result = {
+      ok: true,
+      operation: "mikuproject_report_wbs_markdown",
+      artifacts: [
+        {
+          role: "operation_summary",
+          text: "{\"ok\":true}",
+          mimeType: "application/json"
+        },
+        {
+          role: "report_output",
+          text: "# WBS",
+          mimeType: "text/markdown"
+        },
+        {
+          role: "diagnostics_log",
+          text: "{\"diagnostics\":[]}",
+          mimeType: "application/json"
+        }
+      ]
+    };
+
+    expect(extractMcpPrimaryArtifactText(result, "wbs-markdown-export")).toBe("# WBS");
+  });
+
+  it("falls back to stdout for older MCP text results without inline artifact text", () => {
+    const result = {
+      ok: true,
+      operation: "mikuproject_state_from_draft",
+      artifacts: [
+        {
+          role: "workbook_state",
+          uri: "mikuproject://state/current",
+          path: "/tmp/current-workbook.json"
+        }
+      ],
+      stdout: "{\"format\":\"mikuproject_workbook_json\"}"
+    };
+
+    expect(extractMcpPrimaryArtifactText(result, "draft")).toBe(
+      "{\"format\":\"mikuproject_workbook_json\"}"
+    );
   });
 });
