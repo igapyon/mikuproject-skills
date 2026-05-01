@@ -25,7 +25,7 @@ mikuproject、mcp-only で AI spec を確認して
 
 VS Code で使う場合は、workspace の `.vscode/mcp.json` に MCP server 設定を置きます。
 
-例:
+### stdio 例
 
 ```json
 {
@@ -61,6 +61,47 @@ workplace/mikuproject-mcp-vscode
 ```
 
 `.vscode/mcp.json` と `workplace/` はローカル環境用として扱います。
+
+### HTTP 例
+
+HTTP transport で接続する場合は、MCP server を別プロセスで起動し、
+`.vscode/mcp.json` には接続先 URL だけを書きます。
+
+MCP server 起動例:
+
+```sh
+MIKUPROJECT_MCP_HTTP_HOST=127.0.0.1 \
+MIKUPROJECT_MCP_HTTP_PORT=3000 \
+MIKUPROJECT_MCP_HTTP_ENDPOINT=/mcp \
+node /path/to/mikuproject-mcp/packages/node/dist/http.js
+```
+
+`mikuproject-mcp-http` コマンドとしてインストール済みの場合は、同じ環境変数で
+そのコマンドを起動しても構いません。
+
+VS Code の `.vscode/mcp.json` 例:
+
+```json
+{
+  "servers": {
+    "mikuproject": {
+      "type": "http",
+      "url": "http://127.0.0.1:3000/mcp"
+    }
+  }
+}
+```
+
+HTTP transport は request-scoped workspace を使うため、host path 引数を渡さない
+運用を基本にします。`draftContent` / `workbookContent` / `stateContent` /
+`patchContent` / `content` / `inputBase64` などの inline input と、
+`outputMode: "content"` または `outputMode: "base64"` を使います。
+
+content-mode の結果は、operation payload の top-level `text` ではなく
+`artifacts[]` に入ります。たとえば `mikuproject_state_from_draft` の workbook
+JSON は `artifacts[].role === "workbook_state"` の `text` を読みます。WBS
+Markdown や Mermaid などの report は `report_output.text`、WBS XLSX や ZIP
+bundle などの binary report は `report_output.base64` を読みます。
 
 ## 最小確認
 

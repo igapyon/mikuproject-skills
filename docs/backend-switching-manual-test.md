@@ -2,8 +2,9 @@
 
 この文書は、VS Code で `mikuproject-skills` の MCP backend を手動確認するための手順です。
 
-この手順では MCP server を `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz` から起動します。
-local checkout 版や GitHub Releases URL は使いません。
+この手順の主経路では MCP server を `workplace/igapyon-mikuproject-mcp-node-0.8.2.tgz`
+から stdio で起動します。HTTP transport を確認する場合は、local checkout 版の
+HTTP entrypoint を別プロセスで起動する手順も使えます。
 
 ## 1. 前提確認
 
@@ -64,6 +65,31 @@ repository root に `.vscode/mcp.json` を作ります。
 ```text
 workplace/mikuproject-mcp-vscode
 ```
+
+HTTP transport を確認する場合は、MCP server を別プロセスで起動します。
+
+```bash
+MIKUPROJECT_MCP_HTTP_HOST=127.0.0.1 \
+MIKUPROJECT_MCP_HTTP_PORT=3000 \
+MIKUPROJECT_MCP_HTTP_ENDPOINT=/mcp \
+node /path/to/mikuproject-mcp/packages/node/dist/http.js
+```
+
+その場合の `.vscode/mcp.json` は次の形にします。
+
+```json
+{
+  "servers": {
+    "mikuproject": {
+      "type": "http",
+      "url": "http://127.0.0.1:3000/mcp"
+    }
+  }
+}
+```
+
+HTTP transport では、MCP client はこの URL へ接続するだけです。server process
+の起動、停止、port 変更は別途管理します。
 
 ## 3. VS Code を再読み込みする
 
@@ -205,6 +231,47 @@ outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/state/manual-
 - `workplace/mikuproject-mcp-vscode/state/manual-workbook.json` が生成される
 - artifact role が workbook state として扱われる
 
+HTTP transport / content-mode で確認する場合は、host path 引数を渡さず、
+`draftContent` と `outputMode: "content"` を使います。
+
+期待:
+
+- HTTP `initialize` が 200 を返す
+- HTTP `tools/list` が 200 を返し、`mikuproject_state_from_draft` が含まれる
+- `mikuproject_state_from_draft` の operation payload は `ok: true`
+- workbook JSON は top-level `text` ではなく、`artifacts[]` の
+  `role === "workbook_state"` の `text` に入る
+- `stdout` は互換用 fallback として扱えるが、primary artifact は role で選ぶ
+
+返却 payload の要点:
+
+```json
+{
+  "ok": true,
+  "operation": "mikuproject_state_from_draft",
+  "artifacts": [
+    {
+      "role": "workbook_state",
+      "text": "{...mikuproject_workbook_json...}",
+      "mimeType": "application/json"
+    },
+    {
+      "role": "operation_summary",
+      "text": "{...}",
+      "mimeType": "application/json"
+    },
+    {
+      "role": "diagnostics_log",
+      "text": "{...}",
+      "mimeType": "application/json"
+    }
+  ],
+  "stdout": "{...mikuproject_workbook_json...}"
+}
+```
+
+`payload.text` は期待しません。
+
 ## 9. WBS Markdown report を作る
 
 Copilot Chat で次を依頼します。
@@ -220,6 +287,12 @@ outputPath は ${workspaceFolder}/workplace/mikuproject-mcp-vscode/report/manual
 - `operation` が `mikuproject_report_wbs_markdown`
 - `workplace/mikuproject-mcp-vscode/report/manual-wbs.md` が生成される
 - report artifact として扱われる
+
+HTTP transport / content-mode で確認する場合は、`workbookContent` と
+`outputMode: "content"` を使います。Markdown 本文は `artifacts[]` の
+`role === "report_output"` の `text` に入ります。operation summary や
+diagnostics が同じ `artifacts[]` に追加されるため、配列位置ではなく role で
+選びます。
 
 ## 10. WBS XLSX report を作る
 

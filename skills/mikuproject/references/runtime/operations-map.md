@@ -74,7 +74,7 @@ MCP backend phase grouping:
 
 - Phase A: AI/state workflow tools used for spec, draft, projections, patch validation, patch apply, diff, summarize, and workbook JSON export
 - Phase B: primary file import/export tools for structural workbook XLSX and MS Project XML export
-- Phase C: report/presentation tools exposed by `mikuproject-mcp` 0.8.2, including WBS XLSX, SVG reports, report bundle, WBS Markdown, and Mermaid
+- Phase C: report/presentation tools exposed by `mikuproject-mcp` 0.8.2 and later, including WBS XLSX, SVG reports, report bundle, WBS Markdown, and Mermaid
 
 Current `mikuproject-mcp` does not expose every CLI import or merge operation.
 Under `mcp-only`, missing MCP tools remain unavailable rather than falling back
@@ -160,6 +160,44 @@ Important artifact roles shared with `mikuproject-mcp` include:
 - `report_output`
 - `operation_summary`
 - `diagnostics_log`
+
+## HTTP MCP Content-Mode Results
+
+When using Streamable HTTP, prefer inline inputs and content-return modes instead
+of host file paths.
+
+Use inline input fields such as:
+
+- `draftContent`
+- `workbookContent`
+- `stateContent`
+- `patchContent`
+- `content`
+- `inputBase64`
+
+For text outputs, set `outputMode: "content"`.
+For binary outputs, set `outputMode: "base64"`.
+
+In content mode, the generated output is not returned as a top-level `text`
+field on the parsed operation payload. The MCP tool result itself is still a
+text MCP message whose text is JSON, but after parsing that JSON, generated
+artifacts are found under `artifacts[]`.
+
+Read primary outputs by artifact role:
+
+| Operation | Primary artifact role | Field |
+| --- | --- | --- |
+| `draft` / `mikuproject_state_from_draft` | `workbook_state` | `artifacts[].text` |
+| `workbook-export` / `mikuproject_export_workbook_json` | `mikuproject_workbook_json` | `artifacts[].text` |
+| AI projection exports | `projection` | `artifacts[].text` |
+| text report exports such as WBS Markdown / Mermaid / SVG | `report_output` | `artifacts[].text` |
+| binary report exports such as WBS XLSX / ZIP bundles | `report_output` | `artifacts[].base64` |
+
+`stdout` may also contain the generated text output and can be used as a
+compatibility fallback. Do not expect `payload.text` after parsing the operation
+JSON. Operation summaries and diagnostics may also be appended to `artifacts[]`
+with roles `operation_summary` and `diagnostics_log`; select the primary
+artifact by role rather than by array position.
 
 ## Java / Node.js CLI Correspondence
 
