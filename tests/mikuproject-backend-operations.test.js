@@ -5,6 +5,10 @@ import {
   getMcpToolName,
   operationCapabilities
 } from "../skills/mikuproject/lib/backend-operations.mjs";
+import { resolveRuntimeArtifactPath } from "../skills/mikuproject/lib/runtime-artifacts.mjs";
+
+const javaRuntimePath = resolveRuntimeArtifactPath({ kind: "java" });
+const nodeRuntimePath = resolveRuntimeArtifactPath({ kind: "node" });
 
 describe("mikuproject backend operation registry", () => {
   it("exposes operation capabilities for backend policy selection", () => {
@@ -29,7 +33,7 @@ describe("mikuproject backend operation registry", () => {
       command: "java",
       args: [
         "-jar",
-        "skills/mikuproject/runtime/mikuproject.jar",
+        javaRuntimePath,
         "report",
         "wbs-xlsx",
         "--in",
@@ -51,7 +55,7 @@ describe("mikuproject backend operation registry", () => {
     expect(invocation).toEqual({
       command: "node",
       args: [
-        "skills/mikuproject/runtime/mikuproject.mjs",
+        nodeRuntimePath,
         "state",
         "from-draft",
         "--in",
@@ -73,7 +77,7 @@ describe("mikuproject backend operation registry", () => {
 
     expect(invocation.args).toEqual([
       "-jar",
-      "skills/mikuproject/runtime/mikuproject.jar",
+      javaRuntimePath,
       "state",
       "apply-patch",
       "--state",

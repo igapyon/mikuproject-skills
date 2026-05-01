@@ -8,10 +8,10 @@ This reference is for the structural workbook `XLSX`, not `WBS XLSX`.
 
 Prefer the bundled runtime CLI commands:
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export xlsx --in workbook.json --out workbook.xlsx`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar import xlsx --in workbook.xlsx --out workbook.json`
-- `java -jar skills/mikuproject/runtime/mikuproject.jar merge xlsx --state workbook.json --in workbook.xlsx --out workbook.next.json`
-- `node skills/mikuproject/runtime/mikuproject.mjs export xlsx --in workbook.json --out workbook.xlsx`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar export xlsx --in workbook.json --out workbook.xlsx`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar import xlsx --in workbook.xlsx --out workbook.json`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar merge xlsx --state workbook.json --in workbook.xlsx --out workbook.next.json`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs export xlsx --in workbook.json --out workbook.xlsx`
 
 ## `xlsx-import`
 

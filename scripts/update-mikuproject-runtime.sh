@@ -49,22 +49,36 @@ test -s "$mikuproject_root/bundle/mikuproject-sources.tgz"
 test -s "$mikuproject_java_root/target/mikuproject.jar"
 test -s "$mikuproject_java_root/target/mikuproject-sources.jar"
 
-cp "$mikuproject_root/bundle/mikuproject.mjs" "$runtime_root/mikuproject.mjs"
-cp "$mikuproject_root/bundle/mikuproject-sources.tgz" "$runtime_root/mikuproject-sources.tgz"
-cp "$mikuproject_java_root/target/mikuproject.jar" "$runtime_root/mikuproject.jar"
-cp "$mikuproject_java_root/target/mikuproject-sources.jar" "$runtime_root/mikuproject-sources.jar"
+runtime_version="${MIKUPROJECT_RUNTIME_VERSION:-$(node "$mikuproject_root/bundle/mikuproject.mjs" --version | awk '{print $2}')}"
+test -n "$runtime_version"
 
-java -jar "$runtime_root/mikuproject.jar" ai spec >/dev/null
-java -jar "$runtime_root/mikuproject.jar" --version >/dev/null
-node "$runtime_root/mikuproject.mjs" ai spec >/dev/null
-node "$runtime_root/mikuproject.mjs" --version >/dev/null
+node_runtime="$runtime_root/mikuproject-$runtime_version.mjs"
+node_sources="$runtime_root/mikuproject-sources-$runtime_version.tgz"
+java_runtime="$runtime_root/mikuproject-$runtime_version.jar"
+java_sources="$runtime_root/mikuproject-sources-$runtime_version.jar"
+
+rm -f \
+  "$runtime_root/mikuproject.jar" \
+  "$runtime_root/mikuproject-sources.jar" \
+  "$runtime_root/mikuproject.mjs" \
+  "$runtime_root/mikuproject-sources.tgz"
+
+cp "$mikuproject_root/bundle/mikuproject.mjs" "$node_runtime"
+cp "$mikuproject_root/bundle/mikuproject-sources.tgz" "$node_sources"
+cp "$mikuproject_java_root/target/mikuproject.jar" "$java_runtime"
+cp "$mikuproject_java_root/target/mikuproject-sources.jar" "$java_sources"
+
+java -jar "$java_runtime" ai spec >/dev/null
+java -jar "$java_runtime" --version >/dev/null
+node "$node_runtime" ai spec >/dev/null
+node "$node_runtime" --version >/dev/null
 
 cat <<EOF
 [update-mikuproject-runtime] updated runtime artifacts
-  - skills/mikuproject/runtime/mikuproject.jar
-  - skills/mikuproject/runtime/mikuproject-sources.jar
-  - skills/mikuproject/runtime/mikuproject.mjs
-  - skills/mikuproject/runtime/mikuproject-sources.tgz
+  - skills/mikuproject/runtime/mikuproject-$runtime_version.jar
+  - skills/mikuproject/runtime/mikuproject-sources-$runtime_version.jar
+  - skills/mikuproject/runtime/mikuproject-$runtime_version.mjs
+  - skills/mikuproject/runtime/mikuproject-sources-$runtime_version.tgz
   - workplace: $workplace_root
   - mikuproject ref: $mikuproject_ref
   - mikuproject-java ref: $mikuproject_java_ref

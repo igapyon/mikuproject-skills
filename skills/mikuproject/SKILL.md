@@ -70,14 +70,14 @@ negated.
 For `cli-only` and `cli-preferred`, use this CLI runtime order:
 
 1. read this `SKILL.md`
-2. check `skills/mikuproject/runtime/mikuproject.jar` and `skills/mikuproject/runtime/mikuproject.mjs` first
+2. check versioned runtime artifacts matching `skills/mikuproject/runtime/mikuproject-*.jar` and `skills/mikuproject/runtime/mikuproject-*.mjs` first
 3. use the documented Java or Node CLI runtime flow if present
 4. only if that path is missing or unusable, search for alternatives
 
 For this repository:
 
-- prefer `skills/mikuproject/runtime/mikuproject.jar` for operations it supports
-- use `skills/mikuproject/runtime/mikuproject.mjs` when the Java runtime is missing or does not support the requested operation
+- prefer the newest `skills/mikuproject/runtime/mikuproject-*.jar` for operations it supports
+- use the newest `skills/mikuproject/runtime/mikuproject-*.mjs` when the Java runtime is missing or does not support the requested operation
 - do not search broadly through the workspace before checking the bundled runtime artifacts
 - do not conclude that runtime dependencies are missing until the bundled skill-local runtime path has also been checked when applicable
 - in `mcp-only`, do not probe CLI runtime artifacts just to see whether CLI fallback is possible

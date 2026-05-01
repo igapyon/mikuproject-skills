@@ -16,8 +16,8 @@ If you already have current state as `mikuproject_workbook_json`, return it dire
 
 If you need to regenerate current state from runtime input, use:
 
-- `java -jar skills/mikuproject/runtime/mikuproject.jar export workbook-json --in workbook.json --out workbook.normalized.json`
-- `node skills/mikuproject/runtime/mikuproject.mjs export workbook-json --in workbook.json --out workbook.normalized.json`
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar export workbook-json --in workbook.json --out workbook.normalized.json`
+- `node skills/mikuproject/runtime/mikuproject-<version>.mjs export workbook-json --in workbook.json --out workbook.normalized.json`
 
 ## Preferred Behavior
 

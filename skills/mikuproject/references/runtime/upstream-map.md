@@ -6,8 +6,11 @@ Use this reference when you need the exact `mikuproject` runtime locations behin
 
 Check these skill-local runtime artifacts before broad repository exploration:
 
-- `skills/mikuproject/runtime/mikuproject.jar`
-- `skills/mikuproject/runtime/mikuproject.mjs`
+- `skills/mikuproject/runtime/mikuproject-<version>.jar`
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs`
+
+`<version>` is a placeholder for the bundled runtime artifact version.
+Use the actual file name in `skills/mikuproject/runtime/`.
 
 When both are present, prefer the Java runtime for operations it supports. Use the Node.js runtime when the Java runtime is missing or does not support the requested operation.
 
@@ -16,18 +19,18 @@ When both are present, prefer the Java runtime for operations it supports. Use t
 Java runtime:
 
 ```bash
-java -jar skills/mikuproject/runtime/mikuproject.jar ai spec
-java -jar skills/mikuproject/runtime/mikuproject.jar state from-draft --in draft.editjson --out workbook.json
-java -jar skills/mikuproject/runtime/mikuproject.jar report all --in workbook.json --out report-bundle.zip
+java -jar skills/mikuproject/runtime/mikuproject-<version>.jar ai spec
+java -jar skills/mikuproject/runtime/mikuproject-<version>.jar state from-draft --in draft.editjson --out workbook.json
+java -jar skills/mikuproject/runtime/mikuproject-<version>.jar report all --in workbook.json --out report-bundle.zip
 ```
 
 Node.js runtime:
 
 ```bash
-node skills/mikuproject/runtime/mikuproject.mjs ai spec
-node skills/mikuproject/runtime/mikuproject.mjs state from-draft --in draft.editjson --out workbook.json
-node skills/mikuproject/runtime/mikuproject.mjs state apply-patch --state workbook.json --in patch.editjson --out workbook.next.json
-node skills/mikuproject/runtime/mikuproject.mjs report all --in workbook.json --out report-bundle.zip
+node skills/mikuproject/runtime/mikuproject-<version>.mjs ai spec
+node skills/mikuproject/runtime/mikuproject-<version>.mjs state from-draft --in draft.editjson --out workbook.json
+node skills/mikuproject/runtime/mikuproject-<version>.mjs state apply-patch --state workbook.json --in patch.editjson --out workbook.next.json
+node skills/mikuproject/runtime/mikuproject-<version>.mjs report all --in workbook.json --out report-bundle.zip
 ```
 
 ## Main Formats

@@ -50,8 +50,8 @@
 
 前提:
 
-- `skills/mikuproject/runtime/mikuproject.mjs ai spec` で spec を取得できる
-- `java -jar skills/mikuproject/runtime/mikuproject.jar ai spec` で spec を取得できる
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs ai spec` で spec を取得できる
+- `java -jar skills/mikuproject/runtime/mikuproject-<version>.jar ai spec` で spec を取得できる
 
 ## 6. `project_draft_view` 取込機能
 
@@ -62,7 +62,7 @@
 
 前提:
 
-- `skills/mikuproject/runtime/mikuproject.mjs state from-draft` で扱える
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs state from-draft` で扱える
 
 ## 7. `Patch JSON` 取込機能
 
@@ -73,8 +73,8 @@
 
 前提:
 
-- `skills/mikuproject/runtime/mikuproject.mjs ai validate-patch` で検証できる
-- `skills/mikuproject/runtime/mikuproject.mjs state apply-patch` で適用できる
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs ai validate-patch` で検証できる
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs state apply-patch` で適用できる
 - Patch 適用時は base workbook state が必要
 
 ## 8. `mikuproject_workbook_json` 引き渡し機能
@@ -85,7 +85,7 @@
 
 前提:
 
-- `skills/mikuproject/runtime/mikuproject.mjs export workbook-json` が使える
+- `skills/mikuproject/runtime/mikuproject-<version>.mjs export workbook-json` が使える
 
 ## 9. 動作確認
 
@@ -99,15 +99,16 @@
 
 - root の `vitest` を有効化した
 - `tests/mikuproject-core-api-smoke.test.js` を追加した
-- 2026-04-25: smoke test を `skills/mikuproject/runtime/mikuproject.jar` / `mikuproject.mjs` の CLI contract 検証へ移行した
+- 2026-04-25: smoke test を `skills/mikuproject/runtime/mikuproject-<version>.jar` / `mikuproject-<version>.mjs` の CLI contract 検証へ移行した
 - `npm test` で 24 files / 208 tests passed を確認した
 - 2026-04-14: bundle を repo 外の孤立ディレクトリへコピーして `mikuproject-cli.mjs --help` を実行すると `jsdom` 解決失敗で落ちる問題を確認した
-- 2026-04-25: `scripts/build-skill-bundle.mjs` を修正し、`skills/mikuproject/runtime/mikuproject.jar` と `mikuproject.mjs` を同梱するようにした
+- 2026-04-25: `scripts/build-skill-bundle.mjs` を修正し、`skills/mikuproject/runtime/mikuproject-<version>.jar` と `mikuproject-<version>.mjs` を同梱するようにした
 - 2026-04-14: `tests/mikuproject-bundle-smoke.test.js` を追加し、bundle を一時ディレクトリへ展開した孤立環境でも CLI が起動することを回帰確認に入れた
-- 2026-04-25: `docs/skill-installation.md` に bundle の必須構成として `skills/mikuproject/runtime/mikuproject.jar` と `mikuproject.mjs` を追記した
+- 2026-04-25: `docs/skill-installation.md` に bundle の必須構成として `skills/mikuproject/runtime/mikuproject-<version>.jar` と `mikuproject-<version>.mjs` を追記した
 - 2026-04-14: `npm test` で 3 files / 3 tests passed を確認し、`npm run build:bundle:zip` で `bundle/mikuproject-skills-20260413.zip` を再生成した
 - 2026-04-29: `workplace/mikuproject-mcp-devel` で `npm install` 後に `npm run build && npm run test` を実行し、27 tests passed を確認した
 - 2026-04-29: root の `npm test` で 3 files / 3 tests passed を確認した
+- 2026-05-01: runtime artifact 名を version 付き正規形へ移行し、root の `npm test` で 13 files / 31 tests passed を確認した
 
 ## 10. 文書化
 
@@ -125,7 +126,7 @@
 現時点で、Agent Skills から Java runtime を優先利用するための主要 CLI surface は揃った。
 
 - [x] upstream の Java CLI runtime artifact と Node.js CLI runtime artifact に `--version` を追加してもらう
-  - `mikuproject.jar` / `mikuproject.mjs` はファイル名に version が含まれないため、受け取った artifact の由来や新旧を CLI から判別できる必要がある
+  - version 付き artifact 名を正とする前は、受け取った artifact の由来や新旧を CLI から判別できる必要があった
 - [x] upstream `mikuproject-java` 側で、Node.js runtime の agent-friendly な CLI 引数体系に合わせて Java CLI 引数を変更してもらう
   - `mikuproject-skills` 側の実装項目ではなく、`mikuproject-java` 側メンバーへの TODO として扱う
   - 依頼文書: `docs/upstream-mikuproject-java-cli-request.md`
@@ -257,7 +258,7 @@ MCP backend を使えるようにする。
 
 ### Agent Skill documentation updates
 
-- [x] `docs/miku-soft-40-agentskills-design-v20260429.md` に execution backend policy を反映する
+- [x] `docs/miku-soft-40-agentskills-design-v20260501.md` に execution backend policy を反映する
   - Agent Skill が workflow layer として残り、実行面は CLI backend / MCP backend / handoff backend を選べることを追記する
   - 既定は `cli-preferred` だが、環境 policy が上位であることを明記する
   - `cli-only` / `mcp-only` の strict policy では別 backend へ自動 fallback しないことを明記する

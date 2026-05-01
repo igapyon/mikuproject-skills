@@ -5,8 +5,13 @@ import { execFileSync } from "node:child_process";
 
 import { afterEach, describe, expect, it } from "vitest";
 
+import { resolveRuntimeArtifactPath } from "../skills/mikuproject/lib/runtime-artifacts.mjs";
+
 const ROOT = process.cwd();
-const nodeRuntimePath = path.resolve(ROOT, "skills/mikuproject/runtime/mikuproject.mjs");
+const nodeRuntimePath = resolveRuntimeArtifactPath({
+  kind: "node",
+  runtimeRoot: path.resolve(ROOT, "skills/mikuproject/runtime")
+});
 
 describe("mikuproject file workflow smoke", () => {
   const tempDirs = [];
